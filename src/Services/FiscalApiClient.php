@@ -1,43 +1,29 @@
 <?php
-
-
 declare(strict_types=1);
+namespace Fiscalapi\Services;
 
-namespace Fiscalapi;
+use Fiscalapi\Http\FiscalApiHttpClientInterface;
+use Fiscalapi\Http\FiscalApiSettings;
 
-use Fiscalapi\Services\Http\FiscalapiHttpClientInterface;
-use Fiscalapi\Services\Http\FiscalapiHttpClient;
-use Fiscalapi\Services\Http\FiscalapiSettings;
-use Fiscalapi\Services\ProductService;
-use Fiscalapi\Services\ProductServiceInterface;
-
-class FiscalapiClient implements FiscalapiClientInterface
+class FiscalApiClient implements FiscalApiClientInterface
 {
-    private FiscalapiHttpClientInterface $httpClient;
+    private FiscalApiHttpClientInterface $httpClient;
     private ?ProductServiceInterface $productService = null;
 
     /**
-     * Constructor del cliente principal de FiscalAPI
+     * Constructor del cliente principal de FiscalAPI.
      *
-     * @param FiscalapiSettings|FiscalapiHttpClientInterface $clientOrSettings Configuración o cliente HTTP
+     * @param FiscalApiSettings $settings Configuración del cliente HTTP.
      */
-    public function __construct($clientOrSettings)
+    public function __construct(FiscalApiSettings $settings)
     {
-        if ($clientOrSettings instanceof FiscalapiHttpClientInterface) {
-            $this->httpClient = $clientOrSettings;
-        } elseif ($clientOrSettings instanceof FiscalapiSettings) {
-            $this->httpClient = new FiscalapiHttpClient($clientOrSettings);
-        } else {
-            throw new \InvalidArgumentException(
-                'El parámetro debe ser una instancia de FiscalapiSettings o FiscalapiHttpClientInterface'
-            );
-        }
+        $this->httpClient = FiscalApiClientFactory::create($settings);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function products(): ProductServiceInterface
+    public function getProductService(): ProductServiceInterface
     {
         if ($this->productService === null) {
             $this->productService = new ProductService($this->httpClient);
@@ -49,7 +35,7 @@ class FiscalapiClient implements FiscalapiClientInterface
     /**
      * {@inheritdoc}
      */
-    public function getHttpClient(): FiscalapiHttpClientInterface
+    public function getHttpClient(): FiscalApiHttpClientInterface
     {
         return $this->httpClient;
     }
