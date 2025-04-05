@@ -1,0 +1,52 @@
+# Composer
+/vendor/
+/composer.lock
+
+# PhpStorm
+/.idea/
+/.phpstorm.meta.php
+/_ide_helper.php
+/_ide_helper_models.php
+
+# PHP
+.phpunit.result.cache
+/.phpunit.cache/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+/logs/
+/log/
+
+# Configuración local
+.env
+.env.backup
+
+# Archivos de caché PHP
+*.php.cache
+
+# Archivos temporales
+*.tmp
+*.swp
+*.swo
+/tmp/
+/temp/
+
+# Directorios de construcción o generados
+/build/
+/dist/
+/reports/
+/coverage/
+/clover.xml
+
+# Archivos temporales de pruebas
+/phpunit-*.xml
+
+# Node.js (si usas herramientas front-end auxiliares)
+/node_modules/
+/npm-debug.log
+/yarn-error.log
+/package-lock.json

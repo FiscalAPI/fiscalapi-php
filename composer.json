@@ -1,0 +1,39 @@
+{
+    "name": "fiscalapi/fiscalapi",
+    "description": "SDK de PHP para FiscalAPI",
+    "type": "library",
+    "license": "MPL-2.0",
+    "homepage": "https://www.fiscalapi.com",
+    "authors": [
+        {
+            "name": "FISCAL API S DE R.L DE C.V",
+            "homepage": "https://www.fiscalapi.com"
+        }
+    ],
+    "keywords": [
+        "fiscalapi",
+        "cfdi",
+        "factura",
+        "facturación",
+        "sat",
+        "mexico"
+    ],
+    "require": {
+        "php": ">=7.4",
+        "guzzlehttp/guzzle": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Fiscalapi\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "support": {
+        "issues": "https://github.com/FiscalAPI/fiscalapi-php/issues",
+        "source": "https://github.com/FiscalAPI/fiscalapi-php"
+    }
+}
