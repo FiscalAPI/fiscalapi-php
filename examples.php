@@ -1125,8 +1125,10 @@ try {
     // ------------------------------------------------------------------
     // Descargar XML por ID
     // ------------------------------------------------------------------
-    // $apiResponse = $client->getInvoiceService()->getXml("fc2bb1aa-12a7-4d92-bdea-57d589bd29d6");
-    // consoleLog($apiResponse);
+    $apiResponse = $client->getInvoiceService()->getXml("fc2bb1aa-12a7-4d92-bdea-57d589bd29d6");
+    consoleLog($apiResponse);
+
+    
 
     // ------------------------------------------------------------------
     // Enviar factura por correo (por valores)

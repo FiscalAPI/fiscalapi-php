@@ -96,7 +96,7 @@ class InvoiceService extends AbstractService implements InvoiceServiceInterface
         }
 
         return $this->httpClient->get(
-            $this->buildResourceUrl($id . '/xml')
+            $this->buildResourceUrl($id , 'xml')
         );
     }
 
