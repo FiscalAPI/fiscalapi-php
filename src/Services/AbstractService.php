@@ -29,7 +29,7 @@ abstract class AbstractService implements FiscalApiServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function list(int $pageNumber = 1, int $pageSize = 20): FiscalApiHttpResponseInterface
+    public function list(int $pageNumber = 1, int $pageSize = 10): FiscalApiHttpResponseInterface
     {
         $queryParams = [
             'pageNumber' => $pageNumber,

@@ -17,7 +17,7 @@ interface ProductServiceInterface extends FiscalApiServiceInterface
      * @param int $pageSize Tamaño de página
      * @return FiscalApiHttpResponseInterface
      */
-    public function list(int $pageNumber = 1, int $pageSize = 20): FiscalApiHttpResponseInterface;
+    public function list(int $pageNumber = 1, int $pageSize = 10): FiscalApiHttpResponseInterface;
 
     /**
      * Obtiene un producto por su ID
