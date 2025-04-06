@@ -1125,8 +1125,8 @@ try {
     // ------------------------------------------------------------------
     // Descargar XML por ID
     // ------------------------------------------------------------------
-    $apiResponse = $client->getInvoiceService()->getXml("fc2bb1aa-12a7-4d92-bdea-57d589bd29d6");
-    consoleLog($apiResponse);
+    // $apiResponse = $client->getInvoiceService()->getXml("fc2bb1aa-12a7-4d92-bdea-57d589bd29d6");
+    // consoleLog($apiResponse);
 
     
 
@@ -1137,11 +1137,13 @@ try {
     //     "invoiceId" => "96d93ff4-95c6-4381-858a-6551259d17ad",
     //     "bandColor" => "#FFA500",
     //     "fontColor" => "#FFFFFF",
-    //     "toEmail" => "mendoza.git@gmail.com",
+    //     "toEmail" => "mail@domain.com",
     //     "base64Logo" => $base64Logo
     // ];
     // $apiResponse = $client->getInvoiceService()->send($emailRequest);
     // consoleLog($apiResponse);
+
+
 
     // ------------------------------------------------------------------
     // Enviar factura por correo por ID (por referencias)
