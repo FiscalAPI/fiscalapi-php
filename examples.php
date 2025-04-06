@@ -1074,26 +1074,28 @@ try {
     // ------------------------------------------------------------------
     // Obtener el estado de una factura por valores
     // ------------------------------------------------------------------
+    // $invoiceStatus = [
+    //     'issuerTin' => "POPJ450924HD6",        // RFC del emisor
+    //     'recipientTin' => "MEJJ940824C61",     // RFC del receptor
+    //     'invoiceTotal' => 430.00,              // Total de la factura
+    //     'invoiceUuid' => "8e0fdc23-e148-4cf5-b3ce-4459f31c9c45", // UUID de la factura
+    //     'last8DigitsIssuerSignature' => "oxPKRg==" // Últimos 8 dígitos del sello digital del emisor
+    // ];
+    // $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
+    // consoleLog($apiResponse);
+
+
+
+    // ------------------------------------------------------------------
+    // Obtener el estado de una factura por ID (por referencia)
+    // ------------------------------------------------------------------
     $invoiceStatus = [
-        'issuerTin' => "POPJ450924HD6",        // RFC del emisor
-        'recipientTin' => "MEJJ940824C61",     // RFC del receptor
-        'invoiceTotal' => 430.00,              // Total de la factura
-        'invoiceUuid' => "8e0fdc23-e148-4cf5-b3ce-4459f31c9c45", // UUID de la factura
-        'last8DigitsIssuerSignature' => "oxPKRg==" // Últimos 8 dígitos del sello digital del emisor
+        'id' => "3ba2038a-74bd-48ae-96ac-3e97b03d89e1",        
     ];
     $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
     consoleLog($apiResponse);
 
     
-
-    // ------------------------------------------------------------------
-    // Obtener el estado de una factura por ID (por referencia)
-    // ------------------------------------------------------------------
-    // $invoiceStatus = [
-    //     'id' => "3ba2038a-74bd-48ae-96ac-3e97b03d89e1",        
-    // ];
-    // $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
-    // consoleLog($apiResponse);
 
     // ------------------------------------------------------------------
     // Generar PDF de una factura por valores
