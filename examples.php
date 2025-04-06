@@ -221,907 +221,908 @@ try {
 
 
 
-// ------------------------------------------------------------------
-// Listar facturas
-// ------------------------------------------------------------------
-// $apiResponse = $client->getInvoiceService()->list(1, 2);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Listar facturas
+    // ------------------------------------------------------------------
+    // $apiResponse = $client->getInvoiceService()->list(1, 2);
+    // consoleLog($apiResponse);
 
 
-// ------------------------------------------------------------------
-// Obtener factura por ID
-// ------------------------------------------------------------------
-// $apiResponse = $client->getInvoiceService()->get("737a1786-2d58-480a-afea-c6933e368cf4", true);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Obtener factura por ID
+    // ------------------------------------------------------------------
+    // $apiResponse = $client->getInvoiceService()->get("737a1786-2d58-480a-afea-c6933e368cf4", true);
+    // consoleLog($apiResponse);
 
 
-// ------------------------------------------------------------------
-// Crear factura de ingreso con IVA 16%
-// ------------------------------------------------------------------
-$invoice = [
-    'versionCode' => "4.0",
-    'series' => "F",
-    'date' => $currentDate, // Formato de fecha equivalente a DateTime.now()
-    'paymentFormCode' => "01",
-    'paymentMethodCode' => "PUE",
-    'currencyCode' => "MXN",
-    'typeCode' => "I",
-    'expeditionZipCode' => "42501",
-    'exchangeRate' => 1,
-    'exportCode' => "01",
-    'issuer' => [
-        'tin' => "FUNK671228PH6",
-        'legalName' => "KARLA FUENTE NOLASCO",
-        'taxRegimeCode' => "621",
-        'taxCredentials' => [
-            [
-                'base64File' => $base64Cert,
-                'fileType' => 0,
-                'password' => $password
-            ],
-            [
-                'base64File' => $base64Key,
-                'fileType' => 1,
-                'password' => $password
-            ]
-        ]
-    ],
-    'recipient' => [
-        'tin' => "EKU9003173C9",
-        'legalName' => "ESCUELA KEMPER URGATE",
-        'zipCode' => "42501",
-        'taxRegimeCode' => "601",
-        'cfdiUseCode' => "G01",
-        'email' => "someone@somewhere.com"
-    ],
-    'items' => [
-        [
-            'itemCode' => "01010101",
-            'quantity' => 9.5,
-            'unitOfMeasurementCode' => "E48",
-            'description' => "Invoicing software as a service",
-            'unitPrice' => 3587.75,
-            'taxObjectCode' => "02",
-            'itemSku' => "7506022301697",
-            'discount' => 255.85,
-            'itemTaxes' => [
+    // ------------------------------------------------------------------
+    // Crear factura de ingreso con IVA 16%
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate, // Formato de fecha equivalente a DateTime.now()
+    //     'paymentFormCode' => "01",
+    //     'paymentMethodCode' => "PUE",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I",
+    //     'expeditionZipCode' => "42501",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9",
+    //         'legalName' => "ESCUELA KEMPER URGATE",
+    //         'zipCode' => "42501",
+    //         'taxRegimeCode' => "601",
+    //         'cfdiUseCode' => "G01",
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",
+    //             'quantity' => 9.5,
+    //             'unitOfMeasurementCode' => "E48",
+    //             'description' => "Invoicing software as a service",
+    //             'unitPrice' => 3587.75,
+    //             'taxObjectCode' => "02",
+    //             'itemSku' => "7506022301697",
+    //             'discount' => 255.85,
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002",
+    //                     'taxTypeCode' => "Tasa",
+    //                     'taxRate' => "0.160000",
+    //                     'taxFlagCode' => "T"
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
+
+    // ------------------------------------------------------------------
+    // Crear factura con IVA exento
+    // ------------------------------------------------------------------
+    $invoiceExento = [
+        'versionCode' => "4.0",
+        'series' => "F",
+        'date' => $currentDate,
+        'paymentFormCode' => "01",
+        'paymentMethodCode' => "PUE",
+        'currencyCode' => "MXN",
+        'typeCode' => "I",
+        'expeditionZipCode' => "42501",
+        'exchangeRate' => 1,
+        'exportCode' => "01",
+        'issuer' => [
+            'tin' => "FUNK671228PH6",
+            'legalName' => "KARLA FUENTE NOLASCO",
+            'taxRegimeCode' => "621",
+            'taxCredentials' => [
                 [
-                    'taxCode' => "002",
-                    'taxTypeCode' => "Tasa",
-                    'taxRate' => "0.160000",
-                    'taxFlagCode' => "T"
+                    'base64File' => $base64Cert,
+                    'fileType' => 0,
+                    'password' => $password
+                ],
+                [
+                    'base64File' => $base64Key,
+                    'fileType' => 1,
+                    'password' => $password
+                ]
+            ]
+        ],
+        'recipient' => [
+            'tin' => "EKU9003173C9",
+            'legalName' => "ESCUELA KEMPER URGATE",
+            'zipCode' => "42501",
+            'taxRegimeCode' => "601",
+            'cfdiUseCode' => "G01",
+            'email' => "someone@somewhere.com"
+        ],
+        'items' => [
+            [
+                'itemCode' => "01010101",
+                'quantity' => 9.5,
+                'unitOfMeasurementCode' => "E48", // Unidad de servicio
+                'description' => "Invoicing software as a service",
+                'unitPrice' => 3587.75,
+                'taxObjectCode' => "02",
+                'itemSku' => "7506022301697",
+                'discount' => 255.85,
+                'itemTaxes' => [
+                    [
+                        'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
+                        'taxTypeCode' => "Exento", // Tipo "Exento" para indicar que está exento de impuestos
+                        'taxFlagCode' => "T" // T=Traslado o R=Retención  
+                    ]
                 ]
             ]
         ]
-    ]
-];
-$apiResponse = $client->getInvoiceService()->create($invoice);
-consoleLog($apiResponse);
+    ];
+    $apiResponse = $client->getInvoiceService()->create($invoiceExento);
+    consoleLog($apiResponse);
+    
 
-// ------------------------------------------------------------------
-// Crear factura con IVA exento
-// ------------------------------------------------------------------
-// $invoiceExento = [
-//     'versionCode' => "4.0",
-//     'series' => "F",
-//     'date' => $currentDate,
-//     'paymentFormCode' => "01",
-//     'paymentMethodCode' => "PUE",
-//     'currencyCode' => "MXN",
-//     'typeCode' => "I",
-//     'expeditionZipCode' => "42501",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6",
-//         'legalName' => "KARLA FUENTE NOLASCO",
-//         'taxRegimeCode' => "621",
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => $password
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => $password
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9",
-//         'legalName' => "ESCUELA KEMPER URGATE",
-//         'zipCode' => "42501",
-//         'taxRegimeCode' => "601",
-//         'cfdiUseCode' => "G01",
-//         'email' => "someone@somewhere.com"
-//     ],
-//     'items' => [
-//         [
-//             'itemCode' => "01010101",
-//             'quantity' => 9.5,
-//             'unitOfMeasurementCode' => "E48", // Unidad de servicio
-//             'description' => "Invoicing software as a service",
-//             'unitPrice' => 3587.75,
-//             'taxObjectCode' => "02",
-//             'itemSku' => "7506022301697",
-//             'discount' => 255.85,
-//             'itemTaxes' => [
-//                 [
-//                     'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
-//                     'taxTypeCode' => "Exento", // Tipo "Exento" para indicar que está exento de impuestos
-//                     'taxFlagCode' => "T" // T=Traslado o R=Retención  
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoiceExento);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Crear factura con IVA tasa cero
+    // ------------------------------------------------------------------
+    // $invoiceTasaCero = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "01", // 01=Efectivo, 02=Cheque, 03=Transferencia electrónica de fondos, 04=Tarjeta de débito, 05=Tarjeta de crédito, 06=Otro  
+    //     'paymentMethodCode' => "PUE", // PUE=Pago en una sola exhibición, PPD=Pago en parcialidades o diferido
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I", // I=Ingreso, E=Egreso 
+    //     'expeditionZipCode' => "42501",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01", // 01=Exportación, 02=No exportación  
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6", // RFC del emisor
+    //         'legalName' => "KARLA FUENTE NOLASCO", // Razón social del emisor sin regimen de capital
+    //         'taxRegimeCode' => "621", // Código del régimen fiscal del emisor. Catálogo del SAT c_RegimenFiscal
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9", // RFC del receptor
+    //         'legalName' => "ESCUELA KEMPER URGATE", // Razón social del receptor sin regimen de capital
+    //         'zipCode' => "42501", // Código postal del receptor
+    //         'taxRegimeCode' => "601", // Código del régimen fiscal del receptor. Catálogo del SAT c_RegimenFiscal
+    //         'cfdiUseCode' => "G01", // Código del uso CFDI. Catálogo del SAT c_UsoCFDI
+    //         'email' => "someone@somewhere.com" // Correo electrónico del receptor. Para enviar la factura desde el dasborard
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",
+    //             'quantity' => 9.5,
+    //             'unitOfMeasurementCode' => "E48", // Código de la unidad de medida. Catálogo c_ClaveUnidad
+    //             'description' => "Invoicing software as a service", // Descripción del producto o servicio
+    //             'unitPrice' => 3587.75, // Precio unitario del producto o servicio. (Sin impuestos)
+    //             'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
+    //             'itemSku' => "7506022301697", // SKU o clave del sistema externo que identifica al producto o servicio
+    //             'discount' => 255.85, // Cantidad monetaria del descuento aplicado al producto o servicio
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002", // Código del impuesto. Catálogo del SAT c_Impuesto
+    //                     'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
+    //                     'taxRate' => "0.000000", // Tasa cero (0%) 
+    //                     'taxFlagCode' => "T" // T=Traslado o R=Retención
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoiceTasaCero);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Crear factura con IVA tasa cero
-// ------------------------------------------------------------------
-// $invoiceTasaCero = [
-//     'versionCode' => "4.0",
-//     'series' => "F",
-//     'date' => $currentDate,
-//     'paymentFormCode' => "01", // 01=Efectivo, 02=Cheque, 03=Transferencia electrónica de fondos, 04=Tarjeta de débito, 05=Tarjeta de crédito, 06=Otro  
-//     'paymentMethodCode' => "PUE", // PUE=Pago en una sola exhibición, PPD=Pago en parcialidades o diferido
-//     'currencyCode' => "MXN",
-//     'typeCode' => "I", // I=Ingreso, E=Egreso 
-//     'expeditionZipCode' => "42501",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01", // 01=Exportación, 02=No exportación  
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6", // RFC del emisor
-//         'legalName' => "KARLA FUENTE NOLASCO", // Razón social del emisor sin regimen de capital
-//         'taxRegimeCode' => "621", // Código del régimen fiscal del emisor. Catálogo del SAT c_RegimenFiscal
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => $password
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => $password
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9", // RFC del receptor
-//         'legalName' => "ESCUELA KEMPER URGATE", // Razón social del receptor sin regimen de capital
-//         'zipCode' => "42501", // Código postal del receptor
-//         'taxRegimeCode' => "601", // Código del régimen fiscal del receptor. Catálogo del SAT c_RegimenFiscal
-//         'cfdiUseCode' => "G01", // Código del uso CFDI. Catálogo del SAT c_UsoCFDI
-//         'email' => "someone@somewhere.com" // Correo electrónico del receptor. Para enviar la factura desde el dasborard
-//     ],
-//     'items' => [
-//         [
-//             'itemCode' => "01010101",
-//             'quantity' => 9.5,
-//             'unitOfMeasurementCode' => "E48", // Código de la unidad de medida. Catálogo c_ClaveUnidad
-//             'description' => "Invoicing software as a service", // Descripción del producto o servicio
-//             'unitPrice' => 3587.75, // Precio unitario del producto o servicio. (Sin impuestos)
-//             'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
-//             'itemSku' => "7506022301697", // SKU o clave del sistema externo que identifica al producto o servicio
-//             'discount' => 255.85, // Cantidad monetaria del descuento aplicado al producto o servicio
-//             'itemTaxes' => [
-//                 [
-//                     'taxCode' => "002", // Código del impuesto. Catálogo del SAT c_Impuesto
-//                     'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
-//                     'taxRate' => "0.000000", // Tasa cero (0%) 
-//                     'taxFlagCode' => "T" // T=Traslado o R=Retención
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoiceTasaCero);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Crear factura de ingreso por referencias (solo IDs)
+    // ------------------------------------------------------------------
+    // $invoiceByReferences = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "01",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I",
+    //     'expeditionZipCode' => "42501",
+    //     'paymentMethodCode' => "PUE",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
+    //         // No es necesario incluir otros datos del emisor al usar el ID
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
+    //         // No es necesario incluir otros datos del receptor al usar el ID
+    //     ],
+    //     'items' => [
+    //         [
+    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+    //             'quantity' => 2, // Solo es necesario especificar la cantidad
+    //             'discount' => 255.85 // Y opcionalmente el descuento
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Crear factura de ingreso por referencias (solo IDs)
-// ------------------------------------------------------------------
-// $invoiceByReferences = [
-//     'versionCode' => "4.0",
-//     'series' => "F",
-//     'date' => $currentDate,
-//     'paymentFormCode' => "01",
-//     'currencyCode' => "MXN",
-//     'typeCode' => "I",
-//     'expeditionZipCode' => "42501",
-//     'paymentMethodCode' => "PUE",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
-//         // No es necesario incluir otros datos del emisor al usar el ID
-//     ],
-//     'recipient' => [
-//         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
-//         // No es necesario incluir otros datos del receptor al usar el ID
-//     ],
-//     'items' => [
-//         [
-//             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
-//             'quantity' => 2, // Solo es necesario especificar la cantidad
-//             'discount' => 255.85 // Y opcionalmente el descuento
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Crear nota de crédito por valores
+    // ------------------------------------------------------------------
+    // $creditNote = [
+    //     'versionCode' => "4.0",
+    //     'series' => "CN", // Serie CN para notas de crédito
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "03", // 03 - Transferencia electrónica de fondos
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
+    //     'expeditionZipCode' => "01160",
+    //     'paymentMethodCode' => "PUE",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9",
+    //         'legalName' => "ESCUELA KEMPER URGATE",
+    //         'zipCode' => "42501",
+    //         'taxRegimeCode' => "601",
+    //         'cfdiUseCode' => "G01",
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     // Facturas relacionadas - necesarias para notas de crédito
+    //     'relatedInvoices' => [
+    //         [
+    //             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF", // UUID de la factura original
+    //             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
+    //         ]
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",
+    //             'quantity' => 0.5,
+    //             'unitOfMeasurementCode' => "E48",
+    //             'description' => "Invoicing software as a service",
+    //             'unitPrice' => 3587.75,
+    //             'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
+    //             'itemSku' => "7506022301697",
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
+    //                     'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
+    //                     'taxRate' => "0.160000", // Tasa 16%
+    //                     'taxFlagCode' => "T"  // T=Traslado o R=Retención
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($creditNote);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Crear nota de crédito por valores
-// ------------------------------------------------------------------
-// $creditNote = [
-//     'versionCode' => "4.0",
-//     'series' => "CN", // Serie CN para notas de crédito
-//     'date' => $currentDate,
-//     'paymentFormCode' => "03", // 03 - Transferencia electrónica de fondos
-//     'currencyCode' => "MXN",
-//     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
-//     'expeditionZipCode' => "01160",
-//     'paymentMethodCode' => "PUE",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6",
-//         'legalName' => "KARLA FUENTE NOLASCO",
-//         'taxRegimeCode' => "621",
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => $password
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => $password
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9",
-//         'legalName' => "ESCUELA KEMPER URGATE",
-//         'zipCode' => "42501",
-//         'taxRegimeCode' => "601",
-//         'cfdiUseCode' => "G01",
-//         'email' => "someone@somewhere.com"
-//     ],
-//     // Facturas relacionadas - necesarias para notas de crédito
-//     'relatedInvoices' => [
-//         [
-//             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF", // UUID de la factura original
-//             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
-//         ]
-//     ],
-//     'items' => [
-//         [
-//             'itemCode' => "01010101",
-//             'quantity' => 0.5,
-//             'unitOfMeasurementCode' => "E48",
-//             'description' => "Invoicing software as a service",
-//             'unitPrice' => 3587.75,
-//             'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
-//             'itemSku' => "7506022301697",
-//             'itemTaxes' => [
-//                 [
-//                     'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
-//                     'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
-//                     'taxRate' => "0.160000", // Tasa 16%
-//                     'taxFlagCode' => "T"  // T=Traslado o R=Retención
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($creditNote);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Crear nota de crédito por referencias
+    // ------------------------------------------------------------------
+    // $creditNoteByReferences = [
+    //     'versionCode' => "4.0",
+    //     'series' => "CN",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "03",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
+    //     'expeditionZipCode' => "01160",
+    //     'paymentMethodCode' => "PUE",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // Solo se necesita el ID del emisor
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // Solo se necesita el ID del receptor
+    //     ],
+    //     // Importante: Las facturas relacionadas siempre son necesarias para notas de crédito
+    //     'relatedInvoices' => [
+    //         [
+    //             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF",
+    //             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
+    //         ]
+    //     ],
+    //     'items' => [
+    //         [
+    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+    //             'quantity' => 0.5 // La cantidad que se está acreditando/devolviendo
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($creditNoteByReferences);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Crear nota de crédito por referencias
-// ------------------------------------------------------------------
-// $creditNoteByReferences = [
-//     'versionCode' => "4.0",
-//     'series' => "CN",
-//     'date' => $currentDate,
-//     'paymentFormCode' => "03",
-//     'currencyCode' => "MXN",
-//     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
-//     'expeditionZipCode' => "01160",
-//     'paymentMethodCode' => "PUE",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // Solo se necesita el ID del emisor
-//     ],
-//     'recipient' => [
-//         'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // Solo se necesita el ID del receptor
-//     ],
-//     // Importante: Las facturas relacionadas siempre son necesarias para notas de crédito
-//     'relatedInvoices' => [
-//         [
-//             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF",
-//             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
-//         ]
-//     ],
-//     'items' => [
-//         [
-//             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
-//             'quantity' => 0.5 // La cantidad que se está acreditando/devolviendo
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($creditNoteByReferences);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Crear un complemento de pago por valores
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "CP", // Serie CP para complementos de pago
+    //     'date' => $currentDate,
+    //     'currencyCode' => "XXX", // Para complementos de pago se usa XXX
+    //     'typeCode' => "P", // Tipo P para complementos de pago
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9",
+    //         'legalName' => "ESCUELA KEMPER URGATE",
+    //         'zipCode' => "42501",
+    //         'taxRegimeCode' => "601",
+    //         'cfdiUseCode' => "CP01", // Uso específico para pagos
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     // El concepto es fijo para complementos de pago
+    //     'items' => [
+    //         [
+    //             'itemCode' => "84111506", // Código específico para pagos
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT",
+    //             'description' => "Pago",
+    //             'unitPrice' => 0,
+    //             'taxObjectCode' => "01"
+    //         ]
+    //     ],
+    //     // Sección de pagos - específica para complementos de pago
+    //     'payments' => [
+    //         [
+    //             'paymentDate' => "2025-03-31T14:44:56", // Fecha del pago
+    //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
+    //             'currencyCode' => "MXN",
+    //             'exchangeRate' => 1,
+    //             'amount' => 11600.00, // Monto total del pago
+    //             'sourceBankTin' => "BSM970519DU8", // RFC del banco emisor
+    //             'sourceBankAccount' => "1234567891012131", // Cuenta del banco emisor
+    //             'targetBankTin' => "BBA830831LJ2", // RFC del banco receptor
+    //             'targetBankAccount' => "1234567890", // Cuenta del banco receptor
+    //             'paidInvoices' => [
+    //                 [
+    //                     'uuid' => "5C7B0622-01B4-4EB8-96D0-E0DEBD89FF0F", // UUID de la factura que se está pagando
+    //                     'series' => "F",
+    //                     'number' => "1501",
+    //                     'currencyCode' => "MXN",
+    //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+    //                     'subTotal' => 10000,
+    //                     'previousBalance' => 11600.00, // Saldo anterior
+    //                     'paymentAmount' => 11600.00, // Cantidad pagada
+    //                     'remainingBalance' => 0, // Saldo restante
+    //                     'taxObjectCode' => "02",
+    //                     'paidInvoiceTaxes' => [
+    //                         [
+    //                             'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
+    //                             'taxTypeCode' => "Tasa", // Tasa Cuota Excento
+    //                             'taxRate' => "0.160000", // Tasa 16%
+    //                             'taxFlagCode' => "T" // T=Traslado o R=Retención
+    //                         ]
+    //                     ]
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Crear un complemento de pago por valores
-// ------------------------------------------------------------------
-// $invoice = [
-//     'versionCode' => "4.0",
-//     'series' => "CP", // Serie CP para complementos de pago
-//     'date' => $currentDate,
-//     'currencyCode' => "XXX", // Para complementos de pago se usa XXX
-//     'typeCode' => "P", // Tipo P para complementos de pago
-//     'expeditionZipCode' => "01160",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6",
-//         'legalName' => "KARLA FUENTE NOLASCO",
-//         'taxRegimeCode' => "621",
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => $password
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => $password
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9",
-//         'legalName' => "ESCUELA KEMPER URGATE",
-//         'zipCode' => "42501",
-//         'taxRegimeCode' => "601",
-//         'cfdiUseCode' => "CP01", // Uso específico para pagos
-//         'email' => "someone@somewhere.com"
-//     ],
-//     // El concepto es fijo para complementos de pago
-//     'items' => [
-//         [
-//             'itemCode' => "84111506", // Código específico para pagos
-//             'quantity' => 1,
-//             'unitOfMeasurementCode' => "ACT",
-//             'description' => "Pago",
-//             'unitPrice' => 0,
-//             'taxObjectCode' => "01"
-//         ]
-//     ],
-//     // Sección de pagos - específica para complementos de pago
-//     'payments' => [
-//         [
-//             'paymentDate' => "2025-03-31T14:44:56", // Fecha del pago
-//             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-//             'currencyCode' => "MXN",
-//             'exchangeRate' => 1,
-//             'amount' => 11600.00, // Monto total del pago
-//             'sourceBankTin' => "BSM970519DU8", // RFC del banco emisor
-//             'sourceBankAccount' => "1234567891012131", // Cuenta del banco emisor
-//             'targetBankTin' => "BBA830831LJ2", // RFC del banco receptor
-//             'targetBankAccount' => "1234567890", // Cuenta del banco receptor
-//             'paidInvoices' => [
-//                 [
-//                     'uuid' => "5C7B0622-01B4-4EB8-96D0-E0DEBD89FF0F", // UUID de la factura que se está pagando
-//                     'series' => "F",
-//                     'number' => "1501",
-//                     'currencyCode' => "MXN",
-//                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-//                     'subTotal' => 10000,
-//                     'previousBalance' => 11600.00, // Saldo anterior
-//                     'paymentAmount' => 11600.00, // Cantidad pagada
-//                     'remainingBalance' => 0, // Saldo restante
-//                     'taxObjectCode' => "02",
-//                     'paidInvoiceTaxes' => [
-//                         [
-//                             'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
-//                             'taxTypeCode' => "Tasa", // Tasa Cuota Excento
-//                             'taxRate' => "0.160000", // Tasa 16%
-//                             'taxFlagCode' => "T" // T=Traslado o R=Retención
-//                         ]
-//                     ]
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Crear un complemento de pago por referencias
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "CP", // Serie CP para complementos de pago
+    //     'date' => $currentDate,
+    //     'currencyCode' => "XXX", // Para complementos de pago se usa XXX
+    //     'typeCode' => "P", // Tipo P para complementos de pago
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
+    //         // Solo se necesita el ID del emisor
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
+    //         // Solo se necesita el ID del receptor
+    //     ],
+    //     // Nota: No se necesita la sección "items" cuando se usa el enfoque por referencias,
+    //     // ya que el sistema generará automáticamente el concepto requerido
+    //     
+    //     // Sección de pagos - específica para complementos de pago
+    //     'payments' => [
+    //         [
+    //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
+    //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
+    //             'currencyCode' => "MXN",
+    //             'exchangeRate' => 1,
+    //             'amount' => 11600.00, // Monto total del pago
+    //             'sourceBankTin' => "BSM970519DU8", // RFC del banco emisor
+    //             'sourceBankAccount' => "1234567891012131", // Cuenta del banco emisor
+    //             'targetBankTin' => "BBA830831LJ2", // RFC del banco receptor
+    //             'targetBankAccount' => "1234567890", // Cuenta del banco receptor
+    //             'paidInvoices' => [
+    //                 [
+    //                     'uuid' => "5C7B0622-01B4-4EB8-96D0-E0DEBD89FF0F", // UUID de la factura que se está pagando
+    //                     'series' => "F",
+    //                     'number' => "1501",
+    //                     'currencyCode' => "MXN",
+    //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+    //                     'subTotal' => 10000,
+    //                     'previousBalance' => 11600.00, // Saldo anterior
+    //                     'paymentAmount' => 11600.00, // Cantidad pagada
+    //                     'remainingBalance' => 0, // Saldo restante
+    //                     'taxObjectCode' => "02",
+    //                     'paidInvoiceTaxes' => [
+    //                         [
+    //                             'taxCode' => "002",
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.160000", // Como string para mantener precisión
+    //                             'taxFlagCode' => "T"
+    //                         ]
+    //                     ]
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Crear un complemento de pago por referencias
-// ------------------------------------------------------------------
-// $invoice = [
-//     'versionCode' => "4.0",
-//     'series' => "CP", // Serie CP para complementos de pago
-//     'date' => $currentDate,
-//     'currencyCode' => "XXX", // Para complementos de pago se usa XXX
-//     'typeCode' => "P", // Tipo P para complementos de pago
-//     'expeditionZipCode' => "01160",
-//     'exchangeRate' => 1,
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
-//         // Solo se necesita el ID del emisor
-//     ],
-//     'recipient' => [
-//         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
-//         // Solo se necesita el ID del receptor
-//     ],
-//     // Nota: No se necesita la sección "items" cuando se usa el enfoque por referencias,
-//     // ya que el sistema generará automáticamente el concepto requerido
-//     
-//     // Sección de pagos - específica para complementos de pago
-//     'payments' => [
-//         [
-//             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
-//             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-//             'currencyCode' => "MXN",
-//             'exchangeRate' => 1,
-//             'amount' => 11600.00, // Monto total del pago
-//             'sourceBankTin' => "BSM970519DU8", // RFC del banco emisor
-//             'sourceBankAccount' => "1234567891012131", // Cuenta del banco emisor
-//             'targetBankTin' => "BBA830831LJ2", // RFC del banco receptor
-//             'targetBankAccount' => "1234567890", // Cuenta del banco receptor
-//             'paidInvoices' => [
-//                 [
-//                     'uuid' => "5C7B0622-01B4-4EB8-96D0-E0DEBD89FF0F", // UUID de la factura que se está pagando
-//                     'series' => "F",
-//                     'number' => "1501",
-//                     'currencyCode' => "MXN",
-//                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-//                     'subTotal' => 10000,
-//                     'previousBalance' => 11600.00, // Saldo anterior
-//                     'paymentAmount' => 11600.00, // Cantidad pagada
-//                     'remainingBalance' => 0, // Saldo restante
-//                     'taxObjectCode' => "02",
-//                     'paidInvoiceTaxes' => [
-//                         [
-//                             'taxCode' => "002",
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.160000", // Como string para mantener precisión
-//                             'taxFlagCode' => "T"
-//                         ]
-//                     ]
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Complemento de pago en USD para facturas en MXN
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "usd-mxn", // Serie descriptiva para pagos en USD de facturas MXN
+    //     'date' => $currentDate,
+    //     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
+    //     'typeCode' => "P", // Tipo P para complementos de pago
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1, // Para complementos de pago siempre es 1
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9",
+    //         'legalName' => "ESCUELA KEMPER URGATE",
+    //         'zipCode' => "42501",
+    //         'taxRegimeCode' => "601",
+    //         'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     // El concepto es fijo para complementos de pago
+    //     'items' => [
+    //         [
+    //             'itemCode' => "84111506", // Código específico para pagos
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT",
+    //             'description' => "Pago",
+    //             'unitPrice' => 0,
+    //             'taxObjectCode' => "01"
+    //         ]
+    //     ],
+    //     // Sección de pagos - específica para complementos de pago
+    //     'payments' => [
+    //         [
+    //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
+    //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
+    //             'currencyCode' => "USD", // El pago se realizó en dólares
+    //             'exchangeRate' => 20.64, // Tipo de cambio USD/MXN
+    //             'amount' => 5.62, // Monto del pago en USD
+    //             'sourceBankTin' => "BSM970519DU8",
+    //             'sourceBankAccount' => "1234567891012131",
+    //             'targetBankTin' => "BBA830831LJ2",
+    //             'targetBankAccount' => "1234567890",
+    //             'paidInvoices' => [
+    //                 [
+    //                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
+    //                     'series' => "F",
+    //                     'number' => "2",
+    //                     'currencyCode' => "MXN", // La factura original está en pesos
+    //                     'equivalence' => 20.64, // El mismo tipo de cambio para conversión
+    //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+    //                     'subTotal' => 100.00, // Subtotal original de la factura
+    //                     'previousBalance' => 116.00, // Saldo anterior en MXN
+    //                     'paymentAmount' => 116.00, // Cantidad pagada (5.62 USD x 20.64 = 116.00 MXN)
+    //                     'remainingBalance' => 0, // Saldo restante después del pago
+    //                     'taxObjectCode' => "02",
+    //                     'paidInvoiceTaxes' => [
+    //                         [
+    //                             'taxCode' => "002", // IVA
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.160000", // Como string para mantener precisión
+    //                             'taxFlagCode' => "T" // Trasladado
+    //                         ],
+    //                         [
+    //                             'taxCode' => "002", // IVA
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.106667",
+    //                             'taxFlagCode' => "R" // Retenido
+    //                         ],
+    //                         [
+    //                             'taxCode' => "001", // ISR
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.100000",
+    //                             'taxFlagCode' => "R" // Retenido
+    //                         ]
+    //                     ]
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Complemento de pago en USD para facturas en MXN
-// ------------------------------------------------------------------
-// $invoice = [
-//     'versionCode' => "4.0",
-//     'series' => "usd-mxn", // Serie descriptiva para pagos en USD de facturas MXN
-//     'date' => $currentDate,
-//     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
-//     'typeCode' => "P", // Tipo P para complementos de pago
-//     'expeditionZipCode' => "01160",
-//     'exchangeRate' => 1, // Para complementos de pago siempre es 1
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6",
-//         'legalName' => "KARLA FUENTE NOLASCO",
-//         'taxRegimeCode' => "621",
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => $password
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => $password
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9",
-//         'legalName' => "ESCUELA KEMPER URGATE",
-//         'zipCode' => "42501",
-//         'taxRegimeCode' => "601",
-//         'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
-//         'email' => "someone@somewhere.com"
-//     ],
-//     // El concepto es fijo para complementos de pago
-//     'items' => [
-//         [
-//             'itemCode' => "84111506", // Código específico para pagos
-//             'quantity' => 1,
-//             'unitOfMeasurementCode' => "ACT",
-//             'description' => "Pago",
-//             'unitPrice' => 0,
-//             'taxObjectCode' => "01"
-//         ]
-//     ],
-//     // Sección de pagos - específica para complementos de pago
-//     'payments' => [
-//         [
-//             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
-//             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-//             'currencyCode' => "USD", // El pago se realizó en dólares
-//             'exchangeRate' => 20.64, // Tipo de cambio USD/MXN
-//             'amount' => 5.62, // Monto del pago en USD
-//             'sourceBankTin' => "BSM970519DU8",
-//             'sourceBankAccount' => "1234567891012131",
-//             'targetBankTin' => "BBA830831LJ2",
-//             'targetBankAccount' => "1234567890",
-//             'paidInvoices' => [
-//                 [
-//                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
-//                     'series' => "F",
-//                     'number' => "2",
-//                     'currencyCode' => "MXN", // La factura original está en pesos
-//                     'equivalence' => 20.64, // El mismo tipo de cambio para conversión
-//                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-//                     'subTotal' => 100.00, // Subtotal original de la factura
-//                     'previousBalance' => 116.00, // Saldo anterior en MXN
-//                     'paymentAmount' => 116.00, // Cantidad pagada (5.62 USD x 20.64 = 116.00 MXN)
-//                     'remainingBalance' => 0, // Saldo restante después del pago
-//                     'taxObjectCode' => "02",
-//                     'paidInvoiceTaxes' => [
-//                         [
-//                             'taxCode' => "002", // IVA
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.160000", // Como string para mantener precisión
-//                             'taxFlagCode' => "T" // Trasladado
-//                         ],
-//                         [
-//                             'taxCode' => "002", // IVA
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.106667",
-//                             'taxFlagCode' => "R" // Retenido
-//                         ],
-//                         [
-//                             'taxCode' => "001", // ISR
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.100000",
-//                             'taxFlagCode' => "R" // Retenido
-//                         ]
-//                     ]
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Complemento de pago en MXN para facturas en USD
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "MXN-USD", // Serie descriptiva para pagos en MXN de facturas USD
+    //     'date' => $currentDate,
+    //     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
+    //     'typeCode' => "P", // Tipo P para complementos de pago
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1, // Para complementos de pago siempre es 1
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9",
+    //         'legalName' => "ESCUELA KEMPER URGATE",
+    //         'zipCode' => "42501",
+    //         'taxRegimeCode' => "601",
+    //         'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     // El concepto es fijo para complementos de pago
+    //     'items' => [
+    //         [
+    //             'itemCode' => "84111506", // Código específico para pagos
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT",
+    //             'description' => "Pago",
+    //             'unitPrice' => 0,
+    //             'taxObjectCode' => "01"
+    //         ]
+    //     ],
+    //     // Sección de pagos - específica para complementos de pago
+    //     'payments' => [
+    //         [
+    //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
+    //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
+    //             'currencyCode' => "MXN", // El pago se realizó en pesos mexicanos
+    //             'exchangeRate' => 1, // Tipo de cambio para MXN es 1
+    //             'amount' => 921.23, // Monto del pago en MXN
+    //             'sourceBankTin' => "BSM970519DU8", 
+    //             'sourceBankAccount' => "1234567891012131",
+    //             'targetBankTin' => "BBA830831LJ2",
+    //             'targetBankAccount' => "1234567890",
+    //             'paidInvoices' => [
+    //                 [
+    //                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
+    //                     'series' => "F",
+    //                     'number' => "2",
+    //                     'currencyCode' => "USD", // La factura original está en dólares
+    //                     'equivalence' => 0.045331, // Tipo de cambio inverso (MXN/USD) aprox. 1/22.06
+    //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+    //                     'subTotal' => 36.00, // Subtotal original de la factura en USD
+    //                     'previousBalance' => 41.76, // Saldo anterior en USD
+    //                     'paymentAmount' => 41.76, // Cantidad pagada en USD (921.23 MXN ÷ 22.06 = 41.76 USD)
+    //                     'remainingBalance' => 0, // Saldo restante después del pago
+    //                     'taxObjectCode' => "02",
+    //                     'paidInvoiceTaxes' => [
+    //                         [
+    //                             'taxCode' => "002", // IVA
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.160000", // Como string para mantener precisión
+    //                             'taxFlagCode' => "T" // Trasladado
+    //                         ],
+    //                         [
+    //                             'taxCode' => "002", // IVA
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.106667",
+    //                             'taxFlagCode' => "R" // Retenido
+    //                         ],
+    //                         [
+    //                             'taxCode' => "001", // ISR
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.100000",
+    //                             'taxFlagCode' => "R" // Retenido
+    //                         ]
+    //                     ]
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Complemento de pago en MXN para facturas en USD
-// ------------------------------------------------------------------
-// $invoice = [
-//     'versionCode' => "4.0",
-//     'series' => "MXN-USD", // Serie descriptiva para pagos en MXN de facturas USD
-//     'date' => $currentDate,
-//     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
-//     'typeCode' => "P", // Tipo P para complementos de pago
-//     'expeditionZipCode' => "01160",
-//     'exchangeRate' => 1, // Para complementos de pago siempre es 1
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6",
-//         'legalName' => "KARLA FUENTE NOLASCO",
-//         'taxRegimeCode' => "621",
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => $password
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => $password
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9",
-//         'legalName' => "ESCUELA KEMPER URGATE",
-//         'zipCode' => "42501",
-//         'taxRegimeCode' => "601",
-//         'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
-//         'email' => "someone@somewhere.com"
-//     ],
-//     // El concepto es fijo para complementos de pago
-//     'items' => [
-//         [
-//             'itemCode' => "84111506", // Código específico para pagos
-//             'quantity' => 1,
-//             'unitOfMeasurementCode' => "ACT",
-//             'description' => "Pago",
-//             'unitPrice' => 0,
-//             'taxObjectCode' => "01"
-//         ]
-//     ],
-//     // Sección de pagos - específica para complementos de pago
-//     'payments' => [
-//         [
-//             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
-//             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-//             'currencyCode' => "MXN", // El pago se realizó en pesos mexicanos
-//             'exchangeRate' => 1, // Tipo de cambio para MXN es 1
-//             'amount' => 921.23, // Monto del pago en MXN
-//             'sourceBankTin' => "BSM970519DU8", 
-//             'sourceBankAccount' => "1234567891012131",
-//             'targetBankTin' => "BBA830831LJ2",
-//             'targetBankAccount' => "1234567890",
-//             'paidInvoices' => [
-//                 [
-//                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
-//                     'series' => "F",
-//                     'number' => "2",
-//                     'currencyCode' => "USD", // La factura original está en dólares
-//                     'equivalence' => 0.045331, // Tipo de cambio inverso (MXN/USD) aprox. 1/22.06
-//                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-//                     'subTotal' => 36.00, // Subtotal original de la factura en USD
-//                     'previousBalance' => 41.76, // Saldo anterior en USD
-//                     'paymentAmount' => 41.76, // Cantidad pagada en USD (921.23 MXN ÷ 22.06 = 41.76 USD)
-//                     'remainingBalance' => 0, // Saldo restante después del pago
-//                     'taxObjectCode' => "02",
-//                     'paidInvoiceTaxes' => [
-//                         [
-//                             'taxCode' => "002", // IVA
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.160000", // Como string para mantener precisión
-//                             'taxFlagCode' => "T" // Trasladado
-//                         ],
-//                         [
-//                             'taxCode' => "002", // IVA
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.106667",
-//                             'taxFlagCode' => "R" // Retenido
-//                         ],
-//                         [
-//                             'taxCode' => "001", // ISR
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.100000",
-//                             'taxFlagCode' => "R" // Retenido
-//                         ]
-//                     ]
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Complemento de pago en EUR para facturas en USD
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "EUR-USD", // Serie descriptiva para pagos en EUR de facturas USD
+    //     'date' => $currentDate, // Formato de fecha actual
+    //     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
+    //     'typeCode' => "P", // Tipo P para complementos de pago
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1, // Para complementos de pago siempre es 1
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => "12345678a"
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => "12345678a"
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9",
+    //         'legalName' => "ESCUELA KEMPER URGATE",
+    //         'zipCode' => "42501",
+    //         'taxRegimeCode' => "601",
+    //         'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     // El concepto es fijo para complementos de pago
+    //     'items' => [
+    //         [
+    //             'itemCode' => "84111506", // Código específico para pagos
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT",
+    //             'description' => "Pago",
+    //             'unitPrice' => 0,
+    //             'taxObjectCode' => "01"
+    //         ]
+    //     ],
+    //     // Sección de pagos - específica para complementos de pago
+    //     'payments' => [
+    //         [
+    //             'paymentDate' => "2024-06-03T14:44:56", // Fecha del pago
+    //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
+    //             'currencyCode' => "EUR", // El pago se realizó en euros
+    //             'exchangeRate' => 25.00, // Tipo de cambio EUR a MXN
+    //             'amount' => 100.00, // Monto del pago en EUR
+    //             'sourceBankTin' => "BSM970519DU8",
+    //             'sourceBankAccount' => "1234567891012131",
+    //             'targetBankTin' => "BBA830831LJ2",
+    //             'targetBankAccount' => "1234567890",
+    //             'paidInvoices' => [
+    //                 [
+    //                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
+    //                     'series' => "F",
+    //                     'number' => "2",
+    //                     'currencyCode' => "USD", // La factura original está en dólares
+    //                     'equivalence' => 1.160, // Tipo de cambio EUR/USD
+    //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+    //                     'subTotal' => 100.00, // Subtotal original de la factura en USD
+    //                     'previousBalance' => 116.00, // Saldo anterior en USD
+    //                     'paymentAmount' => 116.00, // Cantidad pagada en USD (100 EUR × 1.16 = 116 USD)
+    //                     'remainingBalance' => 0, // Saldo restante después del pago
+    //                     'taxObjectCode' => "02",
+    //                     'paidInvoiceTaxes' => [
+    //                         [
+    //                             'taxCode' => "002", // IVA
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.160000", // Tasa de IVA trasladado
+    //                             'taxFlagCode' => "T" // Trasladado
+    //                         ],
+    //                         [
+    //                             'taxCode' => "002", // IVA
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.106667", // Tasa de IVA retenido
+    //                             'taxFlagCode' => "R" // Retenido
+    //                         ],
+    //                         [
+    //                             'taxCode' => "001", // ISR
+    //                             'taxTypeCode' => "Tasa",
+    //                             'taxRate' => "0.100000", // Tasa de ISR retenido
+    //                             'taxFlagCode' => "R" // Retenido
+    //                         ]
+    //                     ]
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Complemento de pago en EUR para facturas en USD
-// ------------------------------------------------------------------
-// $invoice = [
-//     'versionCode' => "4.0",
-//     'series' => "EUR-USD", // Serie descriptiva para pagos en EUR de facturas USD
-//     'date' => $currentDate, // Formato de fecha actual
-//     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
-//     'typeCode' => "P", // Tipo P para complementos de pago
-//     'expeditionZipCode' => "01160",
-//     'exchangeRate' => 1, // Para complementos de pago siempre es 1
-//     'exportCode' => "01",
-//     'issuer' => [
-//         'tin' => "FUNK671228PH6",
-//         'legalName' => "KARLA FUENTE NOLASCO",
-//         'taxRegimeCode' => "621",
-//         'taxCredentials' => [
-//             [
-//                 'base64File' => $base64Cert,
-//                 'fileType' => 0,
-//                 'password' => "12345678a"
-//             ],
-//             [
-//                 'base64File' => $base64Key,
-//                 'fileType' => 1,
-//                 'password' => "12345678a"
-//             ]
-//         ]
-//     ],
-//     'recipient' => [
-//         'tin' => "EKU9003173C9",
-//         'legalName' => "ESCUELA KEMPER URGATE",
-//         'zipCode' => "42501",
-//         'taxRegimeCode' => "601",
-//         'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
-//         'email' => "someone@somewhere.com"
-//     ],
-//     // El concepto es fijo para complementos de pago
-//     'items' => [
-//         [
-//             'itemCode' => "84111506", // Código específico para pagos
-//             'quantity' => 1,
-//             'unitOfMeasurementCode' => "ACT",
-//             'description' => "Pago",
-//             'unitPrice' => 0,
-//             'taxObjectCode' => "01"
-//         ]
-//     ],
-//     // Sección de pagos - específica para complementos de pago
-//     'payments' => [
-//         [
-//             'paymentDate' => "2024-06-03T14:44:56", // Fecha del pago
-//             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-//             'currencyCode' => "EUR", // El pago se realizó en euros
-//             'exchangeRate' => 25.00, // Tipo de cambio EUR a MXN
-//             'amount' => 100.00, // Monto del pago en EUR
-//             'sourceBankTin' => "BSM970519DU8",
-//             'sourceBankAccount' => "1234567891012131",
-//             'targetBankTin' => "BBA830831LJ2",
-//             'targetBankAccount' => "1234567890",
-//             'paidInvoices' => [
-//                 [
-//                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
-//                     'series' => "F",
-//                     'number' => "2",
-//                     'currencyCode' => "USD", // La factura original está en dólares
-//                     'equivalence' => 1.160, // Tipo de cambio EUR/USD
-//                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-//                     'subTotal' => 100.00, // Subtotal original de la factura en USD
-//                     'previousBalance' => 116.00, // Saldo anterior en USD
-//                     'paymentAmount' => 116.00, // Cantidad pagada en USD (100 EUR × 1.16 = 116 USD)
-//                     'remainingBalance' => 0, // Saldo restante después del pago
-//                     'taxObjectCode' => "02",
-//                     'paidInvoiceTaxes' => [
-//                         [
-//                             'taxCode' => "002", // IVA
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.160000", // Tasa de IVA trasladado
-//                             'taxFlagCode' => "T" // Trasladado
-//                         ],
-//                         [
-//                             'taxCode' => "002", // IVA
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.106667", // Tasa de IVA retenido
-//                             'taxFlagCode' => "R" // Retenido
-//                         ],
-//                         [
-//                             'taxCode' => "001", // ISR
-//                             'taxTypeCode' => "Tasa",
-//                             'taxRate' => "0.100000", // Tasa de ISR retenido
-//                             'taxFlagCode' => "R" // Retenido
-//                         ]
-//                     ]
-//                 ]
-//             ]
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->create($invoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Cancelar una factura por valores
+    // ------------------------------------------------------------------
+    // $cancelInvoice = [
+    //     'invoiceUuid' => "60c52802-c369-411f-b679-5317a28a544a", // UUID de la factura a cancelar
+    //     'tin' => "FUNK671228PH6", // RFC del emisor
+    //     'cancellationReasonCode' => "01", // Código de razón de cancelación: 01 - Comprobante emitido con errores con relación
+    //     'replacementUuid' => "de841944-bd4f-4bb8-adfe-2a2282787c62", // UUID de la factura que sustituye
+    //     'taxCredentials' => [
+    //         [
+    //             'base64File' => $base64Cert,
+    //             'fileType' => 0,
+    //             'password' => "12345678a"
+    //         ],
+    //         [
+    //             'base64File' => $base64Key,
+    //             'fileType' => 1,
+    //             'password' => "12345678a"
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->cancel($cancelInvoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Cancelar una factura por valores
-// ------------------------------------------------------------------
-// $cancelInvoice = [
-//     'invoiceUuid' => "60c52802-c369-411f-b679-5317a28a544a", // UUID de la factura a cancelar
-//     'tin' => "FUNK671228PH6", // RFC del emisor
-//     'cancellationReasonCode' => "01", // Código de razón de cancelación: 01 - Comprobante emitido con errores con relación
-//     'replacementUuid' => "de841944-bd4f-4bb8-adfe-2a2282787c62", // UUID de la factura que sustituye
-//     'taxCredentials' => [
-//         [
-//             'base64File' => $base64Cert,
-//             'fileType' => 0,
-//             'password' => "12345678a"
-//         ],
-//         [
-//             'base64File' => $base64Key,
-//             'fileType' => 1,
-//             'password' => "12345678a"
-//         ]
-//     ]
-// ];
-// $apiResponse = $client->getInvoiceService()->cancel($cancelInvoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Cancelar una factura por ID (por referencia)
+    // ------------------------------------------------------------------
+    // $cancelInvoice = [
+    //     'id' => "20b0f8ea-20ac-4a42-b6c5-d0a0671cdb80", // ID de referencia de la factura a cancelar
+    //     'cancellationReasonCode' => "01", // 01 - Comprobante emitido con errores con relación  // opcional cuando se utiliza 02 (Comprobante emitido con errores sin relación)
+    //     'replacementUuid' => "de841944-bd4f-4bb8-adfe-2a2282787c62" // UUID de la factura que sustituye  // opcional cuando se utiliza 02 (Comprobante emitido con errores sin relación)
+    // ];
+    // $apiResponse = $client->getInvoiceService()->cancel($cancelInvoice);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Cancelar una factura por ID (por referencia)
-// ------------------------------------------------------------------
-// $cancelInvoice = [
-//     'id' => "20b0f8ea-20ac-4a42-b6c5-d0a0671cdb80", // ID de referencia de la factura a cancelar
-//     'cancellationReasonCode' => "01", // 01 - Comprobante emitido con errores con relación  // opcional cuando se utiliza 02 (Comprobante emitido con errores sin relación)
-//     'replacementUuid' => "de841944-bd4f-4bb8-adfe-2a2282787c62" // UUID de la factura que sustituye  // opcional cuando se utiliza 02 (Comprobante emitido con errores sin relación)
-// ];
-// $apiResponse = $client->getInvoiceService()->cancel($cancelInvoice);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Obtener el estado de una factura por valores
+    // ------------------------------------------------------------------
+    // $invoiceStatus = [
+    //     'issuerTin' => "POPJ450924HD6",        // RFC del emisor
+    //     'recipientTin' => "MEJJ940824C61",     // RFC del receptor
+    //     'invoiceTotal' => 430.00,              // Total de la factura
+    //     'invoiceUuid' => "8e0fdc23-e148-4cf5-b3ce-4459f31c9c45", // UUID de la factura
+    //     'last8DigitsIssuerSignature' => "oxPKRg==" // Últimos 8 dígitos del sello digital del emisor
+    // ];
+    // $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Obtener el estado de una factura por valores
-// ------------------------------------------------------------------
-// $invoiceStatus = [
-//     'issuerTin' => "POPJ450924HD6",        // RFC del emisor
-//     'recipientTin' => "MEJJ940824C61",     // RFC del receptor
-//     'invoiceTotal' => 430.00,              // Total de la factura
-//     'invoiceUuid' => "8e0fdc23-e148-4cf5-b3ce-4459f31c9c45", // UUID de la factura
-//     'last8DigitsIssuerSignature' => "oxPKRg==" // Últimos 8 dígitos del sello digital del emisor
-// ];
-// $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Obtener el estado de una factura por ID (por referencia)
+    // ------------------------------------------------------------------
+    // $invoiceStatus = [
+    //     'id' => "3ba2038a-74bd-48ae-96ac-3e97b03d89e1",        
+    // ];
+    // $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Obtener el estado de una factura por ID (por referencia)
-// ------------------------------------------------------------------
-// $invoiceStatus = [
-//     'id' => "3ba2038a-74bd-48ae-96ac-3e97b03d89e1",        
-// ];
-// $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Generar PDF de una factura por valores
+    // ------------------------------------------------------------------
+    // $invoicePdf = [
+    //     "invoiceId" => "fc2bb1aa-12a7-4d92-bdea-57d589bd29d6",
+    //     "bandColor" => "#FFA500",
+    //     "fontColor" => "#FFFFFF",
+    //     "base64Logo" => $base64Logo
+    // ];
+    // $apiResponse = $client->getInvoiceService()->getPdf($invoicePdf);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Generar PDF de una factura por valores
-// ------------------------------------------------------------------
-// $invoicePdf = [
-//     "invoiceId" => "fc2bb1aa-12a7-4d92-bdea-57d589bd29d6",
-//     "bandColor" => "#FFA500",
-//     "fontColor" => "#FFFFFF",
-//     "base64Logo" => $base64Logo
-// ];
-// $apiResponse = $client->getInvoiceService()->getPdf($invoicePdf);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Generar PDF por ID (por referencia)
+    // ------------------------------------------------------------------
+    // $invoicePdf = [
+    //     "invoiceId" => "fc2bb1aa-12a7-4d92-bdea-57d589bd29d6",
+    // ];
+    // $apiResponse = $client->getInvoiceService()->getPdf($invoicePdf);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Generar PDF por ID (por referencia)
-// ------------------------------------------------------------------
-// $invoicePdf = [
-//     "invoiceId" => "fc2bb1aa-12a7-4d92-bdea-57d589bd29d6",
-// ];
-// $apiResponse = $client->getInvoiceService()->getPdf($invoicePdf);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Descargar XML por ID
+    // ------------------------------------------------------------------
+    // $apiResponse = $client->getInvoiceService()->getXml("fc2bb1aa-12a7-4d92-bdea-57d589bd29d6");
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Descargar XML por ID
-// ------------------------------------------------------------------
-// $apiResponse = $client->getInvoiceService()->getXml("fc2bb1aa-12a7-4d92-bdea-57d589bd29d6");
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Enviar factura por correo (por valores)
+    // ------------------------------------------------------------------
+    // $emailRequest = [
+    //     "invoiceId" => "96d93ff4-95c6-4381-858a-6551259d17ad",
+    //     "bandColor" => "#FFA500",
+    //     "fontColor" => "#FFFFFF",
+    //     "toEmail" => "mendoza.git@gmail.com",
+    //     "base64Logo" => $base64Logo
+    // ];
+    // $apiResponse = $client->getInvoiceService()->send($emailRequest);
+    // consoleLog($apiResponse);
 
-// ------------------------------------------------------------------
-// Enviar factura por correo (por valores)
-// ------------------------------------------------------------------
-// $emailRequest = [
-//     "invoiceId" => "96d93ff4-95c6-4381-858a-6551259d17ad",
-//     "bandColor" => "#FFA500",
-//     "fontColor" => "#FFFFFF",
-//     "toEmail" => "mendoza.git@gmail.com",
-//     "base64Logo" => $base64Logo
-// ];
-// $apiResponse = $client->getInvoiceService()->send($emailRequest);
-// consoleLog($apiResponse);
-
-// ------------------------------------------------------------------
-// Enviar factura por correo por ID (por referencias)
-// ------------------------------------------------------------------
-// $emailRequest = [
-//     "invoiceId" => "96d93ff4-95c6-4381-858a-6551259d17ad",
-//     "toEmail" => "contacto@fiscalapi.com",
-// ];
-// $apiResponse = $client->getInvoiceService()->send($emailRequest);
-// consoleLog($apiResponse);
+    // ------------------------------------------------------------------
+    // Enviar factura por correo por ID (por referencias)
+    // ------------------------------------------------------------------
+    // $emailRequest = [
+    //     "invoiceId" => "96d93ff4-95c6-4381-858a-6551259d17ad",
+    //     "toEmail" => "contacto@fiscalapi.com",
+    // ];
+    // $apiResponse = $client->getInvoiceService()->send($emailRequest);
+    // consoleLog($apiResponse);
 
 
 
