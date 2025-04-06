@@ -364,99 +364,101 @@ try {
     // ------------------------------------------------------------------
     // Crear factura con IVA tasa cero
     // ------------------------------------------------------------------
-    $invoiceTasaCero = [
-        'versionCode' => "4.0",
-        'series' => "F",
-        'date' => $currentDate,
-        'paymentFormCode' => "01", // 01=Efectivo, 02=Cheque, 03=Transferencia electrónica de fondos, 04=Tarjeta de débito, 05=Tarjeta de crédito, 06=Otro  
-        'paymentMethodCode' => "PUE", // PUE=Pago en una sola exhibición, PPD=Pago en parcialidades o diferido
-        'currencyCode' => "MXN",
-        'typeCode' => "I", // I=Ingreso, E=Egreso 
-        'expeditionZipCode' => "42501",
-        'exchangeRate' => 1,
-        'exportCode' => "01", // 01=Exportación, 02=No exportación  
-        'issuer' => [
-            'tin' => "FUNK671228PH6", // RFC del emisor
-            'legalName' => "KARLA FUENTE NOLASCO", // Razón social del emisor sin regimen de capital
-            'taxRegimeCode' => "621", // Código del régimen fiscal del emisor. Catálogo del SAT c_RegimenFiscal
-            'taxCredentials' => [
-                [
-                    'base64File' => $base64Cert,
-                    'fileType' => 0,
-                    'password' => $password
-                ],
-                [
-                    'base64File' => $base64Key,
-                    'fileType' => 1,
-                    'password' => $password
-                ]
-            ]
-        ],
-        'recipient' => [
-            'tin' => "EKU9003173C9", // RFC del receptor
-            'legalName' => "ESCUELA KEMPER URGATE", // Razón social del receptor sin regimen de capital
-            'zipCode' => "42501", // Código postal del receptor
-            'taxRegimeCode' => "601", // Código del régimen fiscal del receptor. Catálogo del SAT c_RegimenFiscal
-            'cfdiUseCode' => "G01", // Código del uso CFDI. Catálogo del SAT c_UsoCFDI
-            'email' => "someone@somewhere.com" // Correo electrónico del receptor. Para enviar la factura desde el dasborard
-        ],
-        'items' => [
-            [
-                'itemCode' => "01010101",
-                'quantity' => 9.5,
-                'unitOfMeasurementCode' => "E48", // Código de la unidad de medida. Catálogo c_ClaveUnidad
-                'description' => "Invoicing software as a service", // Descripción del producto o servicio
-                'unitPrice' => 3587.75, // Precio unitario del producto o servicio. (Sin impuestos)
-                'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
-                'itemSku' => "7506022301697", // SKU o clave del sistema externo que identifica al producto o servicio
-                'discount' => 255.85, // Cantidad monetaria del descuento aplicado al producto o servicio
-                'itemTaxes' => [
-                    [
-                        'taxCode' => "002", // Código del impuesto. Catálogo del SAT c_Impuesto
-                        'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
-                        'taxRate' => "0.000000", // Tasa cero (0%) 
-                        'taxFlagCode' => "T" // T=Traslado o R=Retención
-                    ]
-                ]
-            ]
-        ]
-    ];
-    $apiResponse = $client->getInvoiceService()->create($invoiceTasaCero);
-    consoleLog($apiResponse);
+    // $invoiceTasaCero = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "01", // 01=Efectivo, 02=Cheque, 03=Transferencia electrónica de fondos, 04=Tarjeta de débito, 05=Tarjeta de crédito, 06=Otro  
+    //     'paymentMethodCode' => "PUE", // PUE=Pago en una sola exhibición, PPD=Pago en parcialidades o diferido
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I", // I=Ingreso, E=Egreso 
+    //     'expeditionZipCode' => "42501",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01", // 01=Exportación, 02=No exportación  
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6", // RFC del emisor
+    //         'legalName' => "KARLA FUENTE NOLASCO", // Razón social del emisor sin regimen de capital
+    //         'taxRegimeCode' => "621", // Código del régimen fiscal del emisor. Catálogo del SAT c_RegimenFiscal
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "EKU9003173C9", // RFC del receptor
+    //         'legalName' => "ESCUELA KEMPER URGATE", // Razón social del receptor sin regimen de capital
+    //         'zipCode' => "42501", // Código postal del receptor
+    //         'taxRegimeCode' => "601", // Código del régimen fiscal del receptor. Catálogo del SAT c_RegimenFiscal
+    //         'cfdiUseCode' => "G01", // Código del uso CFDI. Catálogo del SAT c_UsoCFDI
+    //         'email' => "someone@somewhere.com" // Correo electrónico del receptor. Para enviar la factura desde el dasborard
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",
+    //             'quantity' => 9.5,
+    //             'unitOfMeasurementCode' => "E48", // Código de la unidad de medida. Catálogo c_ClaveUnidad
+    //             'description' => "Invoicing software as a service", // Descripción del producto o servicio
+    //             'unitPrice' => 3587.75, // Precio unitario del producto o servicio. (Sin impuestos)
+    //             'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
+    //             'itemSku' => "7506022301697", // SKU o clave del sistema externo que identifica al producto o servicio
+    //             'discount' => 255.85, // Cantidad monetaria del descuento aplicado al producto o servicio
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002", // Código del impuesto. Catálogo del SAT c_Impuesto
+    //                     'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
+    //                     'taxRate' => "0.000000", // Tasa cero (0%) 
+    //                     'taxFlagCode' => "T" // T=Traslado o R=Retención
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoiceTasaCero);
+    // consoleLog($apiResponse);
 
 
     // ------------------------------------------------------------------
     // Crear factura de ingreso por referencias (solo IDs)
     // ------------------------------------------------------------------
-    // $invoiceByReferences = [
-    //     'versionCode' => "4.0",
-    //     'series' => "F",
-    //     'date' => $currentDate,
-    //     'paymentFormCode' => "01",
-    //     'currencyCode' => "MXN",
-    //     'typeCode' => "I",
-    //     'expeditionZipCode' => "42501",
-    //     'paymentMethodCode' => "PUE",
-    //     'exchangeRate' => 1,
-    //     'exportCode' => "01",
-    //     'issuer' => [
-    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
-    //         // No es necesario incluir otros datos del emisor al usar el ID
-    //     ],
-    //     'recipient' => [
-    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
-    //         // No es necesario incluir otros datos del receptor al usar el ID
-    //     ],
-    //     'items' => [
-    //         [
-    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
-    //             'quantity' => 2, // Solo es necesario especificar la cantidad
-    //             'discount' => 255.85 // Y opcionalmente el descuento
-    //         ]
-    //     ]
-    // ];
-    // $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
-    // consoleLog($apiResponse);
+    $invoiceByReferences = [
+        'versionCode' => "4.0",
+        'series' => "F",
+        'date' => $currentDate,
+        'paymentFormCode' => "01",
+        'currencyCode' => "MXN",
+        'typeCode' => "I",
+        'expeditionZipCode' => "42501",
+        'paymentMethodCode' => "PUE",
+        'exchangeRate' => 1,
+        'exportCode' => "01",
+        'issuer' => [
+            'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
+            // No es necesario incluir otros datos del emisor al usar el ID
+        ],
+        'recipient' => [
+            'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
+            // No es necesario incluir otros datos del receptor al usar el ID
+        ],
+        'items' => [
+            [
+                'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+                'quantity' => 2, // Solo es necesario especificar la cantidad
+                'discount' => 255.85 // Y opcionalmente el descuento
+            ]
+        ]
+    ];
+    $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
+    consoleLog($apiResponse);
+
+    
 
     // ------------------------------------------------------------------
     // Crear nota de crédito por valores
