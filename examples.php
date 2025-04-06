@@ -728,112 +728,9 @@ try {
     // ------------------------------------------------------------------
     // Complemento de pago en USD para facturas en MXN
     // ------------------------------------------------------------------
-    $invoice = [
-        'versionCode' => "4.0",
-        'series' => "usd-mxn", // Serie descriptiva para pagos en USD de facturas MXN
-        'date' => $currentDate,
-        'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
-        'typeCode' => "P", // Tipo P para complementos de pago
-        'expeditionZipCode' => "01160",
-        'exchangeRate' => 1, // Para complementos de pago siempre es 1
-        'exportCode' => "01",
-        'issuer' => [
-            'tin' => "FUNK671228PH6",
-            'legalName' => "KARLA FUENTE NOLASCO",
-            'taxRegimeCode' => "621",
-            'taxCredentials' => [
-                [
-                    'base64File' => $base64Cert,
-                    'fileType' => 0,
-                    'password' => $password
-                ],
-                [
-                    'base64File' => $base64Key,
-                    'fileType' => 1,
-                    'password' => $password
-                ]
-            ]
-        ],
-        'recipient' => [
-            'tin' => "EKU9003173C9",
-            'legalName' => "ESCUELA KEMPER URGATE",
-            'zipCode' => "42501",
-            'taxRegimeCode' => "601",
-            'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
-            'email' => "someone@somewhere.com"
-        ],
-        // El concepto es fijo para complementos de pago
-        'items' => [
-            [
-                'itemCode' => "84111506", // Código específico para pagos
-                'quantity' => 1,
-                'unitOfMeasurementCode' => "ACT",
-                'description' => "Pago",
-                'unitPrice' => 0,
-                'taxObjectCode' => "01"
-            ]
-        ],
-        // Sección de pagos - específica para complementos de pago
-        'payments' => [
-            [
-                'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
-                'paymentFormCode' => "28", // 28 - Tarjeta de débito
-                'currencyCode' => "USD", // El pago se realizó en dólares
-                'exchangeRate' => 20.64, // Tipo de cambio USD/MXN
-                'amount' => 5.62, // Monto del pago en USD
-                'sourceBankTin' => "BSM970519DU8",
-                'sourceBankAccount' => "1234567891012131",
-                'targetBankTin' => "BBA830831LJ2",
-                'targetBankAccount' => "1234567890",
-                'paidInvoices' => [
-                    [
-                        'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
-                        'series' => "F",
-                        'number' => "2",
-                        'currencyCode' => "MXN", // La factura original está en pesos
-                        'equivalence' => 20.64, // El mismo tipo de cambio para conversión
-                        'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-                        'subTotal' => 100.00, // Subtotal original de la factura
-                        'previousBalance' => 116.00, // Saldo anterior en MXN
-                        'paymentAmount' => 116.00, // Cantidad pagada (5.62 USD x 20.64 = 116.00 MXN)
-                        'remainingBalance' => 0, // Saldo restante después del pago
-                        'taxObjectCode' => "02",
-                        'paidInvoiceTaxes' => [
-                            [
-                                'taxCode' => "002", // IVA
-                                'taxTypeCode' => "Tasa",
-                                'taxRate' => "0.160000", // Como string para mantener precisión
-                                'taxFlagCode' => "T" // Trasladado
-                            ],
-                            [
-                                'taxCode' => "002", // IVA
-                                'taxTypeCode' => "Tasa",
-                                'taxRate' => "0.106667",
-                                'taxFlagCode' => "R" // Retenido
-                            ],
-                            [
-                                'taxCode' => "001", // ISR
-                                'taxTypeCode' => "Tasa",
-                                'taxRate' => "0.100000",
-                                'taxFlagCode' => "R" // Retenido
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ];
-    $apiResponse = $client->getInvoiceService()->create($invoice);
-    consoleLog($apiResponse);
-
-    
-
-    // ------------------------------------------------------------------
-    // Complemento de pago en MXN para facturas en USD
-    // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
-    //     'series' => "MXN-USD", // Serie descriptiva para pagos en MXN de facturas USD
+    //     'series' => "usd-mxn", // Serie descriptiva para pagos en USD de facturas MXN
     //     'date' => $currentDate,
     //     'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
     //     'typeCode' => "P", // Tipo P para complementos de pago
@@ -881,10 +778,10 @@ try {
     //         [
     //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
     //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-    //             'currencyCode' => "MXN", // El pago se realizó en pesos mexicanos
-    //             'exchangeRate' => 1, // Tipo de cambio para MXN es 1
-    //             'amount' => 921.23, // Monto del pago en MXN
-    //             'sourceBankTin' => "BSM970519DU8", 
+    //             'currencyCode' => "USD", // El pago se realizó en dólares
+    //             'exchangeRate' => 20.64, // Tipo de cambio USD/MXN
+    //             'amount' => 5.62, // Monto del pago en USD
+    //             'sourceBankTin' => "BSM970519DU8",
     //             'sourceBankAccount' => "1234567891012131",
     //             'targetBankTin' => "BBA830831LJ2",
     //             'targetBankAccount' => "1234567890",
@@ -893,12 +790,12 @@ try {
     //                     'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
     //                     'series' => "F",
     //                     'number' => "2",
-    //                     'currencyCode' => "USD", // La factura original está en dólares
-    //                     'equivalence' => 0.045331, // Tipo de cambio inverso (MXN/USD) aprox. 1/22.06
+    //                     'currencyCode' => "MXN", // La factura original está en pesos
+    //                     'equivalence' => 20.64, // El mismo tipo de cambio para conversión
     //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-    //                     'subTotal' => 36.00, // Subtotal original de la factura en USD
-    //                     'previousBalance' => 41.76, // Saldo anterior en USD
-    //                     'paymentAmount' => 41.76, // Cantidad pagada en USD (921.23 MXN ÷ 22.06 = 41.76 USD)
+    //                     'subTotal' => 100.00, // Subtotal original de la factura
+    //                     'previousBalance' => 116.00, // Saldo anterior en MXN
+    //                     'paymentAmount' => 116.00, // Cantidad pagada (5.62 USD x 20.64 = 116.00 MXN)
     //                     'remainingBalance' => 0, // Saldo restante después del pago
     //                     'taxObjectCode' => "02",
     //                     'paidInvoiceTaxes' => [
@@ -928,6 +825,109 @@ try {
     // ];
     // $apiResponse = $client->getInvoiceService()->create($invoice);
     // consoleLog($apiResponse);
+
+
+
+    // ------------------------------------------------------------------
+    // Complemento de pago en MXN para facturas en USD
+    // ------------------------------------------------------------------
+    $invoice = [
+        'versionCode' => "4.0",
+        'series' => "MXN-USD", // Serie descriptiva para pagos en MXN de facturas USD
+        'date' => $currentDate,
+        'currencyCode' => "XXX", // Para complementos de pago siempre es XXX
+        'typeCode' => "P", // Tipo P para complementos de pago
+        'expeditionZipCode' => "01160",
+        'exchangeRate' => 1, // Para complementos de pago siempre es 1
+        'exportCode' => "01",
+        'issuer' => [
+            'tin' => "FUNK671228PH6",
+            'legalName' => "KARLA FUENTE NOLASCO",
+            'taxRegimeCode' => "621",
+            'taxCredentials' => [
+                [
+                    'base64File' => $base64Cert,
+                    'fileType' => 0,
+                    'password' => $password
+                ],
+                [
+                    'base64File' => $base64Key,
+                    'fileType' => 1,
+                    'password' => $password
+                ]
+            ]
+        ],
+        'recipient' => [
+            'tin' => "EKU9003173C9",
+            'legalName' => "ESCUELA KEMPER URGATE",
+            'zipCode' => "42501",
+            'taxRegimeCode' => "601",
+            'cfdiUseCode' => "CP01", // Uso específico para complementos de pago
+            'email' => "someone@somewhere.com"
+        ],
+        // El concepto es fijo para complementos de pago
+        'items' => [
+            [
+                'itemCode' => "84111506", // Código específico para pagos
+                'quantity' => 1,
+                'unitOfMeasurementCode' => "ACT",
+                'description' => "Pago",
+                'unitPrice' => 0,
+                'taxObjectCode' => "01"
+            ]
+        ],
+        // Sección de pagos - específica para complementos de pago
+        'payments' => [
+            [
+                'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
+                'paymentFormCode' => "28", // 28 - Tarjeta de débito
+                'currencyCode' => "MXN", // El pago se realizó en pesos mexicanos
+                'exchangeRate' => 1, // Tipo de cambio para MXN es 1
+                'amount' => 921.23, // Monto del pago en MXN
+                'sourceBankTin' => "BSM970519DU8", 
+                'sourceBankAccount' => "1234567891012131",
+                'targetBankTin' => "BBA830831LJ2",
+                'targetBankAccount' => "1234567890",
+                'paidInvoices' => [
+                    [
+                        'uuid' => "4a5d025b-813a-4acf-9f32-8fb61f4918ac", // UUID de la factura que se está pagando
+                        'series' => "F",
+                        'number' => "2",
+                        'currencyCode' => "USD", // La factura original está en dólares
+                        'equivalence' => 0.045331, // Tipo de cambio inverso (MXN/USD) aprox. 1/22.06
+                        'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+                        'subTotal' => 36.00, // Subtotal original de la factura en USD
+                        'previousBalance' => 41.76, // Saldo anterior en USD
+                        'paymentAmount' => 41.76, // Cantidad pagada en USD (921.23 MXN ÷ 22.06 = 41.76 USD)
+                        'remainingBalance' => 0, // Saldo restante después del pago
+                        'taxObjectCode' => "02",
+                        'paidInvoiceTaxes' => [
+                            [
+                                'taxCode' => "002", // IVA
+                                'taxTypeCode' => "Tasa",
+                                'taxRate' => "0.160000", // Como string para mantener precisión
+                                'taxFlagCode' => "T" // Trasladado
+                            ],
+                            [
+                                'taxCode' => "002", // IVA
+                                'taxTypeCode' => "Tasa",
+                                'taxRate' => "0.106667",
+                                'taxFlagCode' => "R" // Retenido
+                            ],
+                            [
+                                'taxCode' => "001", // ISR
+                                'taxTypeCode' => "Tasa",
+                                'taxRate' => "0.100000",
+                                'taxFlagCode' => "R" // Retenido
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+    $apiResponse = $client->getInvoiceService()->create($invoice);
+    consoleLog($apiResponse);
 
     // ------------------------------------------------------------------
     // Complemento de pago en EUR para facturas en USD
