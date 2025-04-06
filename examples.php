@@ -157,11 +157,66 @@ try {
 
 
 
-
-
     ////Listar productos
     //$apiResponse = $client->getProductService()->list(1,2);
     //consoleLog($apiResponse);
+
+
+    // //Obtener producto por id
+    // $apiResponse = $client->getProductService()->get('114a4be5-fb65-40b2-a762-ff0c55c6ebfa');
+    // consoleLog($apiResponse);
+
+
+    // //Crear producto (cuando no se especifica el impuesto, se aplica un IVA trasladado del 16% por defecto, tal como se muestra en el ejemplo comentado)
+    // $data = [
+    //     'description' => 'Libro de PHP Básico', //Descripción del producto
+    //     'unitPrice' => 100.00, //Precio unitario del producto sin impuestos
+    //     // 'productTaxes' => [
+    //     //     [
+    //     //         'rate' => 0.16, // Tasa del impuesto. El valor debe estar entre 0.00000 y 1.000000 p. ej. `0.160000` para un 16% de impuesto
+    //     //         'taxId' => '002', // 001=ISR, 002=IVA, 003=IEPS
+    //     //         'taxFlagId' => 'T', // T=Traslado o R=Retención
+    //     //         'taxTypeId' => 'Tasa', // Tasa, Cuota o Exento
+    //     //     ]
+    //     // ]
+    // ];
+    // $apiResponse = $client->getProductService()->create($data);
+    // consoleLog($apiResponse);    
+
+
+    // // Actualizar producto por id 
+    // $data = [
+    //     'id' => 'f2299587-78f9-43a9-81b1-89a38c254b36',
+    //     'description' => 'Libro de PHP Avanzado',
+    //     'unitPrice' => 250.85,
+    //     'satUnitMeasurementId' => 'D63', // Unidad de medida de la SAT (D63=Unidad)
+    //     'satTaxObjectId' => '02', // Objeto de impuesto de la SAT (02= Si, objeto de impuesto)
+    //     'satProductCodeId' => '14111804', // Código de producto de la SAT (14111804=Libros)
+    //     'productTaxes' => [
+    //         [
+    //             'rate' => 0.16, // Tasa del impuesto. El valor debe estar entre 0.00000 y 1.000000 p. ej. `0.160000` para un 16% de impuesto
+    //             'taxId' => '002', // 001=ISR, 002=IVA, 003=IEPS
+    //             'taxFlagId' => 'T', // T=Traslado o R=Retención
+    //             'taxTypeId' => 'Tasa', // Tasa, Cuota o Exento
+    //         ],
+    //         [
+    //             'rate' => 0.08, // Tasa del impuesto
+    //             'taxId' => '003', // 001=ISR, 002=IVA, 003=IEPS
+    //             'taxFlagId' => 'T', // T=Traslado o R=Retención
+    //             'taxTypeId' => 'Tasa', // Tasa, Cuota o Exento
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getProductService()->update($data);
+    // consoleLog($apiResponse);
+
+
+    // // Eliminar producto por id
+    // $apiResponse = $client->getProductService()->delete('f2299587-78f9-43a9-81b1-89a38c254b36');
+    // consoleLog($apiResponse);
+
+
+
 
 } catch (\Exception $e) {
     consoleError($e);
