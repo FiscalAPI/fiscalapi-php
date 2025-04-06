@@ -1109,6 +1109,8 @@ try {
     // $apiResponse = $client->getInvoiceService()->getPdf($invoicePdf);
     // consoleLog($apiResponse);
 
+
+
     // ------------------------------------------------------------------
     // Generar PDF por ID (por referencia)
     // ------------------------------------------------------------------
@@ -1117,6 +1119,8 @@ try {
     // ];
     // $apiResponse = $client->getInvoiceService()->getPdf($invoicePdf);
     // consoleLog($apiResponse);
+
+
 
     // ------------------------------------------------------------------
     // Descargar XML por ID
