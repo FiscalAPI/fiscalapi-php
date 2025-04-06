@@ -1,4 +1,4 @@
-<?php
+<?php 
 declare(strict_types=1);
 namespace Fiscalapi\Services;
 
@@ -12,6 +12,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?PersonServiceInterface $personService = null;
     private ?ApiKeyServiceInterface $apiKeyService = null;
     private ?CatalogServiceInterface $catalogService = null;
+    private ?TaxFileServiceInterface $taxFileService = null;
 
     /**
      * Constructor del cliente principal de FiscalAPI.
@@ -37,9 +38,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     }
 
     /**
-     * Obtiene el servicio de personas
-     *
-     * @return PersonServiceInterface
+     * {@inheritdoc}
      */
     public function getPersonService(): PersonServiceInterface
     {
@@ -51,9 +50,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     }
 
     /**
-     * Obtiene el servicio de API Keys
-     *
-     * @return ApiKeyServiceInterface
+     * {@inheritdoc}
      */
     public function getApiKeyService(): ApiKeyServiceInterface
     {
@@ -65,9 +62,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     }
 
     /**
-     * Obtiene el servicio de catálogos
-     *
-     * @return CatalogServiceInterface
+     * {@inheritdoc}
      */
     public function getCatalogService(): CatalogServiceInterface
     {
@@ -76,6 +71,18 @@ class FiscalApiClient implements FiscalApiClientInterface
         }
 
         return $this->catalogService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTaxFileService(): TaxFileServiceInterface
+    {
+        if ($this->taxFileService === null) {
+            $this->taxFileService = new TaxFileService($this->httpClient);
+        }
+
+        return $this->taxFileService;
     }
 
     /**

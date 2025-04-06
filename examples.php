@@ -97,7 +97,12 @@ try {
     // // Eliminar persona (usuario/emisor/receptor/cliente, etc ) por id
     // $apiResponse = $client->getPersonService()->delete('39b32f44-b975-4f3b-a3f9-cb093eb0baa9');
     // consoleLog($apiResponse);
-    
+
+
+    // // Listar certificados
+    $apiResponse = $client->getTaxFileService()->list(1,2); 
+    consoleLog($apiResponse);    
+
 
 
 

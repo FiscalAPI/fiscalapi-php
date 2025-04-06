@@ -36,6 +36,13 @@ interface FiscalApiClientInterface
     public function getCatalogService(): CatalogServiceInterface;
 
     /**
+     * Obtiene el servicio de archivos fiscales
+     *
+     * @return TaxFileServiceInterface
+     */
+    public function getTaxFileService(): TaxFileServiceInterface;
+
+    /**
      * Obtiene el cliente HTTP subyacente.
      *
      * @return FiscalApiHttpClientInterface
