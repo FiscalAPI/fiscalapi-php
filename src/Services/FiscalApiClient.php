@@ -9,6 +9,9 @@ class FiscalApiClient implements FiscalApiClientInterface
 {
     private FiscalApiHttpClientInterface $httpClient;
     private ?ProductServiceInterface $productService = null;
+    private ?PersonServiceInterface $personService = null;
+    private ?ApiKeyServiceInterface $apiKeyService = null;
+    private ?CatalogServiceInterface $catalogService = null;
 
     /**
      * Constructor del cliente principal de FiscalAPI.
@@ -17,6 +20,7 @@ class FiscalApiClient implements FiscalApiClientInterface
      */
     public function __construct(FiscalApiSettings $settings)
     {
+        // Utiliza la fábrica para obtener un cliente HTTP
         $this->httpClient = FiscalApiClientFactory::create($settings);
     }
 
@@ -30,6 +34,48 @@ class FiscalApiClient implements FiscalApiClientInterface
         }
 
         return $this->productService;
+    }
+
+    /**
+     * Obtiene el servicio de personas
+     *
+     * @return PersonServiceInterface
+     */
+    public function getPersonService(): PersonServiceInterface
+    {
+        if ($this->personService === null) {
+            $this->personService = new PersonService($this->httpClient);
+        }
+
+        return $this->personService;
+    }
+
+    /**
+     * Obtiene el servicio de API Keys
+     *
+     * @return ApiKeyServiceInterface
+     */
+    public function getApiKeyService(): ApiKeyServiceInterface
+    {
+        if ($this->apiKeyService === null) {
+            $this->apiKeyService = new ApiKeyService($this->httpClient);
+        }
+
+        return $this->apiKeyService;
+    }
+
+    /**
+     * Obtiene el servicio de catálogos
+     *
+     * @return CatalogServiceInterface
+     */
+    public function getCatalogService(): CatalogServiceInterface
+    {
+        if ($this->catalogService === null) {
+            $this->catalogService = new CatalogService($this->httpClient);
+        }
+
+        return $this->catalogService;
     }
 
     /**

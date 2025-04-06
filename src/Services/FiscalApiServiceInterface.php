@@ -6,12 +6,12 @@ namespace Fiscalapi\Services;
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 
 /**
- * Interfaz para el servicio de productos
+ * Interfaz base para todos los servicios de FiscalAPI
  */
-interface ProductServiceInterface extends FiscalApiServiceInterface
+interface FiscalApiServiceInterface
 {
     /**
-     * Obtiene una lista de productos
+     * Obtiene una lista de recursos
      *
      * @param int $pageNumber Número de página
      * @param int $pageSize Tamaño de página
@@ -20,23 +20,23 @@ interface ProductServiceInterface extends FiscalApiServiceInterface
     public function list(int $pageNumber = 1, int $pageSize = 20): FiscalApiHttpResponseInterface;
 
     /**
-     * Obtiene un producto por su ID
+     * Obtiene un recurso por su ID
      *
-     * @param string $id Id del producto
+     * @param string $id Id del recurso
      * @return FiscalApiHttpResponseInterface
      */
     public function get(string $id): FiscalApiHttpResponseInterface;
 
     /**
-     * Crea un nuevo producto
+     * Crea un nuevo recurso
      *
-     * @param array $data Datos del producto
+     * @param array $data Datos del recurso
      * @return FiscalApiHttpResponseInterface
      */
     public function create(array $data): FiscalApiHttpResponseInterface;
 
     /**
-     * Actualiza un producto existente. Debe incluir el key 'id' en el array asociativo.
+     * Actualiza un recurso existente. Debe incluir el key 'id' en el array asociativo.
      *
      * @param array $data Datos a actualizar
      * @return FiscalApiHttpResponseInterface
@@ -44,12 +44,10 @@ interface ProductServiceInterface extends FiscalApiServiceInterface
     public function update(array $data): FiscalApiHttpResponseInterface;
 
     /**
-     * Elimina un producto
+     * Elimina un recurso
      *
-     * @param string $id Id del producto
+     * @param string $id Id del recurso
      * @return FiscalApiHttpResponseInterface
      */
     public function delete(string $id): FiscalApiHttpResponseInterface;
-
-    // Aquí puedes añadir métodos específicos para productos si es necesario
 }

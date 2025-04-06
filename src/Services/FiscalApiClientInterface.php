@@ -15,6 +15,27 @@ interface FiscalApiClientInterface
     public function getProductService(): ProductServiceInterface;
 
     /**
+     * Obtiene el servicio de personas
+     *
+     * @return PersonServiceInterface
+     */
+    public function getPersonService(): PersonServiceInterface;
+
+    /**
+     * Obtiene el servicio de API Keys
+     *
+     * @return ApiKeyServiceInterface
+     */
+    public function getApiKeyService(): ApiKeyServiceInterface;
+
+    /**
+     * Obtiene el servicio de catálogos
+     *
+     * @return CatalogServiceInterface
+     */
+    public function getCatalogService(): CatalogServiceInterface;
+
+    /**
      * Obtiene el cliente HTTP subyacente.
      *
      * @return FiscalApiHttpClientInterface

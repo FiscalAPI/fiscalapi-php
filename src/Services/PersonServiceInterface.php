@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Fiscalapi\Services;
@@ -6,12 +7,12 @@ namespace Fiscalapi\Services;
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 
 /**
- * Interfaz para el servicio de productos
+ * Interfaz para el servicio de personas
  */
-interface ProductServiceInterface extends FiscalApiServiceInterface
+interface PersonServiceInterface extends FiscalApiServiceInterface
 {
     /**
-     * Obtiene una lista de productos
+     * Obtiene una lista de personas
      *
      * @param int $pageNumber Número de página
      * @param int $pageSize Tamaño de página
@@ -20,23 +21,23 @@ interface ProductServiceInterface extends FiscalApiServiceInterface
     public function list(int $pageNumber = 1, int $pageSize = 20): FiscalApiHttpResponseInterface;
 
     /**
-     * Obtiene un producto por su ID
+     * Obtiene una persona por su ID
      *
-     * @param string $id Id del producto
+     * @param string $id Id de la persona
      * @return FiscalApiHttpResponseInterface
      */
     public function get(string $id): FiscalApiHttpResponseInterface;
 
     /**
-     * Crea un nuevo producto
+     * Crea una nueva persona
      *
-     * @param array $data Datos del producto
+     * @param array $data Datos de la persona
      * @return FiscalApiHttpResponseInterface
      */
     public function create(array $data): FiscalApiHttpResponseInterface;
 
     /**
-     * Actualiza un producto existente. Debe incluir el key 'id' en el array asociativo.
+     * Actualiza una persona existente. Debe incluir el key 'id' en el array asociativo.
      *
      * @param array $data Datos a actualizar
      * @return FiscalApiHttpResponseInterface
@@ -44,12 +45,10 @@ interface ProductServiceInterface extends FiscalApiServiceInterface
     public function update(array $data): FiscalApiHttpResponseInterface;
 
     /**
-     * Elimina un producto
+     * Elimina una persona
      *
-     * @param string $id Id del producto
+     * @param string $id Id de la persona
      * @return FiscalApiHttpResponseInterface
      */
     public function delete(string $id): FiscalApiHttpResponseInterface;
-
-    // Aquí puedes añadir métodos específicos para productos si es necesario
 }
