@@ -428,106 +428,108 @@ try {
     // ------------------------------------------------------------------
     // Crear factura de ingreso por referencias (solo IDs)
     // ------------------------------------------------------------------
-    $invoiceByReferences = [
-        'versionCode' => "4.0",
-        'series' => "F",
-        'date' => $currentDate,
-        'paymentFormCode' => "01",
-        'currencyCode' => "MXN",
-        'typeCode' => "I",
-        'expeditionZipCode' => "42501",
-        'paymentMethodCode' => "PUE",
-        'exchangeRate' => 1,
-        'exportCode' => "01",
-        'issuer' => [
-            'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
-            // No es necesario incluir otros datos del emisor al usar el ID
-        ],
-        'recipient' => [
-            'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
-            // No es necesario incluir otros datos del receptor al usar el ID
-        ],
-        'items' => [
-            [
-                'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
-                'quantity' => 2, // Solo es necesario especificar la cantidad
-                'discount' => 255.85 // Y opcionalmente el descuento
-            ]
-        ]
-    ];
-    $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
-    consoleLog($apiResponse);
-
-    
-
-    // ------------------------------------------------------------------
-    // Crear nota de crédito por valores
-    // ------------------------------------------------------------------
-    // $creditNote = [
+    // $invoiceByReferences = [
     //     'versionCode' => "4.0",
-    //     'series' => "CN", // Serie CN para notas de crédito
+    //     'series' => "F",
     //     'date' => $currentDate,
-    //     'paymentFormCode' => "03", // 03 - Transferencia electrónica de fondos
+    //     'paymentFormCode' => "01",
     //     'currencyCode' => "MXN",
-    //     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
-    //     'expeditionZipCode' => "01160",
+    //     'typeCode' => "I",
+    //     'expeditionZipCode' => "42501",
     //     'paymentMethodCode' => "PUE",
     //     'exchangeRate' => 1,
     //     'exportCode' => "01",
     //     'issuer' => [
-    //         'tin' => "FUNK671228PH6",
-    //         'legalName' => "KARLA FUENTE NOLASCO",
-    //         'taxRegimeCode' => "621",
-    //         'taxCredentials' => [
-    //             [
-    //                 'base64File' => $base64Cert,
-    //                 'fileType' => 0,
-    //                 'password' => $password
-    //             ],
-    //             [
-    //                 'base64File' => $base64Key,
-    //                 'fileType' => 1,
-    //                 'password' => $password
-    //             ]
-    //         ]
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
+    //         // No es necesario incluir otros datos del emisor al usar el ID
     //     ],
     //     'recipient' => [
-    //         'tin' => "EKU9003173C9",
-    //         'legalName' => "ESCUELA KEMPER URGATE",
-    //         'zipCode' => "42501",
-    //         'taxRegimeCode' => "601",
-    //         'cfdiUseCode' => "G01",
-    //         'email' => "someone@somewhere.com"
-    //     ],
-    //     // Facturas relacionadas - necesarias para notas de crédito
-    //     'relatedInvoices' => [
-    //         [
-    //             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF", // UUID de la factura original
-    //             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
-    //         ]
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
+    //         // No es necesario incluir otros datos del receptor al usar el ID
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "01010101",
-    //             'quantity' => 0.5,
-    //             'unitOfMeasurementCode' => "E48",
-    //             'description' => "Invoicing software as a service",
-    //             'unitPrice' => 3587.75,
-    //             'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
-    //             'itemSku' => "7506022301697",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
-    //                     'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
-    //                     'taxRate' => "0.160000", // Tasa 16%
-    //                     'taxFlagCode' => "T"  // T=Traslado o R=Retención
-    //                 ]
-    //             ]
+    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+    //             'quantity' => 2, // Solo es necesario especificar la cantidad
+    //             'discount' => 255.85 // Y opcionalmente el descuento
     //         ]
     //     ]
     // ];
-    // $apiResponse = $client->getInvoiceService()->create($creditNote);
+    // $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
     // consoleLog($apiResponse);
+
+
+
+    // ------------------------------------------------------------------
+    // Crear nota de crédito por valores
+    // ------------------------------------------------------------------
+    $creditNote = [
+        'versionCode' => "4.0",
+        'series' => "CN", // Serie CN para notas de crédito
+        'date' => $currentDate,
+        'paymentFormCode' => "03", // 03 - Transferencia electrónica de fondos
+        'currencyCode' => "MXN",
+        'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
+        'expeditionZipCode' => "01160",
+        'paymentMethodCode' => "PUE",
+        'exchangeRate' => 1,
+        'exportCode' => "01",
+        'issuer' => [
+            'tin' => "FUNK671228PH6",
+            'legalName' => "KARLA FUENTE NOLASCO",
+            'taxRegimeCode' => "621",
+            'taxCredentials' => [
+                [
+                    'base64File' => $base64Cert,
+                    'fileType' => 0,
+                    'password' => $password
+                ],
+                [
+                    'base64File' => $base64Key,
+                    'fileType' => 1,
+                    'password' => $password
+                ]
+            ]
+        ],
+        'recipient' => [
+            'tin' => "EKU9003173C9",
+            'legalName' => "ESCUELA KEMPER URGATE",
+            'zipCode' => "42501",
+            'taxRegimeCode' => "601",
+            'cfdiUseCode' => "G01",
+            'email' => "someone@somewhere.com"
+        ],
+        // Facturas relacionadas - necesarias para notas de crédito
+        'relatedInvoices' => [
+            [
+                'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF", // UUID de la factura original
+                'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
+            ]
+        ],
+        'items' => [
+            [
+                'itemCode' => "01010101",
+                'quantity' => 0.5,
+                'unitOfMeasurementCode' => "E48",
+                'description' => "Invoicing software as a service",
+                'unitPrice' => 3587.75,
+                'taxObjectCode' => "02", // Código de obligaciones de impuesto aplicables al producto o servicio. Catálogo c_ObjetoImp
+                'itemSku' => "7506022301697",
+                'itemTaxes' => [
+                    [
+                        'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
+                        'taxTypeCode' => "Tasa", // Tipo de factor. Catálogo del SAT c_TipoFactor
+                        'taxRate' => "0.160000", // Tasa 16%
+                        'taxFlagCode' => "T"  // T=Traslado o R=Retención
+                    ]
+                ]
+            ]
+        ]
+    ];
+    $apiResponse = $client->getInvoiceService()->create($creditNote);
+    consoleLog($apiResponse);
+
+    
 
     // ------------------------------------------------------------------
     // Crear nota de crédito por referencias
