@@ -13,7 +13,7 @@ $settings = new FiscalApiSettings(
     'https://localhost:7173',
     'sk_development_833a58f9_8212_43ce_b544_f2fa93b1e895',
     'e839651d-1765-4cd0-ba7f-547a4c20580f',
-    true, // Imprimir raw request / response
+    false, // Imprimir raw request / response
     false, // Desactivar verificación SSL (recomendado solo en desarrollo)
 );
 

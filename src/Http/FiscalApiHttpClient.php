@@ -27,9 +27,9 @@ class FiscalApiHttpClient implements FiscalApiHttpClientInterface
             'headers' => [
                 'X-API-KEY' => $settings->getApiKey(),
                 'X-TENANT-KEY' => $settings->getTenant(),
+                'X-TIME-ZONE' => $settings->getTimeZone(),
                 'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'X-TimeZone' => $settings->getTimeZone()
+                'Accept' => 'application/json'
             ],
             'http_errors' => false,
             'verify' => $settings->isVerifySsl()
