@@ -534,127 +534,131 @@ try {
     // ------------------------------------------------------------------
     // Crear nota de crédito por referencias
     // ------------------------------------------------------------------
-    $creditNoteByReferences = [
-        'versionCode' => "4.0",
-        'series' => "CN",
-        'date' => $currentDate,
-        'paymentFormCode' => "03",
-        'currencyCode' => "MXN",
-        'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
-        'expeditionZipCode' => "01160",
-        'paymentMethodCode' => "PUE",
-        'exchangeRate' => 1,
-        'exportCode' => "01",
-        'issuer' => [
-            'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // Solo se necesita el ID del emisor
-        ],
-        'recipient' => [
-            'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // Solo se necesita el ID del receptor
-        ],
-        // Importante: Las facturas relacionadas siempre son necesarias para notas de crédito
-        'relatedInvoices' => [
-            [
-                'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF",
-                'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
-            ]
-        ],
-        'items' => [
-            [
-                'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
-                'quantity' => 0.5 // La cantidad que se está acreditando/devolviendo
-            ]
-        ]
-    ];
-    $apiResponse = $client->getInvoiceService()->create($creditNoteByReferences);
-    consoleLog($apiResponse);
+    // $creditNoteByReferences = [
+    //     'versionCode' => "4.0",
+    //     'series' => "CN",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "03",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
+    //     'expeditionZipCode' => "01160",
+    //     'paymentMethodCode' => "PUE",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // Solo se necesita el ID del emisor
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // Solo se necesita el ID del receptor
+    //     ],
+    //     // Importante: Las facturas relacionadas siempre son necesarias para notas de crédito
+    //     'relatedInvoices' => [
+    //         [
+    //             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF",
+    //             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
+    //         ]
+    //     ],
+    //     'items' => [
+    //         [
+    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+    //             'quantity' => 0.5 // La cantidad que se está acreditando/devolviendo
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($creditNoteByReferences);
+    // consoleLog($apiResponse);
+
+
 
     // ------------------------------------------------------------------
     // Crear un complemento de pago por valores
     // ------------------------------------------------------------------
-    // $invoice = [
-    //     'versionCode' => "4.0",
-    //     'series' => "CP", // Serie CP para complementos de pago
-    //     'date' => $currentDate,
-    //     'currencyCode' => "XXX", // Para complementos de pago se usa XXX
-    //     'typeCode' => "P", // Tipo P para complementos de pago
-    //     'expeditionZipCode' => "01160",
-    //     'exchangeRate' => 1,
-    //     'exportCode' => "01",
-    //     'issuer' => [
-    //         'tin' => "FUNK671228PH6",
-    //         'legalName' => "KARLA FUENTE NOLASCO",
-    //         'taxRegimeCode' => "621",
-    //         'taxCredentials' => [
-    //             [
-    //                 'base64File' => $base64Cert,
-    //                 'fileType' => 0,
-    //                 'password' => $password
-    //             ],
-    //             [
-    //                 'base64File' => $base64Key,
-    //                 'fileType' => 1,
-    //                 'password' => $password
-    //             ]
-    //         ]
-    //     ],
-    //     'recipient' => [
-    //         'tin' => "EKU9003173C9",
-    //         'legalName' => "ESCUELA KEMPER URGATE",
-    //         'zipCode' => "42501",
-    //         'taxRegimeCode' => "601",
-    //         'cfdiUseCode' => "CP01", // Uso específico para pagos
-    //         'email' => "someone@somewhere.com"
-    //     ],
-    //     // El concepto es fijo para complementos de pago
-    //     'items' => [
-    //         [
-    //             'itemCode' => "84111506", // Código específico para pagos
-    //             'quantity' => 1,
-    //             'unitOfMeasurementCode' => "ACT",
-    //             'description' => "Pago",
-    //             'unitPrice' => 0,
-    //             'taxObjectCode' => "01"
-    //         ]
-    //     ],
-    //     // Sección de pagos - específica para complementos de pago
-    //     'payments' => [
-    //         [
-    //             'paymentDate' => "2025-03-31T14:44:56", // Fecha del pago
-    //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
-    //             'currencyCode' => "MXN",
-    //             'exchangeRate' => 1,
-    //             'amount' => 11600.00, // Monto total del pago
-    //             'sourceBankTin' => "BSM970519DU8", // RFC del banco emisor
-    //             'sourceBankAccount' => "1234567891012131", // Cuenta del banco emisor
-    //             'targetBankTin' => "BBA830831LJ2", // RFC del banco receptor
-    //             'targetBankAccount' => "1234567890", // Cuenta del banco receptor
-    //             'paidInvoices' => [
-    //                 [
-    //                     'uuid' => "5C7B0622-01B4-4EB8-96D0-E0DEBD89FF0F", // UUID de la factura que se está pagando
-    //                     'series' => "F",
-    //                     'number' => "1501",
-    //                     'currencyCode' => "MXN",
-    //                     'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
-    //                     'subTotal' => 10000,
-    //                     'previousBalance' => 11600.00, // Saldo anterior
-    //                     'paymentAmount' => 11600.00, // Cantidad pagada
-    //                     'remainingBalance' => 0, // Saldo restante
-    //                     'taxObjectCode' => "02",
-    //                     'paidInvoiceTaxes' => [
-    //                         [
-    //                             'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
-    //                             'taxTypeCode' => "Tasa", // Tasa Cuota Excento
-    //                             'taxRate' => "0.160000", // Tasa 16%
-    //                             'taxFlagCode' => "T" // T=Traslado o R=Retención
-    //                         ]
-    //                     ]
-    //                 ]
-    //             ]
-    //         ]
-    //     ]
-    // ];
-    // $apiResponse = $client->getInvoiceService()->create($invoice);
-    // consoleLog($apiResponse);
+    $invoice = [
+        'versionCode' => "4.0",
+        'series' => "CP", // Serie CP para complementos de pago
+        'date' => $currentDate,
+        'currencyCode' => "XXX", // Para complementos de pago se usa XXX
+        'typeCode' => "P", // Tipo P para complementos de pago
+        'expeditionZipCode' => "01160",
+        'exchangeRate' => 1,
+        'exportCode' => "01",
+        'issuer' => [
+            'tin' => "FUNK671228PH6",
+            'legalName' => "KARLA FUENTE NOLASCO",
+            'taxRegimeCode' => "621",
+            'taxCredentials' => [
+                [
+                    'base64File' => $base64Cert,
+                    'fileType' => 0,
+                    'password' => $password
+                ],
+                [
+                    'base64File' => $base64Key,
+                    'fileType' => 1,
+                    'password' => $password
+                ]
+            ]
+        ],
+        'recipient' => [
+            'tin' => "EKU9003173C9",
+            'legalName' => "ESCUELA KEMPER URGATE",
+            'zipCode' => "42501",
+            'taxRegimeCode' => "601",
+            'cfdiUseCode' => "CP01", // Uso específico para pagos
+            'email' => "someone@somewhere.com"
+        ],
+        // El concepto es fijo para complementos de pago
+        'items' => [
+            [
+                'itemCode' => "84111506", // Código específico para pagos
+                'quantity' => 1,
+                'unitOfMeasurementCode' => "ACT",
+                'description' => "Pago",
+                'unitPrice' => 0,
+                'taxObjectCode' => "01"
+            ]
+        ],
+        // Sección de pagos - específica para complementos de pago
+        'payments' => [
+            [
+                'paymentDate' => "2025-03-31T14:44:56", // Fecha del pago
+                'paymentFormCode' => "28", // 28 - Tarjeta de débito
+                'currencyCode' => "MXN",
+                'exchangeRate' => 1,
+                'amount' => 11600.00, // Monto total del pago
+                'sourceBankTin' => "BSM970519DU8", // RFC del banco emisor
+                'sourceBankAccount' => "1234567891012131", // Cuenta del banco emisor
+                'targetBankTin' => "BBA830831LJ2", // RFC del banco receptor
+                'targetBankAccount' => "1234567890", // Cuenta del banco receptor
+                'paidInvoices' => [
+                    [
+                        'uuid' => "5C7B0622-01B4-4EB8-96D0-E0DEBD89FF0F", // UUID de la factura que se está pagando
+                        'series' => "F",
+                        'number' => "1501",
+                        'currencyCode' => "MXN",
+                        'partialityNumber' => 1, // Número de parcialidad (1 si es pago único)
+                        'subTotal' => 10000,
+                        'previousBalance' => 11600.00, // Saldo anterior
+                        'paymentAmount' => 11600.00, // Cantidad pagada
+                        'remainingBalance' => 0, // Saldo restante
+                        'taxObjectCode' => "02",
+                        'paidInvoiceTaxes' => [
+                            [
+                                'taxCode' => "002", // 001=ISR, 002=IVA, 003=IEPS
+                                'taxTypeCode' => "Tasa", // Tasa Cuota Excento
+                                'taxRate' => "0.160000", // Tasa 16%
+                                'taxFlagCode' => "T" // T=Traslado o R=Retención
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ];
+    $apiResponse = $client->getInvoiceService()->create($invoice);
+    consoleLog($apiResponse);
+
+    
 
     // ------------------------------------------------------------------
     // Crear un complemento de pago por referencias
