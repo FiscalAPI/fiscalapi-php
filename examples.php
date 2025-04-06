@@ -1069,6 +1069,8 @@ try {
     // $apiResponse = $client->getInvoiceService()->cancel($cancelInvoice);
     // consoleLog($apiResponse);
 
+
+
     // ------------------------------------------------------------------
     // Obtener el estado de una factura por valores
     // ------------------------------------------------------------------
