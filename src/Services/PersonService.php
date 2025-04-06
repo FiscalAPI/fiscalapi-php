@@ -18,6 +18,6 @@ class PersonService extends AbstractService implements PersonServiceInterface
      */
     public function __construct(FiscalApiHttpClientInterface $httpClient)
     {
-        parent::__construct($httpClient, 'persons');
+        parent::__construct($httpClient, 'people');
     }
 }
