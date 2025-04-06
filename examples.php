@@ -1089,13 +1089,13 @@ try {
     // ------------------------------------------------------------------
     // Obtener el estado de una factura por ID (por referencia)
     // ------------------------------------------------------------------
-    $invoiceStatus = [
-        'id' => "3ba2038a-74bd-48ae-96ac-3e97b03d89e1",        
-    ];
-    $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
-    consoleLog($apiResponse);
+    // $invoiceStatus = [
+    //     'id' => "3ba2038a-74bd-48ae-96ac-3e97b03d89e1",        
+    // ];
+    // $apiResponse = $client->getInvoiceService()->getStatus($invoiceStatus);
+    // consoleLog($apiResponse);
 
-    
+
 
     // ------------------------------------------------------------------
     // Generar PDF de una factura por valores
