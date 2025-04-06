@@ -23,9 +23,10 @@ interface ApiKeyServiceInterface extends FiscalApiServiceInterface
      * Obtiene una API Key por su ID
      *
      * @param string $id Id de la API Key
+     * @param bool $details indica si debe recuperar los registros relacionados del registro solicitado. Propiedades expandibles.
      * @return FiscalApiHttpResponseInterface
      */
-    public function get(string $id): FiscalApiHttpResponseInterface;
+    public function get(string $id, bool $details = false): FiscalApiHttpResponseInterface;
 
     /**
      * Crea una nueva API Key

@@ -46,10 +46,21 @@ abstract class AbstractService implements FiscalApiServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function get(string $id): FiscalApiHttpResponseInterface
+    public function get(string $id, bool $details = false): FiscalApiHttpResponseInterface
     {
-        return $this->httpClient->get($this->buildResourceUrl($id));
+
+        $queryParams = [
+            'details' => $details,
+        ];
+
+        $options = [
+            'query_params' => $this->normalizeQueryParams($queryParams),
+        ];
+
+        return $this->httpClient->get($this->buildResourceUrl($id), $options);
     }
+
+
 
     /**
      * {@inheritdoc}
@@ -119,8 +130,22 @@ abstract class AbstractService implements FiscalApiServiceInterface
      */
     protected function normalizeQueryParams(array $params): array
     {
-        return array_filter($params, function ($value) {
-            return $value !== null && $value !== '';
-        });
+        $normalized = [];
+        foreach ($params as $key => $value) {
+            // Se omiten valores nulos o cadenas vacías.
+            if ($value === null || $value === '') {
+                continue;
+            }
+            // Convertir valores booleanos a cadena "true" o "false"
+            if (is_bool($value)) {
+                $normalized[$key] = $value ? 'true' : 'false';
+            } else {
+                $normalized[$key] = $value;
+            }
+        }
+        return $normalized;
     }
+
+
+
 }

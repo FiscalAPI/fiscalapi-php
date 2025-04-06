@@ -13,6 +13,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?ApiKeyServiceInterface $apiKeyService = null;
     private ?CatalogServiceInterface $catalogService = null;
     private ?TaxFileServiceInterface $taxFileService = null;
+    private ?InvoiceServiceInterface $invoiceService = null;
 
     /**
      * Constructor del cliente principal de FiscalAPI.
@@ -83,6 +84,18 @@ class FiscalApiClient implements FiscalApiClientInterface
         }
 
         return $this->taxFileService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getInvoiceService(): InvoiceServiceInterface
+    {
+        if ($this->invoiceService === null) {
+            $this->invoiceService = new InvoiceService($this->httpClient);
+        }
+
+        return $this->invoiceService;
     }
 
     /**

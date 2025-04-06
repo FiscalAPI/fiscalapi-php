@@ -43,6 +43,13 @@ interface FiscalApiClientInterface
     public function getTaxFileService(): TaxFileServiceInterface;
 
     /**
+     * Obtiene el servicio de facturas
+     * 
+     * @return InvoiceServiceInterface
+     */
+    public function getInvoiceService(): InvoiceServiceInterface;
+
+    /**
      * Obtiene el cliente HTTP subyacente.
      *
      * @return FiscalApiHttpClientInterface

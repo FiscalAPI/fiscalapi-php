@@ -23,9 +23,10 @@ interface ProductServiceInterface extends FiscalApiServiceInterface
      * Obtiene un producto por su ID
      *
      * @param string $id Id del producto
+     * @param bool $details indica si debe recuperar los registros relacionados del registro solicitado. Propiedades expandibles.
      * @return FiscalApiHttpResponseInterface
      */
-    public function get(string $id): FiscalApiHttpResponseInterface;
+    public function get(string $id, bool $details = false): FiscalApiHttpResponseInterface;
 
     /**
      * Crea un nuevo producto

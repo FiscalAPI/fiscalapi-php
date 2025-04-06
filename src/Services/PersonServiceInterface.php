@@ -24,9 +24,10 @@ interface PersonServiceInterface extends FiscalApiServiceInterface
      * Obtiene una persona por su ID
      *
      * @param string $id Id de la persona
+     * @param bool $details indica si debe recuperar los registros relacionados del registro solicitado. Propiedades expandibles.
      * @return FiscalApiHttpResponseInterface
      */
-    public function get(string $id): FiscalApiHttpResponseInterface;
+    public function get(string $id, bool $details = false): FiscalApiHttpResponseInterface;
 
     /**
      * Crea una nueva persona

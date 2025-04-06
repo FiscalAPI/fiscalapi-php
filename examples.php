@@ -14,7 +14,7 @@ $settings = new FiscalApiSettings(
     'https://localhost:7173',
     'sk_development_833a58f9_8212_43ce_b544_f2fa93b1e895',
     'e839651d-1765-4cd0-ba7f-547a4c20580f',
-    false, // Imprimir raw request / response
+    true, // Imprimir raw request / response
     false, // Desactivar verificación SSL. (por seguridad debería asignar false en producción)
 );
 
@@ -214,6 +214,17 @@ try {
     // // Eliminar producto por id
     // $apiResponse = $client->getProductService()->delete('f2299587-78f9-43a9-81b1-89a38c254b36');
     // consoleLog($apiResponse);
+
+
+
+    // // Listar facturas
+    // $apiResponse = $client->getInvoiceService()->list(1,2);
+    // consoleLog($apiResponse);   
+
+
+    // // Obtener factura por id.
+    $apiResponse = $client->getInvoiceService()->get('7a8cce85-1592-4e3d-9621-364c82d36091');
+    consoleLog($apiResponse);
 
 
 

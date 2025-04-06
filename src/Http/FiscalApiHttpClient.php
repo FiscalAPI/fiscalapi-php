@@ -145,6 +145,7 @@ class FiscalApiHttpClient implements FiscalApiHttpClientInterface
         $logData = [
             'method' => $method,
             'uri' => $uri,
+            'query_params' => $options[RequestOptions::QUERY] ?? [],
             'headers' => $options['headers'] ?? [],
             'verify_ssl' => $options[RequestOptions::VERIFY] ?? $this->settings->isVerifySsl()
         ];
