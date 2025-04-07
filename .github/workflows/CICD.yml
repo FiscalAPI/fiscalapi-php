@@ -1,0 +1,16 @@
+name: Update Packagist
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  update-packagist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Update Packagist
+        run: |
+          curl -XPOST -H'content-type:application/json' \
+            'https://packagist.org/api/update-package?username=Fiscalapi&apiToken=${{ secrets.PACKAGIST_API_TOKEN }}' \
+            -d'{"repository":{"url":"https://github.com/FiscalAPI/fiscalapi-php"}}'
