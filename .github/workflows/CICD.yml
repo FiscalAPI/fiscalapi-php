@@ -9,8 +9,19 @@ jobs:
   update-packagist:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Debug info
+        run: |
+          echo "Tag: ${{ github.ref }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Event name: ${{ github.event_name }}"
+      
       - name: Update Packagist
         run: |
+          echo "Updating Packagist..."
           curl -XPOST -H'content-type:application/json' \
             'https://packagist.org/api/update-package?username=Fiscalapi&apiToken=${{ secrets.PACKAGIST_API_TOKEN }}' \
-            -d'{"repository":{"url":"https://github.com/FiscalAPI/fiscalapi-php"}}'
+            -d'{"repository":{"url":"https://github.com/FiscalAPI/fiscalapi-php"}}' \
+            -v
