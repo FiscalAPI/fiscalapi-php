@@ -236,6 +236,126 @@ try {
 
 
     // ------------------------------------------------------------------
+    // Crear factura global por valores
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate, // Fecha específica de la factura global
+    //     'paymentFormCode' => "01",
+    //     'paymentMethodCode' => "PUE",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I",
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'globalInformation' => [
+    //         'periodicityCode' => "01", // Periodicidad 01 = Diario
+    //         'monthCode' => "01",       // Mes  01 = Enero
+    //         'year' => 2025             // Año fiscal
+    //     ],
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "XAXX010101000",        // RFC genérico para público en general
+    //         'legalName' => "PUBLICO EN GENERAL",
+    //         'zipCode' => "01160",
+    //         'taxRegimeCode' => "616",        // Régimen Sin obligaciones fiscales
+    //         'cfdiUseCode' => "S01",          // Sin efectos fiscales
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",    // Código de producto/servicio SAT
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT", // Unidad de medida de la SAT (ACT=Actividad)
+    //             'description' => "Venta", // Fijo
+    //             'unitPrice' => 1230.00, // Total de la venta sin impuestos
+    //             'taxObjectCode' => "02",     // 02 = Sí objeto de impuesto
+    //             'itemSku' => "1",            // Indentificador interno de la venta
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002",           // 002 = IVA | 001 = ISR | 003 = IEPS
+    //                     'taxTypeCode' => "Tasa",      // Tipo de impuesto (Tasa, Cuota o Exento)
+    //                     'taxRate' => "0.160000",        // 16%
+    //                     'taxFlagCode' => "T"          // T = Traslado o R = Retención
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
+
+
+
+    // ------------------------------------------------------------------
+    // Crear factura global por referencias
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate, // Fecha de emisión de la factura global
+    //     'paymentFormCode' => "01",
+    //     'paymentMethodCode' => "PUE", // PUE=Pago en una sola exhibición, PPD=Pago en parcialidades o diferido
+    //     'currencyCode' => "MXN", // Moneda de la factura
+    //     'typeCode' => "I", // I=Ingreso, E=Egreso
+    //     'expeditionZipCode' => "01160", // Código postal del emisor
+    //     'exchangeRate' => 1, // Tipo de cambio
+    //     'exportCode' => "01", 
+    //     'globalInformation' => [     
+    //         'periodicityCode' => "02", // Periodicidad 02 = Semanal
+    //         'monthCode' => "02",       // Mes 02 = Febrero
+    //         'year' => 2025             // Año fiscal
+    //     ],
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // ID del emisor
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // ID del receptor
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",    // Fijo
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' =>  // Fijo
+    //             'description' => "Venta", // Fijo
+    //             'unitPrice' => 1230.00, // Total de la venta sin impuestos
+    //             'taxObjectCode' => "02", // 02 = Sí objeto de impuesto
+    //             'itemSku' => "1", // Identificador interno de la venta
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002",           // 002 = IVA
+    //                     'taxTypeCode' => "Tasa",      // Tipo de factor
+    //                     'taxRate' => "0.160000",      // Tasa 16%
+    //                     'taxFlagCode' => "T"          // T = Traslado
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
+
+
+    // ------------------------------------------------------------------
     // Crear factura de ingreso con IVA 16%
     // ------------------------------------------------------------------
     // $invoice = [
