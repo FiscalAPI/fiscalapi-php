@@ -15,7 +15,7 @@ $settings = new FiscalApiSettings(
     'sk_development_833a58f9_8212_43ce_b544_f2fa93b1e895',
     'e839651d-1765-4cd0-ba7f-547a4c20580f',
     false, // Imprimir raw request / response
-    false, // Desactivar verificación SSL. (por seguridad debería asignar false en producción)
+    false, // Desactivar verificación SSL. (por seguridad NO debería asignar false en producción)
 );
 
 // Sellos SAT de prueba (KARLA FUENTE NOLASCO FUNK671228PH6) 
