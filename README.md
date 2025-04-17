@@ -25,88 +25,152 @@ composer require fiscalapi/fiscalapi
 
 ## ⚙️ Configuración
 
-Puedes usar el SDK tanto en aplicaciones sin inyección de dependencias como en proyectos que usan DI (Laravel, Symfony, etc.). A continuación se describen ambas formas:
+El SDK se puede utilizar tanto en aplicaciones básicas de PHP como en frameworks que utilizan inyección de dependencias (como Laravel o Symfony).
 
-### A) Aplicaciones sin Inyección de Dependencias
+### 1. Configuración de Variables de Entorno
 
-1. **Crea tu objeto de configuración** con [tus credenciales](https://docs.fiscalapi.com/credentials-info):
-    ```php
-    $settings = [
-        'apiUrl' => 'https://test.fiscalapi.com', // https://live.fiscalapi.com (producción)
-        'apiKey' => '<tu_api_key>',
-        'tenant' => '<tenant>'
-    ];
-    ```
+Crea o actualiza tu archivo `.env` con las siguientes variables:
 
-2. **Crea la instancia del cliente**:
-    ```php
-    $fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
-    ```
+```
+# FiscalAPI Configuration
+FISCALAPI_URL=https://test.fiscalapi.com # https://live.fiscalapi.com (produción)
+FISCALAPI_KEY=tu_api_key
+FISCALAPI_TENANT=tu_tenant_id
+FISCALAPI_DEBUG=false
+FISCALAPI_VERIFY_SSL=true
+FISCALAPI_API_VERSION=v4
+FISCALAPI_TIMEZONE=America/Mexico_City
+```
 
-Para ejemplos completos, consulta [vanilla-php-examples](https://github.com/FiscalAPI/fiscalapi-samples-php-vanilla).
+### Configuración con inyección de dependencias
 
----
+#### Laravel
 
-### B) Aplicaciones con Inyección de Dependencias (Laravel, Symfony, etc.)
+##### Paso 1: Crear el archivo de configuración
 
-1. **Agrega la sección de configuración** en tu archivo de configuración:
+Crea el archivo `config/fiscalapi.php`:
 
-    **Laravel** (`config/fiscalapi.php`):
-    ```php
-    <?php
-    return [
-        'apiUrl' => env('FISCALAPI_URL', 'https://test.fiscalapi.com'),
-        'apiKey' => env('FISCALAPI_KEY', ''),
-        'tenant' => env('FISCALAPI_TENANT', '')
-    ];
-    ```
+```php
+<?php
 
-2. **Registra los servicios** en el contenedor (por ejemplo, en un Service Provider):
+return [
+    'apiUrl' => env('FISCALAPI_URL', 'https://test.fiscalapi.com'),
+    'apiKey' => env('FISCALAPI_KEY', ''),
+    'tenant' => env('FISCALAPI_TENANT', ''),
+    'debug' => env('FISCALAPI_DEBUG', false),
+    'verifySsl' => env('FISCALAPI_VERIFY_SSL', true),
+    'apiVersion' => env('FISCALAPI_API_VERSION', 'v4'),
+    'timeZone' => env('FISCALAPI_TIMEZONE', 'America/Mexico_City')
+];
+```
 
-    **Laravel**:
-    ```php
-    <?php
-    
-    namespace App\Providers;
-    
-    use Fiscalapi\Services\FiscalApiClient;
-    use Illuminate\Support\ServiceProvider;
-    
-    class FiscalApiServiceProvider extends ServiceProvider
+##### Paso 2: Generar un Service Provider con Artisan
+
+Utiliza el siguiente comando Artisan para generar el Service Provider:
+
+```bash
+php artisan make:provider FiscalApiServiceProvider
+```
+
+##### Paso 3: Modificar el Service Provider generado
+
+Abre el archivo creado en `app/Providers/FiscalApiServiceProvider.php` y modifícalo de la siguiente manera:
+
+```php
+<?php
+
+namespace App\Providers;
+
+use Fiscalapi\Http\FiscalApiSettings;
+use Fiscalapi\Services\FiscalApiClient;
+use Illuminate\Support\ServiceProvider;
+
+class FiscalApiServiceProvider extends ServiceProvider
+{
+    /**
+     * Register services.
+     */
+    public function register(): void
     {
-        public function register()
-        {
-            $this->app->singleton(FiscalApiClient::class, function ($app) {
-                return new FiscalApiClient(config('fiscalapi'));
-            });
-        }
+        $this->mergeConfigFrom(
+            __DIR__.'/../../config/fiscalapi.php', 'fiscalapi'
+        );
+
+        $this->app->singleton(FiscalApiClient::class, function ($app) {
+            $config = config('fiscalapi');
+
+            $settings = new FiscalApiSettings(
+                $config['apiUrl'],
+                $config['apiKey'],
+                $config['tenant'],
+                $config['debug'] ?? false,
+                $config['verifySsl'] ?? true,
+                $config['apiVersion'] ?? 'v4',
+                $config['timeZone'] ?? 'America/Mexico_City'
+            );
+
+            return new FiscalApiClient($settings);
+        });
     }
-    ```
 
-3. **Inyecta** `FiscalApiClient` donde lo requieras:
-
-    ```php
-    <?php
-    
-    namespace App\Http\Controllers;
-    
-    use Fiscalapi\Services\FiscalApiClient;
-    
-    class InvoicesController extends Controller
+    /**
+     * Bootstrap services.
+     */
+    public function boot(): void
     {
-        private $fiscalApi;
-    
-        public function __construct(FiscalApiClient $fiscalApi)
-        {
-            $this->fiscalApi = $fiscalApi;
-        }
-        
-        // Usa $this->fiscalApi en tus métodos de controlador...
+        $this->publishes([
+            __DIR__.'/../../config/fiscalapi.php' => config_path('fiscalapi.php'),
+        ], 'fiscalapi-config');
     }
-    ```
+}
 
-Para más ejemplos, revisa [samples-laravel](https://github.com/FiscalAPI/fiscalapi-samples-php-laravel).
+```
 
+##### Paso 4: Registrar el Service Provider
+
+Dependiendo de tu versión de Laravel, registra el provider en la ubicación adecuada:
+
+**Laravel 8 y anteriores** - En `config/app.php`:
+```php
+'providers' => [
+    // Otros providers...
+    App\Providers\FiscalApiServiceProvider::class,
+],
+```
+
+**Laravel 9+** - En `bootstrap/providers.php`:
+```php
+return [
+    // Otros providers...
+    App\Providers\AppServiceProvider::class,
+    App\Providers\FiscalApiServiceProvider::class,
+];
+```
+
+
+##### Usar el cliente mediante inyección de dependencias donde lo necesites
+
+```php
+<?php
+namespace App\Http\Controllers;
+
+use Fiscalapi\Services\FiscalApiClient;
+
+class FacturasController extends Controller
+{
+    private $fiscalApi;
+
+    public function __construct(FiscalApiClient $fiscalApi)
+    {
+        $this->fiscalApi = $fiscalApi;
+    }
+    
+    public function createInvoice()
+    {
+        // Usar $this->fiscalApi para generar facturas
+    }
+}
+```
 
 ## 🔄 Modos de Operación
 
@@ -350,8 +414,8 @@ Este proyecto está licenciado bajo la Licencia **MPL**. Consulta el archivo [LI
 
 - [Documentación Oficial](https://docs.fiscalapi.com)  
 - [Portal de FiscalAPI](https://fiscalapi.com)  
-- [Ejemplos PHP](https://github.com/FiscalAPI/fiscalapi-samples-php-vanilla)  
-- [Ejemplos Laravel](https://github.com/FiscalAPI/fiscalapi-samples-php-laravel)
+- [Ejemplos PHP](https://github.com/FiscalAPI/fiscalapi-php/blob/main/examples.php)  
+- [Ejemplos Laravel](https://github.com/FiscalAPI/fiscalapi-samples-laravel)
 
 
 ---
