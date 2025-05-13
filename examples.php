@@ -11,9 +11,9 @@ require_once 'vendor/autoload.php';
 // Crea las configuraciones del cliente http fiscalapi.
 // Lea como obtener sus credenciales:  https://docs.fiscalapi.com/credentials-info
 $settings = new FiscalApiSettings(
-    'https://localhost:7173',
-    'sk_development_833a58f9_8212_43ce_b544_f2fa93b1e895',
-    'e839651d-1765-4cd0-ba7f-547a4c20580f',
+    'https://test.fiscalapi.com',
+    '<apiKey>',
+    '<tenant>',
     false, // Imprimir raw request / response
     false, // Desactivar verificación SSL. (por seguridad NO debería asignar false en producción)
 );
@@ -352,6 +352,125 @@ try {
 
     // $apiResponse = $client->getInvoiceService()->create($invoice);
     // consoleLog($apiResponse);
+
+    // ------------------------------------------------------------------
+    // Crear factura global por valores
+    // ------------------------------------------------------------------
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "01",
+    //     'paymentMethodCode' => "PUE",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I",
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'globalInformation' => [
+    //         'periodicityCode' => "01",
+    //         'monthCode' => "05",
+    //         'year' => 2025
+    //     ],
+    //     'issuer' => [
+    //         'tin' => "FUNK671228PH6",
+    //         'legalName' => "KARLA FUENTE NOLASCO",
+    //         'taxRegimeCode' => "621",
+    //         'taxCredentials' => [
+    //             [
+    //                 'base64File' => $base64Cert,
+    //                 'fileType' => 0,
+    //                 'password' => $password
+    //             ],
+    //             [
+    //                 'base64File' => $base64Key,
+    //                 'fileType' => 1,
+    //                 'password' => $password
+    //             ]
+    //         ]
+    //     ],
+    //     'recipient' => [
+    //         'tin' => "XAXX010101000",
+    //         'legalName' => "PUBLICO EN GENERAL",
+    //         'zipCode' => "01160",
+    //         'taxRegimeCode' => "616",
+    //         'cfdiUseCode' => "S01",
+    //         'email' => "someone@somewhere.com"
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT",
+    //             'description' => "Venta",
+    //             'unitPrice' => 1230.00,
+    //             'taxObjectCode' => "02",
+    //             'itemSku' => "venta0001",
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002",
+    //                     'taxTypeCode' => "Tasa",
+    //                     'taxRate' => "0.160000",
+    //                     'taxFlagCode' => "T"
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
+
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
+
+
+    // ------------------------------------------------------------------
+    // Crear factura global por referencias
+    // ------------------------------------------------------------------
+    $invoice = [
+        'versionCode' => "4.0",
+        'series' => "F",
+        'date' => $currentDate,
+        'paymentFormCode' => "01",
+        'paymentMethodCode' => "PUE",
+        'currencyCode' => "MXN",
+        'typeCode' => "I",
+        'exportCode' => "01",
+        'expeditionZipCode' => "01160",
+        'exchangeRate' => 1,
+        'globalInformation' => [
+            'periodicityCode' => "01",
+            'monthCode' => "05",
+            'year' => 2025
+        ],
+        'issuer' => [
+            'id' => "78d380fd-1b69-4e3c-8bc0-4f57737f7d5f"
+        ],
+        'recipient' => [
+            'id' => "4e7ba2d7-2302-42f1-9fe4-6b75069f0fc9"
+        ],
+        'items' => [
+            [
+                'itemCode' => "01010101",
+                'quantity' => 1,
+                'unitOfMeasurementCode' => "ACT",
+                'description' => "Venta",
+                'unitPrice' => 1230.00,
+                'taxObjectCode' => "02",
+                'itemSku' => "venta0001",
+                'itemTaxes' => [
+                    [
+                        'taxCode' => "002",
+                        'taxTypeCode' => "Tasa",
+                        'taxRate' => "0.160000",
+                        'taxFlagCode' => "T"
+                    ]
+                ]
+            ]
+        ]
+    ];
+
+    $apiResponse = $client->getInvoiceService()->create($invoice);
+    consoleLog($apiResponse);
+
 
 
     // ------------------------------------------------------------------
