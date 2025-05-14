@@ -305,55 +305,6 @@ try {
 
 
     // ------------------------------------------------------------------
-    // Crear factura global por referencias
-    // ------------------------------------------------------------------
-    // $invoice = [
-    //     'versionCode' => "4.0",
-    //     'series' => "F",
-    //     'date' => $currentDate, // Fecha de emisión de la factura global
-    //     'paymentFormCode' => "01",
-    //     'paymentMethodCode' => "PUE", // PUE=Pago en una sola exhibición, PPD=Pago en parcialidades o diferido
-    //     'currencyCode' => "MXN", // Moneda de la factura
-    //     'typeCode' => "I", // I=Ingreso, E=Egreso
-    //     'expeditionZipCode' => "01160", // Código postal del emisor
-    //     'exchangeRate' => 1, // Tipo de cambio
-    //     'exportCode' => "01", 
-    //     'globalInformation' => [     
-    //         'periodicityCode' => "02", // Periodicidad 02 = Semanal
-    //         'monthCode' => "02",       // Mes 02 = Febrero
-    //         'year' => 2025             // Año fiscal
-    //     ],
-    //     'issuer' => [
-    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // ID del emisor
-    //     ],
-    //     'recipient' => [
-    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // ID del receptor
-    //     ],
-    //     'items' => [
-    //         [
-    //             'itemCode' => "01010101",    // Fijo
-    //             'quantity' => 1,
-    //             'unitOfMeasurementCode' =>  // Fijo
-    //             'description' => "Venta", // Fijo
-    //             'unitPrice' => 1230.00, // Total de la venta sin impuestos
-    //             'taxObjectCode' => "02", // 02 = Sí objeto de impuesto
-    //             'itemSku' => "1", // Identificador interno de la venta
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",           // 002 = IVA
-    //                     'taxTypeCode' => "Tasa",      // Tipo de factor
-    //                     'taxRate' => "0.160000",      // Tasa 16%
-    //                     'taxFlagCode' => "T"          // T = Traslado
-    //                 ]
-    //             ]
-    //         ]
-    //     ]
-    // ];
-
-    // $apiResponse = $client->getInvoiceService()->create($invoice);
-    // consoleLog($apiResponse);
-
-    // ------------------------------------------------------------------
     // Crear factura global por valores
     // ------------------------------------------------------------------
     // $invoice = [
