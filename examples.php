@@ -10,6 +10,8 @@ require_once 'vendor/autoload.php';
 
 // Crea las configuraciones del cliente http fiscalapi.
 // Lea como obtener sus credenciales:  https://docs.fiscalapi.com/credentials-info
+
+//Ambiente de pruebas
 $settings = new FiscalApiSettings(
     'https://test.fiscalapi.com',
     '<apiKey>',
@@ -17,6 +19,7 @@ $settings = new FiscalApiSettings(
     false, // Imprimir raw request / response
     false, // Desactivar verificación SSL. (por seguridad NO debería asignar false en producción)
 );
+
 
 // Sellos SAT de prueba (KARLA FUENTE NOLASCO FUNK671228PH6) 
 // Visita https://docs.fiscalapi.com/tax-files-info#codificacion-de-fiel-o-csd-en-base64 para leer como convertir tus sellos CSD en base 64
@@ -425,51 +428,51 @@ try {
     // ------------------------------------------------------------------
     // Crear factura global por referencias
     // ------------------------------------------------------------------
-    $invoice = [
-        'versionCode' => "4.0",
-        'series' => "F",
-        'date' => $currentDate,
-        'paymentFormCode' => "01",
-        'paymentMethodCode' => "PUE",
-        'currencyCode' => "MXN",
-        'typeCode' => "I",
-        'exportCode' => "01",
-        'expeditionZipCode' => "01160",
-        'exchangeRate' => 1,
-        'globalInformation' => [
-            'periodicityCode' => "01",
-            'monthCode' => "05",
-            'year' => 2025
-        ],
-        'issuer' => [
-            'id' => "78d380fd-1b69-4e3c-8bc0-4f57737f7d5f"
-        ],
-        'recipient' => [
-            'id' => "4e7ba2d7-2302-42f1-9fe4-6b75069f0fc9"
-        ],
-        'items' => [
-            [
-                'itemCode' => "01010101",
-                'quantity' => 1,
-                'unitOfMeasurementCode' => "ACT",
-                'description' => "Venta",
-                'unitPrice' => 1230.00,
-                'taxObjectCode' => "02",
-                'itemSku' => "venta0001",
-                'itemTaxes' => [
-                    [
-                        'taxCode' => "002",
-                        'taxTypeCode' => "Tasa",
-                        'taxRate' => "0.160000",
-                        'taxFlagCode' => "T"
-                    ]
-                ]
-            ]
-        ]
-    ];
+    // $invoice = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "01",
+    //     'paymentMethodCode' => "PUE",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I",
+    //     'exportCode' => "01",
+    //     'expeditionZipCode' => "01160",
+    //     'exchangeRate' => 1,
+    //     'globalInformation' => [
+    //         'periodicityCode' => "01",
+    //         'monthCode' => "05",
+    //         'year' => 2025
+    //     ],
+    //     'issuer' => [
+    //         'id' => "78d380fd-1b69-4e3c-8bc0-4f57737f7d5f"
+    //     ],
+    //     'recipient' => [
+    //         'id' => "4e7ba2d7-2302-42f1-9fe4-6b75069f0fc9"
+    //     ],
+    //     'items' => [
+    //         [
+    //             'itemCode' => "01010101",
+    //             'quantity' => 1,
+    //             'unitOfMeasurementCode' => "ACT",
+    //             'description' => "Venta",
+    //             'unitPrice' => 1230.00,
+    //             'taxObjectCode' => "02",
+    //             'itemSku' => "venta0001",
+    //             'itemTaxes' => [
+    //                 [
+    //                     'taxCode' => "002",
+    //                     'taxTypeCode' => "Tasa",
+    //                     'taxRate' => "0.160000",
+    //                     'taxFlagCode' => "T"
+    //                 ]
+    //             ]
+    //         ]
+    //     ]
+    // ];
 
-    $apiResponse = $client->getInvoiceService()->create($invoice);
-    consoleLog($apiResponse);
+    // $apiResponse = $client->getInvoiceService()->create($invoice);
+    // consoleLog($apiResponse);
 
 
 
@@ -698,6 +701,41 @@ try {
 
 
 
+     // ------------------------------------------------------------------
+    // Crear factura de ingreso con precios dinamicos por referencias (solo IDs)
+    // ------------------------------------------------------------------
+    // $invoiceByReferences = [
+    //     'versionCode' => "4.0",
+    //     'series' => "F",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "01",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "I",
+    //     'expeditionZipCode' => "42501",
+    //     'paymentMethodCode' => "PUE",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257"
+    //         // No es necesario incluir otros datos del emisor al usar el ID
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9"
+    //         // No es necesario incluir otros datos del receptor al usar el ID
+    //     ],
+    //     'items' => [
+    //         [
+    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+    //             'quantity' => 2, // Solo es necesario especificar la cantidad
+    //             'unitPrice' => 200.00 // precio dinámico
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($invoiceByReferences);
+    // consoleLog($apiResponse);
+
+
+
     // ------------------------------------------------------------------
     // Crear nota de crédito por valores
     // ------------------------------------------------------------------
@@ -806,6 +844,44 @@ try {
     // $apiResponse = $client->getInvoiceService()->create($creditNoteByReferences);
     // consoleLog($apiResponse);
 
+
+    // ------------------------------------------------------------------
+    // Crear nota de crédito por referencias con precio dinámico
+    // ------------------------------------------------------------------
+    // $creditNoteByReferences = [
+    //     'versionCode' => "4.0",
+    //     'series' => "CN",
+    //     'date' => $currentDate,
+    //     'paymentFormCode' => "03",
+    //     'currencyCode' => "MXN",
+    //     'typeCode' => "E", // Tipo E para notas de crédito (Egreso)
+    //     'expeditionZipCode' => "01160",
+    //     'paymentMethodCode' => "PUE",
+    //     'exchangeRate' => 1,
+    //     'exportCode' => "01",
+    //     'issuer' => [
+    //         'id' => "3f3478b4-60fd-459e-8bfc-f8239fc96257" // Solo se necesita el ID del emisor
+    //     ],
+    //     'recipient' => [
+    //         'id' => "96b46762-d246-4a67-a562-510a25dbafa9" // Solo se necesita el ID del receptor
+    //     ],
+    //     // Importante: Las facturas relacionadas siempre son necesarias para notas de crédito
+    //     'relatedInvoices' => [
+    //         [
+    //             'uuid' => "5FB2822E-396D-4725-8521-CDC4BDD20CCF",
+    //             'relationshipTypeCode' => "01" // 01 - Nota de crédito de los documentos relacionados
+    //         ]
+    //     ],
+    //     'items' => [
+    //         [
+    //             'id' => "114a4be5-fb65-40b2-a762-ff0c55c6ebfa", // ID del producto/servicio
+    //             'quantity' => 1, // La cantidad que se está acreditando/devolviendo
+    //             'unitPrice' => 150.00 // precio dinámico
+    //         ]
+    //     ]
+    // ];
+    // $apiResponse = $client->getInvoiceService()->create($creditNoteByReferences);
+    // consoleLog($apiResponse);
 
 
     // ------------------------------------------------------------------
