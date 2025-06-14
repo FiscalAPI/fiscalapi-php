@@ -797,7 +797,7 @@ try {
 
 
     // ------------------------------------------------------------------
-    // Crear nota de crédito por referencias con precio dinámico
+    // Crear nota de crédito por referencias con precio dinamico
     // ------------------------------------------------------------------
     // $creditNoteByReferences = [
     //     'versionCode' => "4.0",
