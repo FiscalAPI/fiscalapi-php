@@ -49,6 +49,32 @@ interface FiscalApiClientInterface
      */
     public function getInvoiceService(): InvoiceServiceInterface;
 
+
+
+    /**
+     * Obtiene el servicio de catalogos de descarga masiva.
+     *
+     * @return DownloadCatalogServiceInterface
+     */
+    public function getDownloadCatalogService(): DownloadCatalogServiceInterface;
+
+
+    /**
+     * Obtiene el servicio de reglas de descarga masiva.
+     *
+     * @return DownloadRuleServiceInterface
+     */
+    public function getDownloadRuleService(): DownloadRuleServiceInterface;
+
+    /**
+     * Obtiene el servicio de solicitudes de descarga masiva.
+     *
+     * @return DownloadRequestServiceInterface
+     */
+    public function getDownloadRequestService(): DownloadRequestServiceInterface;
+
+
+
     /**
      * Obtiene el cliente HTTP subyacente.
      *

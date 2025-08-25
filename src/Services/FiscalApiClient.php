@@ -13,7 +13,12 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?ApiKeyServiceInterface $apiKeyService = null;
     private ?CatalogServiceInterface $catalogService = null;
     private ?TaxFileServiceInterface $taxFileService = null;
+    private ?DownloadCatalogServiceInterface $downloadCatalogService = null;
+    private ?DownloadRuleServiceInterface $downloadRuleService = null;
+    private ?DownloadRequestServiceInterface $downloadRequestService = null;
     private ?InvoiceServiceInterface $invoiceService = null;
+
+
 
     /**
      * Constructor del cliente principal de FiscalAPI.
@@ -101,8 +106,45 @@ class FiscalApiClient implements FiscalApiClientInterface
     /**
      * {@inheritdoc}
      */
+    public function getDownloadCatalogService(): DownloadCatalogServiceInterface
+    {
+        if ($this->downloadCatalogService === null) {
+            $this->downloadCatalogService = new DownloadCatalogService($this->httpClient);
+        }
+
+        return $this->downloadCatalogService;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDownloadRuleService(): DownloadRuleServiceInterface
+    {
+        if ($this->downloadRuleService === null) {
+            $this->downloadRuleService = new DownloadRuleService($this->httpClient);
+        }
+        return $this->downloadRuleService;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getDownloadRequestService(): DownloadRequestServiceInterface
+    {
+        if ($this->downloadRequestService === null) {
+            $this->downloadRequestService = new DownloadRequestService($this->httpClient);
+        }
+        return $this->downloadRequestService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getHttpClient(): FiscalApiHttpClientInterface
     {
         return $this->httpClient;
     }
+
+
+
 }

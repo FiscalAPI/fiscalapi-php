@@ -9,7 +9,7 @@ require_once 'vendor/autoload.php';
 
 
 // Crea las configuraciones del cliente http fiscalapi.
-// Lea como obtener sus credenciales:  https://docs.fiscalapi.com/credentials-info
+// Lea como obtener sus credenciales: https://docs.fiscalapi.com/credentials-info
 
 //Ambiente de pruebas
 $settings = new FiscalApiSettings(
@@ -1453,6 +1453,106 @@ try {
     // Vea las equivalencias de los catálogos en: https://docs.fiscalapi.com/catalogs
     // ------------------------------------------------------------------
     // $apiResponse = $client->getCatalogService()->search("SatPaymentForms", "Tarjeta", 1, 100);
+    // consoleLog($apiResponse);
+
+
+    // *******DESCARGA MASIVA **************//
+
+    // Obtener todos los catálogos de descarga masiva disponibles
+    // $apiResponse = $client->getDownloadCatalogService()->getList();
+    // consoleLog($apiResponse);
+
+    // Listar los registros del catálogo 'SatInvoiceStatuses' de descarga masiva
+    // $apiResponse = $client->getDownloadCatalogService()->listCatalog('SatInvoiceStatuses');
+    // consoleLog($apiResponse);
+
+    // *******REGLAS DE DESCARGA MASIVA **************//
+
+    // Obtener lista paginada de reglas de descarga masiva (pageNumber=1, pageSize=2)
+    // $apiResponse = $client->getDownloadRuleService()->list(1, 2);
+    // consoleLog($apiResponse);
+
+    // Obtener regla de descarga por ID
+    // $apiResponse = $client->getDownloadRuleService()->get('a339a292-37fe-422e-a28a-f93e6025c72f');
+    // consoleLog($apiResponse);
+
+    // Crear regla de descarga - Regla para descargar CFDI recibidos y vigentes
+    //    $downloadRuleData = [
+    //        'personId' => 'b0c1cf6c-153a-464e-99df-5741f45d6695', // Persona que recibió los CFDI
+    //        'description' => 'Regla descarga demo ...',
+    //        'satQueryTypeId' => 'CFDI',
+    //        'downloadTypeId' => 'Recibidos',
+    //        'satInvoiceStatusId' => 'Vigente'
+    //    ];
+    //    $apiResponse = $client->getDownloadRuleService()->create($downloadRuleData);
+    //    consoleLog($apiResponse);
+
+
+    // Crear regla de solicitud de prueba
+    // $apiResponse = $client->getDownloadRuleService()->createTestRule();
+    // consoleLog($apiResponse);
+
+    // Actualizar regla de descarga masiva - Actualizar descripción
+    //    $updateData = [
+    //        'id' => 'e9d633a8-1c27-4a85-8924-4bfa7bec8dc5',
+    //        'description' => 'Regla descarga actualizada'
+    //    ];
+    //    $apiResponse = $client->getDownloadRuleService()->update($updateData);
+    //    consoleLog($apiResponse);
+
+    // Eliminar regla de descarga
+    //    $apiResponse = $client->getDownloadRuleService()->delete('e9d633a8-1c27-4a85-8924-4bfa7bec8dc5');
+    //    consoleLog($apiResponse);
+
+
+    /**********SOLICITUDES DE DESCARGA MASIVA ***********/
+
+    // Obtener lista paginada de solicitudes de descarga masiva (pageNumber=1, pageSize=2)
+    // $apiResponse = $client->getDownloadRequestService()->list(1, 2);
+    // consoleLog($apiResponse);
+
+    // Obtener solicitud de descarga por ID
+    // $apiResponse = $client->getDownloadRequestService()->get('bf8f0fc8-1733-447a-955c-7de59bacc437');
+    // consoleLog($apiResponse);
+
+
+    // Listar xmls descargados asociados a una solicitud de descarga
+    // $apiResponse = $client->getDownloadRequestService()->getXmls('d1dfc248-75bb-43ab-85f7-03232d00b931');
+    // consoleLog($apiResponse);
+
+    // Listar metadatos descargados asociados a una solicitud de descarga
+    // $apiResponse = $client->getDownloadRequestService()->getMetadataItems('d1dfc248-75bb-43ab-85f7-03232d00b931');
+    // consoleLog($apiResponse);
+
+    // Descargar paquete (.zip file) de una solicitud de descarga masiva
+    // $apiResponse = $client->getDownloadRequestService()->downloadPackage('d1dfc248-75bb-43ab-85f7-03232d00b931');
+    // consoleLog($apiResponse);
+
+
+    // Descargar SAT request (.xml file) de una solicitud de descarga masiva (debug/testing)
+    // $apiResponse = $client->getDownloadRequestService()->downloadSatRequest('d1dfc248-75bb-43ab-85f7-03232d00b931');
+    // consoleLog($apiResponse);
+
+    // Descargar SAT response (.xml file) de una solicitud de descarga masiva (debug/testing)
+    // $apiResponse = $client->getDownloadRequestService()->downloadSatResponse('d1dfc248-75bb-43ab-85f7-03232d00b931');
+    // consoleLog($apiResponse);
+
+    // Crear solicitud de descarga masiva - Solicitud para descargar facturas de los últimos 5 días
+    //        $downloadRequestData = [
+    //            'downloadRuleId' => '15766a23-4a33-4a9a-b627-6bfc431a4dd1',
+    //            'downloadRequestTypeId' => 'Manual',
+    //            'startDate' => date('Y-m-d', strtotime('-5 days')),
+    //            'endDate' => date('Y-m-d')
+    //        ];
+    //        $apiResponse = $client->getDownloadRequestService()->create($downloadRequestData);
+    //        consoleLog($apiResponse);
+
+    // Eliminar solicitud de descarga masiva
+    // $apiResponse = $client->getDownloadRequestService()->delete('5259a336-ffd2-4097-8f0f-db23884f009f');
+    // consoleLog($apiResponse);
+
+    // Buscar solicitud de descarga masiva por fecha de creación (hoy)
+    // $apiResponse = $client->getDownloadRequestService()->search(date('Y-m-d'));
     // consoleLog($apiResponse);
 
 
