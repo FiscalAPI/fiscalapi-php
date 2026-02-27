@@ -12,10 +12,6 @@ use InvalidArgumentException;
  */
 class InvoiceService extends AbstractService implements InvoiceServiceInterface
 {
-    private const INCOME_ENDPOINT = 'income';
-    private const CREDIT_NOTE_ENDPOINT = 'credit-note';
-    private const PAYMENT_ENDPOINT = 'payment';
-
     /**
      * Constructor del servicio de facturas
      *
@@ -27,33 +23,14 @@ class InvoiceService extends AbstractService implements InvoiceServiceInterface
     }
 
 
-
+    
     /**
      * {@inheritdoc}
      */
     public function create(array $data): FiscalApiHttpResponseInterface
     {
-        if (!isset($data['typeCode'])) {
-            throw new InvalidArgumentException('El campo typeCode es obligatorio para crear una factura');
-        }
-
-        $endpoint = '';
-        switch ($data['typeCode']) {
-            case 'I':
-                $endpoint = self::INCOME_ENDPOINT;
-                break;
-            case 'E':
-                $endpoint = self::CREDIT_NOTE_ENDPOINT;
-                break;
-            case 'P':
-                $endpoint = self::PAYMENT_ENDPOINT;
-                break;
-            default:
-                throw new InvalidArgumentException(sprintf('Tipo de factura no soportado: %s', $data['typeCode']));
-        }
-
         return $this->httpClient->post(
-            $this->buildResourceUrl($endpoint),
+            $this->buildResourceUrl(),
             [
                 'data' => $data
             ]
