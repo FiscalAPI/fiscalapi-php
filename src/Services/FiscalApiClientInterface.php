@@ -73,7 +73,12 @@ interface FiscalApiClientInterface
      */
     public function getDownloadRequestService(): DownloadRequestServiceInterface;
 
-
+    /**
+     * Obtiene el servicio de timbres.
+     *
+     * @return StampServiceInterface
+     */
+    public function getStampService(): StampServiceInterface;
 
     /**
      * Obtiene el cliente HTTP subyacente.
