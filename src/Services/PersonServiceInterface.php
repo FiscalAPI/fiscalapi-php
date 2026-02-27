@@ -12,6 +12,20 @@ use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 interface PersonServiceInterface extends FiscalApiServiceInterface
 {
     /**
+     * Obtiene el sub-servicio de datos de empleado.
+     *
+     * @return EmployeeServiceInterface
+     */
+    public function getEmployeeService(): EmployeeServiceInterface;
+
+    /**
+     * Obtiene el sub-servicio de datos de empleador (patrón).
+     *
+     * @return EmployerServiceInterface
+     */
+    public function getEmployerService(): EmployerServiceInterface;
+
+    /**
      * Obtiene una lista de personas
      *
      * @param int $pageNumber Número de página
