@@ -883,9 +883,9 @@ try {
     //             'taxObjectCode' => "01"
     //         ]
     //     ],
-    //     // Sección de pagos - específica para complementos de pago
-    //     'payments' => [
-    //         [
+    //     // Complemento de pago
+    //     'complement' => [
+    //         'payment' => [
     //             'paymentDate' => "2025-03-31T14:44:56", // Fecha del pago
     //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
     //             'currencyCode' => "MXN",
@@ -948,9 +948,9 @@ try {
     //     // Nota: No se necesita la sección "items" cuando se usa el enfoque por referencias,
     //     // ya que el sistema generará automáticamente el concepto requerido
         
-    //     // Sección de pagos - específica para complementos de pago
-    //     'payments' => [
-    //         [
+    //     // Complemento de pago
+    //     'complement' => [
+    //         'payment' => [
     //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
     //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
     //             'currencyCode' => "MXN",
@@ -1038,9 +1038,9 @@ try {
     //             'taxObjectCode' => "01"
     //         ]
     //     ],
-    //     // Sección de pagos - específica para complementos de pago
-    //     'payments' => [
-    //         [
+    //     // Complemento de pago
+    //     'complement' => [
+    //         'payment' => [
     //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
     //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
     //             'currencyCode' => "USD", // El pago se realizó en dólares
@@ -1141,9 +1141,9 @@ try {
     //             'taxObjectCode' => "01"
     //         ]
     //     ],
-    //     // Sección de pagos - específica para complementos de pago
-    //     'payments' => [
-    //         [
+    //     // Complemento de pago
+    //     'complement' => [
+    //         'payment' => [
     //             'paymentDate' => "2025-03-31T14:44:56", // Actualizado a una fecha más reciente
     //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
     //             'currencyCode' => "MXN", // El pago se realizó en pesos mexicanos
@@ -1242,9 +1242,9 @@ try {
     //             'taxObjectCode' => "01"
     //         ]
     //     ],
-    //     // Sección de pagos - específica para complementos de pago
-    //     'payments' => [
-    //         [
+    //     // Complemento de pago
+    //     'complement' => [
+    //         'payment' => [
     //             'paymentDate' => "2024-06-03T14:44:56", // Fecha del pago
     //             'paymentFormCode' => "28", // 28 - Tarjeta de débito
     //             'currencyCode' => "EUR", // El pago se realizó en euros
