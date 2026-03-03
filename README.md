@@ -425,7 +425,7 @@ if ($apiResponse->succeeded) {
 - **Impuestos Locales**  
   Agregar complemento de impuestos locales (traslados y retenciones locales) a facturas de ingreso.
 - **Empleadores y Empleados**  
-  Gestión de datos de empleador (patrón) y empleado asociados a personas, necesarios para factuación de nómina.
+  Gestión de datos de empleador (patrón) y empleado asociados a personas, necesarios para facturación de nómina.
 - **Personas (Clientes/Emisores)**  
   Alta y administración de personas, gestión de certificados (CSD).
 - **Productos y Servicios**  
