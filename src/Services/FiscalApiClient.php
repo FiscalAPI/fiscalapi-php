@@ -17,6 +17,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?DownloadRuleServiceInterface $downloadRuleService = null;
     private ?DownloadRequestServiceInterface $downloadRequestService = null;
     private ?InvoiceServiceInterface $invoiceService = null;
+    private ?StampServiceInterface $stampService = null;
 
 
 
@@ -135,6 +136,18 @@ class FiscalApiClient implements FiscalApiClientInterface
             $this->downloadRequestService = new DownloadRequestService($this->httpClient);
         }
         return $this->downloadRequestService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStampService(): StampServiceInterface
+    {
+        if ($this->stampService === null) {
+            $this->stampService = new StampService($this->httpClient);
+        }
+
+        return $this->stampService;
     }
 
     /**

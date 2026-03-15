@@ -11,7 +11,7 @@ use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 interface InvoiceServiceInterface extends FiscalApiServiceInterface
 {
     /**
-     * Crea una nueva factura, nota de crédito o complemento de pago
+     * Crea una nueva factura, nota de crédito, complemento de pago o nómina.
      * 
      * @param array $data Datos de la factura
      * @return FiscalApiHttpResponseInterface

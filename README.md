@@ -32,6 +32,8 @@
 - **Administración de personas** (emisores, receptores, clientes, usuarios, etc.)
 - **Gestión de certificados CSD y FIEL** (subir archivos .cer y .key a FiscalAPI)
 - **Configuración de datos fiscales** (RFC, domicilio fiscal, régimen fiscal)
+- **Gestión de datos de empleador** (patrón) asociados a una persona
+- **Gestión de datos de empleado** (trabajador) asociados a una persona
 
 ## 🛍️ Gestión de Productos/Servicios
 - **Gestión de productos y servicios** con catálogo personalizable
@@ -417,7 +419,13 @@ if ($apiResponse->succeeded) {
 ## 📋 Operaciones Principales
 
 - **Facturas (CFDI)**  
-  Crear facturas de ingreso, notas de crédito, complementos de pago, cancelaciones, generación de PDF/XML.
+  Crear facturas de ingreso, notas de crédito, complementos de pago, nómina, cancelaciones, generación de PDF/XML.
+- **Nómina**  
+  Crear facturas de nómina (typeCode 'N') con complemento de nómina (percepciones, deducciones, etc.).
+- **Impuestos Locales**  
+  Agregar complemento de impuestos locales (traslados y retenciones locales) a facturas de ingreso.
+- **Empleadores y Empleados**  
+  Gestión de datos de empleador (patrón) y empleado asociados a personas, necesarios para facturación de nómina.
 - **Personas (Clientes/Emisores)**  
   Alta y administración de personas, gestión de certificados (CSD).
 - **Productos y Servicios**  
