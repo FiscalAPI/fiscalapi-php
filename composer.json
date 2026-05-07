@@ -1,6 +1,7 @@
 {
     "name": "fiscalapi/fiscalapi",
     "description": "SDK de PHP para FiscalAPI",
+    "version": "4.0.384",
     "type": "library",
     "license": "MPL-2.0",
     "homepage": "https://www.fiscalapi.com",
