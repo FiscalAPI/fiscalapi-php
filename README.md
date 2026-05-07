@@ -10,9 +10,12 @@
 - **Soporte completo para CFDI 4.0** con todas las especificaciones oficiales
 - **Timbrado de facturas de ingreso** con validación automática
 - **Timbrado de notas de crédito** (facturas de egreso)
-- **Timbrado de complementos de pago** en MXN, USD y EUR.
+- **Timbrado de complementos de pago** en MXN, USD y EUR
+- **Timbrado de facturas de nómina** 
+- **Timbrado de facturas de carta porte** 
+- **Timbrado de facturas de comercio exterior**  
 - **Consulta del estatus de facturas** en el SAT en tiempo real
-- **Cancelación de facturas**
+- **Cancelación de facturas** 
 - **Generación de archivos PDF** de las facturas con formato profesional
 - **Personalización de logos y colores** en los PDF generados
 - **Envío de facturas por correo electrónico** automatizado
