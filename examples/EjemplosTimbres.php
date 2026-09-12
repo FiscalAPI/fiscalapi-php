@@ -5,11 +5,15 @@ declare(strict_types=1);
  * Ejemplos de Timbres (Stamp Transactions)
  *
  * Este archivo contiene ejemplos de cómo usar el servicio de timbres de FiscalAPI.
- * Incluye operaciones de listar, obtener por ID, transferir y retirar timbres.
+ * Incluye operaciones de listar, obtener por ID, transferir y retirar.
+ *
+ * El recurso es un ledger de créditos: cada movimiento indica con creditType qué saldo mueve,
+ * timbres o créditos de validación. Los saldos nunca se mezclan.
  */
 
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 use Fiscalapi\Http\FiscalApiSettings;
+use Fiscalapi\Models\CreditType;
 use Fiscalapi\Services\FiscalApiClient;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -47,7 +51,8 @@ try {
 
 
     // ------------------------------------------------------------------
-    // Transferir timbres
+    // Transferir timbres.
+    // Al omitir creditType se transfieren timbres.
     // ------------------------------------------------------------------
     // $transParams = [
     //     'fromPersonId' => "0e82a655-5f0c-4e07-abab-8f322e4123ef",
@@ -60,16 +65,42 @@ try {
 
 
     // ------------------------------------------------------------------
-    // Retirar timbres
+    // Transferir créditos de validación.
+    // El saldo que se valida es el de créditos de validación de la persona de origen.
+    // ------------------------------------------------------------------
+    // $transParams = [
+    //     'fromPersonId' => "0e82a655-5f0c-4e07-abab-8f322e4123ef",
+    //     'toPersonId' => "da71df0c-f328-45ee-9bd9-3096ed02c164",
+    //     'amount' => 1,
+    //     'comments' => "venta de validaciones",
+    //     'creditType' => CreditType::VALIDATION,
+    // ];
+    // $apiResponse = $client->getStampService()->transferStamps($transParams);
+    // consoleLog($apiResponse);
+
+
+    // ------------------------------------------------------------------
+    // Retirar créditos: es una transferencia con origen y destino invertidos.
     // ------------------------------------------------------------------
     // $transParams = [
     //     'fromPersonId' => "da71df0c-f328-45ee-9bd9-3096ed02c164",
     //     'toPersonId' => "0e82a655-5f0c-4e07-abab-8f322e4123ef",
     //     'amount' => 1,
     //     'comments' => "prestamo",
+    //     'creditType' => CreditType::STAMP,
     // ];
-    // $apiResponse = $client->getStampService()->withdrawStamps($transParams);
+    // $apiResponse = $client->getStampService()->transferStamps($transParams);
     // consoleLog($apiResponse);
+
+
+    // ------------------------------------------------------------------
+    // Consultar los saldos de una persona.
+    // availableBalance son timbres y availableValidationBalance son créditos de validación.
+    // ------------------------------------------------------------------
+    // $apiResponse = $client->getPersonService()->get("da71df0c-f328-45ee-9bd9-3096ed02c164");
+    // $person = $apiResponse->getJson()['data'] ?? [];
+    // echo "Timbres disponibles: " . $person['availableBalance'] . "\n";
+    // echo "Créditos de validación disponibles: " . $person['availableValidationBalance'] . "\n";
 
 
 } catch (\Exception $e) {

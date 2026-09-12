@@ -48,6 +48,13 @@
 - **Búsqueda de información** en catálogos del SAT con filtros avanzados
 - **Acceso y búsqueda** en catálogos completos
 
+## ✅ Validaciones SAT
+- **Validación de la estructura del XML** conforme al Anexo 20 y a sus complementos
+- **Verificación del sello del CFDI y del sello del SAT** en el Timbre Fiscal Digital
+- **Vigencia del certificado del emisor** a la fecha de emisión del comprobante
+- **Estado del comprobante ante el SAT**, incluidas las cancelaciones posteriores a la emisión
+- **Consulta de los listados 69-B y 69-B Bis** del CFF por CFDI o por RFC
+
 ## 📖 Recursos Adicionales
 - **Cientos de ejemplos de código** disponibles en múltiples lenguajes de programación
 - Documentación completa con guías paso a paso
@@ -231,7 +238,7 @@ A continuación se muestran algunos ejemplos básicos para ilustrar cómo utiliz
 ### 1. Crear una Persona (Emisor o Receptor)
 
 ```php
-$fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
 
 $request = [
     'legalName' => 'Persona de Prueba',
@@ -239,14 +246,14 @@ $request = [
     'password' => 'YourStrongPassword123!',
 ];
 
-$apiResponse = $fiscalApi->persons->create($request);
+$apiResponse = $client->getPersonService()->create($request);
 ```
 
 ### 2. Subir Certificados CSD
 [Descarga certificados de prueba](https://docs.fiscalapi.com/tax-files-info)
 
 ```php
-$fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
 
 $certificadoCsd = [
     'personId' => '984708c4-fcc0-43bd-9d30-ec017815c20e',
@@ -264,14 +271,14 @@ $clavePrivadaCsd = [
     'tin' => 'EKU9003173C9'
 ];
 
-$apiResponseCer = $fiscalApi->taxFiles->create($certificadoCsd);
-$apiResponseKey = $fiscalApi->taxFiles->create($clavePrivadaCsd);
+$apiResponseCer = $client->getTaxFileService()->create($certificadoCsd);
+$apiResponseKey = $client->getTaxFileService()->create($clavePrivadaCsd);
 ```
 
 ### 3. Crear un Producto o Servicio
 
 ```php
-$fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
 
 $request = [
     'description' => 'Servicios contables',
@@ -281,13 +288,13 @@ $request = [
     'satProductCodeId' => '84111500'
 ];
 
-$apiResponse = $fiscalApi->products->create($request);
+$apiResponse = $client->getProductService()->create($request);
 ```
 
 ### 4. Actualizar Impuestos de un Producto
 
 ```php
-$fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
 
 $request = [
     'id' => '310301b3-1ae9-441b-b463-51a8f9ca8ba2',
@@ -303,13 +310,13 @@ $request = [
     ]
 ];
 
-$apiResponse = $fiscalApi->products->update($request['id'], $request);
+$apiResponse = $client->getProductService()->update($request);
 ```
 
 ### 5. Crear una Factura de Ingreso (Por Referencias)
 
 ```php
-$fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
 
 $invoice = [
     'versionCode' => '4.0',
@@ -335,13 +342,13 @@ $invoice = [
     'paymentMethodCode' => 'PUE',
 ];
 
-$apiResponse = $fiscalApi->invoices->create($invoice);
+$apiResponse = $client->getInvoiceService()->create($invoice);
 ```
 
 ### 6. Crear la Misma Factura de Ingreso (Por Valores)
 
 ```php
-$fiscalApi = new \Fiscalapi\Services\FiscalApiClient($settings);
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
 
 // Agregar sellos CSD, Emisor, Receptor, Items, etc.
 $invoice = [
@@ -399,22 +406,71 @@ $invoice = [
     'paymentMethodCode' => 'PUE',
 ];
 
-$apiResponse = $fiscalApi->invoices->create($invoice);
+$apiResponse = $client->getInvoiceService()->create($invoice);
 ```
 
 ### 7. Búsqueda en Catálogos del SAT
 
 ```php
 // Busca los registros que contengan 'inter' en el catalogo 'SatUnitMeasurements' (pagina 1, tamaño pagina 10)
-$apiResponse = $fiscalApi->catalogs->searchCatalog('SatUnitMeasurements', 'inter', 1, 10);
+$apiResponse = $client->getCatalogService()->search('SatUnitMeasurements', 'inter', 1, 10);
 
-if ($apiResponse->succeeded) {
-    foreach ($apiResponse->data->items as $item) {
-        echo "Unidad: {$item->description}\n";
+$json = $apiResponse->getJson();
+
+if ($json['succeeded']) {
+    foreach ($json['data']['items'] as $item) {
+        echo "Unidad: {$item['description']}\n";
     }
 } else {
-    echo $apiResponse->message;
+    echo $json['details'];
 }
+```
+
+### 8. Validar un CFDI ante el SAT
+
+Cada tipo de validación solicitado consume un crédito de validación. El cobro es todo o nada y ocurre
+antes de ejecutar: si el saldo no alcanza para todos los tipos solicitados no se ejecuta ninguno.
+
+```php
+use Fiscalapi\Models\SatValidationTypeIds;
+
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
+
+$apiResponse = $client->getSatValidationService()->validate([
+    'xml' => base64_encode(file_get_contents('/ruta/a/su/cfdi.xml')),
+    'validationTypes' => [
+        SatValidationTypeIds::XML_STRUCTURE,
+        SatValidationTypeIds::CFDI_SELLO,
+        SatValidationTypeIds::CFDI_STATUS,
+        SatValidationTypeIds::BLACKLIST_69B,
+    ],
+]);
+
+// Los resultados llegan en el orden del catálogo, no en el solicitado.
+// El veredicto de cada validación es la clave passed.
+foreach ($apiResponse->getJson()['data'] as $result) {
+    echo $result['type']['id'] . ': ' . $result['status']['id']
+       . ($result['passed'] ? ' (aprobada)' : ' (no aprobada)') . "\n";
+}
+```
+
+Para consultar únicamente los listados 69-B y 69-B Bis basta con el RFC, sin el CFDI:
+
+```php
+$apiResponse = $client->getSatValidationService()->validate([
+    'tin' => 'XAXX010101000',
+    'validationTypes' => [
+        SatValidationTypeIds::BLACKLIST_69B,
+        SatValidationTypeIds::BLACKLIST_69B_BIS,
+    ],
+]);
+```
+
+El catálogo de tipos y los estatus que cada uno puede tomar se consultan sin consumir créditos:
+
+```php
+$tipos = $client->getSatValidationService()->getTypes();
+$estatus = $client->getSatValidationService()->getStatuses(SatValidationTypeIds::CFDI_STATUS);
 ```
 
 ---
@@ -433,6 +489,10 @@ if ($apiResponse->succeeded) {
   Alta y administración de personas, gestión de certificados (CSD).
 - **Productos y Servicios**  
   Administración de catálogos de productos, búsqueda en catálogos SAT.
+- **Validaciones SAT**  
+  Validación de CFDI ante el SAT: estructura, sellos, vigencia del certificado, estado del comprobante y listados 69-B y 69-B Bis.
+- **Timbres y créditos de validación**  
+  Consulta y transferencia de saldos del ledger, diferenciados con `creditType`.
 
 
 ## 🤝 Contribuir

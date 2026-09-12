@@ -17,7 +17,7 @@ No test suite exists in the repo. No linting or static analysis tools are config
 
 ## Architecture
 
-**Two-layer design:** HTTP layer (`src/Http/`) and Service layer (`src/Services/`).
+**Two-layer design:** HTTP layer (`src/Http/`) and Service layer (`src/Services/`), plus `src/Models/` holding constant-only classes (no DTOs — the SDK is array-based).
 
 ### HTTP Layer (`Fiscalapi\Http`)
 - `FiscalApiSettings` — Configuration object (API URL, key, tenant, version, debug, SSL, timezone)
@@ -25,15 +25,20 @@ No test suite exists in the repo. No linting or static analysis tools are config
 - `FiscalApiHttpResponse` — PSR-7 response wrapper with JSON caching
 
 ### Service Layer (`Fiscalapi\Services`)
-- `AbstractService` — Base CRUD: `list()`, `get()`, `create()`, `update()`, `delete()`. All services extend this.
-- `FiscalApiClient` — Main entry point. Lazy-loads 9 services via getters (e.g., `getInvoiceService()`).
+- `AbstractService` — Base CRUD: `list()`, `get()`, `create()`, `update()`, `delete()`. Most services extend this; `SatValidationService`, `EmployeeService` and `EmployerService` are standalone.
+- `FiscalApiClient` — Main entry point. Lazy-loads 11 services via getters (e.g., `getInvoiceService()`). `EmployeeService` and `EmployerService` are reached through `getPersonService()`.
 - `FiscalApiClientFactory` — Static factory with instance caching keyed by `apiKey:tenant:apiUrl`.
 
 ### Notable Service Implementations
-- **InvoiceService** — Type-based routing: `'I'` → `income`, `'E'` → `credit-note`, `'P'` → `payment`. Has specialized methods: `cancel()`, `getPdf()`, `getXml()`, `send()`, `getStatus()`.
+- **InvoiceService** — Every invoice goes to a single `POST /invoices` carrying `typeCode` in the body (`'I'` income, `'E'` credit note, `'P'` payment, `'N'` payroll). Has specialized methods: `cancel()`, `getPdf()`, `getXml()`, `send()`, `getStatus()`.
 - **CatalogService** — Custom `search(catalogName, searchText)` and `getById(catalogName, id)` methods. Min search term: 4 chars.
 - **DownloadCatalogService** — Throws `BadMethodCallException` for standard CRUD; uses `getList()` and `listCatalog()` instead.
 - **DownloadRequestService** — Methods for downloading XMLs, metadata, ZIP packages, and SAT request/response files.
+- **SatValidationService** — SAT validations over a CFDI or an RFC. Standalone (not CRUD): `getTypes()`, `getTypeById()`, `getStatuses()`, `validate()`. Each requested validation type consumes one validation credit.
+- **StampService** — Credit ledger. `transferStamps()` takes an optional `creditType` (`CreditType::STAMP` or `CreditType::VALIDATION`); `withdrawStamps()` is deprecated and delegates to it.
+
+### Models (`Fiscalapi\Models`)
+Constant-only classes, no DTOs: `SatValidationTypeIds`, `SatValidationStatusIds`, `CreditType`. Values mirror the API contract exactly; identifiers follow PHP's `UPPER_SNAKE_CASE`.
 
 ## Coding Conventions
 
