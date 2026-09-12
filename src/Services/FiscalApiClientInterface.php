@@ -81,6 +81,13 @@ interface FiscalApiClientInterface
     public function getStampService(): StampServiceInterface;
 
     /**
+     * Obtiene el servicio de validaciones SAT.
+     *
+     * @return SatValidationServiceInterface
+     */
+    public function getSatValidationService(): SatValidationServiceInterface;
+
+    /**
      * Obtiene el cliente HTTP subyacente.
      *
      * @return FiscalApiHttpClientInterface

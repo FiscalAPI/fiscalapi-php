@@ -5,6 +5,7 @@ namespace Fiscalapi\Services;
 
 use Fiscalapi\Http\FiscalApiHttpClientInterface;
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
+use Fiscalapi\Models\CreditType;
 use InvalidArgumentException;
 
 /**
@@ -42,14 +43,7 @@ class StampService extends AbstractService implements StampServiceInterface
      */
     public function withdrawStamps(array $data): FiscalApiHttpResponseInterface
     {
-        $this->validateStampTransaction($data);
-
-        return $this->httpClient->post(
-            $this->buildResourceUrl(),
-            [
-                'data' => $data
-            ]
-        );
+        return $this->transferStamps($data);
     }
 
     /**
@@ -60,16 +54,21 @@ class StampService extends AbstractService implements StampServiceInterface
      */
     private function validateStampTransaction(array $data): void
     {
-        if (!isset($data['fromPersonId']) || empty(trim($data['fromPersonId']))) {
+        if (trim((string) ($data['fromPersonId'] ?? '')) === '') {
             throw new InvalidArgumentException('Se requiere el ID de la persona de origen para la transferencia de timbres');
         }
 
-        if (!isset($data['toPersonId']) || empty(trim($data['toPersonId']))) {
+        if (trim((string) ($data['toPersonId'] ?? '')) === '') {
             throw new InvalidArgumentException('Se requiere el ID de la persona de destino para la transferencia de timbres');
         }
 
         if (!isset($data['amount']) || $data['amount'] <= 0) {
             throw new InvalidArgumentException('La cantidad debe ser mayor que cero');
+        }
+
+        if (isset($data['creditType'])
+            && !in_array($data['creditType'], [CreditType::STAMP, CreditType::VALIDATION], true)) {
+            throw new InvalidArgumentException('creditType debe ser 1 (timbres) o 2 (créditos de validación)');
         }
     }
 }

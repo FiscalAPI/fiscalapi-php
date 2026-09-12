@@ -18,6 +18,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?DownloadRequestServiceInterface $downloadRequestService = null;
     private ?InvoiceServiceInterface $invoiceService = null;
     private ?StampServiceInterface $stampService = null;
+    private ?SatValidationServiceInterface $satValidationService = null;
 
 
 
@@ -148,6 +149,18 @@ class FiscalApiClient implements FiscalApiClientInterface
         }
 
         return $this->stampService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSatValidationService(): SatValidationServiceInterface
+    {
+        if ($this->satValidationService === null) {
+            $this->satValidationService = new SatValidationService($this->httpClient);
+        }
+
+        return $this->satValidationService;
     }
 
     /**
