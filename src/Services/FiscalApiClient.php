@@ -19,6 +19,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?InvoiceServiceInterface $invoiceService = null;
     private ?StampServiceInterface $stampService = null;
     private ?SatValidationServiceInterface $satValidationService = null;
+    private ?ManifestServiceInterface $manifestService = null;
 
 
 
@@ -161,6 +162,18 @@ class FiscalApiClient implements FiscalApiClientInterface
         }
 
         return $this->satValidationService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getManifestService(): ManifestServiceInterface
+    {
+        if ($this->manifestService === null) {
+            $this->manifestService = new ManifestService($this->httpClient);
+        }
+
+        return $this->manifestService;
     }
 
     /**

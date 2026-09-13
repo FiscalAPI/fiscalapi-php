@@ -14,6 +14,7 @@
 - **Timbrado de facturas de nómina** 
 - **Timbrado de facturas de carta porte** 
 - **Timbrado de facturas de comercio exterior**  
+- **Firma de la carta manifiesto** con la e.firma (FIEL) del contribuyente
 - **Consulta del estatus de facturas** en el SAT en tiempo real
 - **Cancelación de facturas** 
 - **Generación de archivos PDF** de las facturas con formato profesional
@@ -475,6 +476,144 @@ $estatus = $client->getSatValidationService()->getStatuses(SatValidationTypeIds:
 
 ---
 
+### 9. Crear una Factura de Comercio Exterior
+
+El complemento viaja bajo `complement.comercioExterior`. La API calcula `totalUSD` como la suma de
+`mercancias[].valorDolares`, por lo que no se envía. La clave es `tipoCambioUSD`, con `USD` en mayúsculas,
+y debe corresponder al tipo de cambio publicado por el DOF para la fecha del comprobante.
+
+> **Escala decimal.** El SAT valida la cantidad de decimales de varios campos y `json_encode` descarta los
+> ceros finales de un float: `0.160000` se transmite como `0.16` y el comprobante se rechaza con
+> **CFDI40179** en `cfdi:TasaOCuota` o **CCE122** en `cce20:TotalUSD`. Envía esos campos como string con los
+> decimales literales, tal como aparecen abajo. La API acepta número o string en los campos decimales.
+
+El domicilio del emisor usa claves catalogadas con sufijo `Id` (`coloniaId`, `localidadId`, `municipioId`,
+`estadoId`, `codigoPostalId`) porque es un domicilio en México. Los domicilios del receptor y de los
+destinatarios usan las claves de texto libre equivalentes sin sufijo (`colonia`, `localidad`, `municipio`,
+`estado`, `codigoPostal`), y solo `paisId` conserva el sufijo.
+
+```php
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
+
+$apiResponse = $client->getInvoiceService()->create([
+    'versionCode' => "4.0",
+    'paymentFormCode' => "99",
+    'paymentMethodCode' => "PPD",
+    'currencyCode' => "MXN",
+    'typeCode' => "I",
+    'expeditionZipCode' => "42501",
+    'series' => "CCE",
+    'date' => date('Y-m-d\TH:i:s'),
+    'exportCode' => "02",
+    'issuer' => [
+        'id' => "2e7b988f-3a2a-4f67-86e9-3f931dd48581"
+    ],
+    'recipient' => [
+        'tin' => "XEXX010101000",
+        'legalName' => "Persona Fisica Extranjera",
+        'zipCode' => "42501",
+        'taxRegimeCode' => "616",
+        'cfdiUseCode' => "S01",
+        'countryId' => "USA",        // c_Pais, 3 caracteres. Va a cfdi:Receptor@ResidenciaFiscal
+        'foreignTin' => "123456789"  // Va a cfdi:Receptor@NumRegIdTrib
+    ],
+    'items' => [
+        [
+            'itemCode' => "50211503",
+            'itemSku' => "131494-1055",
+            'quantity' => 2,
+            'unitOfMeasurementCode' => "H87",
+            'description' => "Cigarros",
+            'unitPrice' => 200.00,
+            'discount' => 0,
+            'taxObjectCode' => "02",
+            'itemTaxes' => [
+                [
+                    'taxCode' => "002",
+                    'taxTypeCode' => "Tasa",
+                    'taxRate' => "0.160000",  // string: conserva los 6 decimales
+                    'taxFlagCode' => "T"
+                ]
+            ]
+        ]
+    ],
+    'complement' => [
+        'comercioExterior' => [
+            'claveDePedimentoId' => "A1",
+            'certificadoOrigen' => 0,
+            'incotermId' => "FOB",
+            'tipoCambioUSD' => "16.9722",   // string: conserva los 4 decimales
+            'emisor' => [
+                'domicilio' => [
+                    'calle' => "CALLE DEL PAPEL",
+                    'coloniaId' => "0214",
+                    'localidadId' => "01",
+                    'municipioId' => "014",
+                    'estadoId' => "QUE",
+                    'paisId' => "MEX",
+                    'codigoPostalId' => "76199"
+                ]
+            ],
+            'receptor' => [
+                'numRegIdTrib' => "123456789",
+                'domicilio' => [
+                    'calle' => "ST. A",
+                    'estado' => "TX",
+                    'paisId' => "USA",
+                    'codigoPostal' => "00000"
+                ]
+            ],
+            'mercancias' => [
+                [
+                    'noIdentificacion' => "131494-1055",   // coincide con items[].itemSku
+                    'fraccionArancelariaId' => "2402200100",
+                    'cantidadAduana' => "2.00",
+                    'unidadAduanaId' => "01",
+                    'valorUnitarioAduana' => "11.74",
+                    'valorDolares' => "23.47"
+                ]
+            ]
+        ]
+    ]
+]);
+```
+
+`recipient.countryId` es obligatorio cuando se envía `recipient.foreignTin`, y debe omitirse cuando el
+receptor trae un `tin` distinto de `XEXX010101000` y la factura no lleva complemento de Comercio Exterior.
+Ambas reglas se omiten cuando el receptor se envía por `id`.
+
+La forma completa del complemento, con nullabilidad y longitudes, está documentada en el PHPDoc de
+`InvoiceServiceInterface::create()`. Hay ejemplos ejecutables en
+[`examples/EjemplosComercioExteriorValores.php`](examples/EjemplosComercioExteriorValores.php) y
+[`examples/EjemplosComercioExteriorReferencias.php`](examples/EjemplosComercioExteriorReferencias.php).
+
+---
+
+### 10. Firmar la Carta Manifiesto
+
+Requiere los archivos de la e.firma (FIEL) del contribuyente, no los del CSD de timbrado. El RFC del
+certificado debe corresponder a una persona registrada en el tenant.
+
+```php
+$client = new \Fiscalapi\Services\FiscalApiClient($settings);
+
+$apiResponse = $client->getManifestService()->sign([
+    'base64Cer' => base64_encode(file_get_contents('/ruta/a/fiel.cer')),
+    'base64Key' => base64_encode(file_get_contents('/ruta/a/fiel.key')),
+    'password' => 'contraseña de la llave privada',
+]);
+
+$json = $apiResponse->getJson();
+
+// data => ['base64File' => '<pdf en base64>', 'fileName' => '<RFC>.pdf', 'fileExtension' => '.pdf']
+file_put_contents($json['data']['fileName'], base64_decode($json['data']['base64File']));
+```
+
+Hay un ejemplo ejecutable en
+[`examples/EjemplosFirmaManifiestos.php`](examples/EjemplosFirmaManifiestos.php).
+
+---
+
 ## 📋 Operaciones Principales
 
 - **Facturas (CFDI)**  
@@ -483,6 +622,10 @@ $estatus = $client->getSatValidationService()->getStatuses(SatValidationTypeIds:
   Crear facturas de nómina (typeCode 'N') con complemento de nómina (percepciones, deducciones, etc.).
 - **Impuestos Locales**  
   Agregar complemento de impuestos locales (traslados y retenciones locales) a facturas de ingreso.
+- **Comercio Exterior**  
+  Agregar complemento de Comercio Exterior 2.0 a facturas de ingreso y comprobantes de traslado, con emisor, receptor, propietarios, destinatarios y mercancías.
+- **Manifiestos**  
+  Firmar la carta manifiesto del contribuyente con su e.firma (FIEL) y obtener el PDF firmado.
 - **Empleadores y Empleados**  
   Gestión de datos de empleador (patrón) y empleado asociados a personas, necesarios para facturación de nómina.
 - **Personas (Clientes/Emisores)**  

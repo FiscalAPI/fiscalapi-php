@@ -156,14 +156,14 @@ try {
     //             'taxes' => [
     //                 [
     //                     'taxName' => "CEDULAR",
-    //                     'taxRate' => 3.00,
-    //                     'taxAmount' => 6.00,
+    //                     'taxRate' => "3.00",
+    //                     'taxAmount' => "6.00",
     //                     'taxFlagCode' => "R"
     //                 ],
     //                 [
     //                     'taxName' => "ISH",
-    //                     'taxRate' => 8.00,
-    //                     'taxAmount' => 16.00,
+    //                     'taxRate' => "8.00",
+    //                     'taxAmount' => "16.00",
     //                     'taxFlagCode' => "R"
     //                 ]
     //             ]
@@ -288,8 +288,8 @@ try {
     //             'taxes' => [
     //                 [
     //                     'taxName' => "CEDULAR",
-    //                     'taxRate' => 3.00,
-    //                     'taxAmount' => 6.00,
+    //                     'taxRate' => "3.00",
+    //                     'taxAmount' => "6.00",
     //                     'taxFlagCode' => "R"
     //                 ]
     //             ]
@@ -414,8 +414,8 @@ try {
     //             'taxes' => [
     //                 [
     //                     'taxName' => "ISH",
-    //                     'taxRate' => 8.00,
-    //                     'taxAmount' => 16.00,
+    //                     'taxRate' => "8.00",
+    //                     'taxAmount' => "16.00",
     //                     'taxFlagCode' => "R"
     //                 ]
     //             ]

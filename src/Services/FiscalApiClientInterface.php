@@ -88,6 +88,13 @@ interface FiscalApiClientInterface
     public function getSatValidationService(): SatValidationServiceInterface;
 
     /**
+     * Obtiene el servicio de manifiestos.
+     *
+     * @return ManifestServiceInterface
+     */
+    public function getManifestService(): ManifestServiceInterface;
+
+    /**
      * Obtiene el cliente HTTP subyacente.
      *
      * @return FiscalApiHttpClientInterface
