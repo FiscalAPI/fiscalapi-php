@@ -1,6 +1,23 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * Ejemplos del complemento Comercio Exterior 2.0 por referencias.
+ *
+ * El emisor, el receptor y los conceptos se envian como id de entidades ya registradas.
+ * Un concepto por referencia lleva unicamente 'id' y 'quantity': la clave del SAT, la unidad
+ * de medida, la descripcion, el valor unitario y los impuestos los aporta el producto.
+ *
+ * Al facturar por referencia el atributo NoIdentificacion del concepto toma el id del producto,
+ * de modo que 'comercioExterior.mercancias[].noIdentificacion' debe llevar ese mismo id y no el
+ * SKU del producto. Si no coinciden, la mercancia del complemento no corresponde a ningun
+ * concepto del comprobante.
+ *
+ * Los comprobantes de traslado cuyos conceptos llevan valor unitario cero conservan sus
+ * conceptos en linea: un producto exige un valor unitario mayor a cero y el concepto no puede
+ * bajarlo.
+ */
+
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 use Fiscalapi\Http\FiscalApiSettings;
 use Fiscalapi\Services\FiscalApiClient;
@@ -8,28 +25,36 @@ use Fiscalapi\Services\FiscalApiClient;
 require_once __DIR__ . '/../vendor/autoload.php';
 
 
-// Ejemplos del complemento Comercio Exterior 2.0 referenciando emisor y receptor por id.
-//
-// El emisor referenciado debe tener sus sellos CSD cargados y el receptor debe tener uso de
-// CFDI configurado. Cuando el receptor se envia por id, la API toma de la persona su RFC,
-// nombre, codigo postal, regimen fiscal, pais de residencia y registro de identidad tributaria.
-//
-// Los campos decimales sensibles al SAT viajan como string con los decimales literales
-// ('taxRate' => "0.160000", 'tipoCambioUSD' => "16.9722", 'valorDolares' => "120.00").
-// json_encode descarta los ceros finales de un float, y el SAT rechaza el comprobante con
-// CFDI40179 en cfdi:TasaOCuota o CCE122 en cce20:TotalUSD cuando la escala no corresponde.
-//
-// 'tipoCambioUSD' debe ser el tipo de cambio publicado por el DOF para la fecha del comprobante.
-// Actualizalo antes de ejecutar cualquier ejemplo o el SAT responde CCE121.
-
 // Crea las configuraciones del cliente http fiscalapi.
 $settings = new FiscalApiSettings(
     'https://test.fiscalapi.com',
-    '<apiKey>',
-    '<tenant>',
+    '<API_KEY>',
+    '<TENANT_KEY>',
     false,
     false,
 );
+
+// Ids de las personas registradas en FiscalAPI.
+// El emisor debe tener su par de sellos CSD cargado y el receptor su uso de CFDI configurado.
+$issuerId = "<issuer-id>";                                  // ESCUELA KEMPER URGATE, regimen 601
+$recipientId = "<recipient-id>";                            // receptor extranjero, regimen 616
+$nationalRecipientId = "<national-recipient-id>";           // receptor con RFC mexicano, regimen 601
+
+// Ids de los productos registrados en FiscalAPI.
+// Cada producto define clave del SAT, unidad de medida, valor unitario, objeto de impuesto
+// e impuestos, de modo que el concepto solo necesita referirlo.
+$productoFleteId = "<producto-flete-id>";                                   // FLETE, IVA trasladado e IEPS retenido
+$productoGomitasId = "<producto-gomitas-id>";                               // Gomitas, IVA trasladado
+$productoPulparindoId = "<producto-pulparindo-id>";                         // Pulparindo, IVA trasladado
+$productoCigarrosId = "<producto-cigarros-id>";                             // Cigarros, IVA trasladado, ISR e IVA retenidos
+$productoCigarrosDosImpuestosId = "<producto-cigarros-dos-impuestos-id>";   // Cigarros, IVA trasladado e ISR retenido
+$productoBebidaId = "<producto-bebida-id>";                                 // Bebida, IVA trasladado, ISR e IVA retenidos
+$productoFormulaMagistralId = "<producto-formula-magistral-id>";            // FORMULA MAGISTRAL, sin impuestos
+$productoCigarrosSinImpuestosId = "<producto-cigarros-sin-impuestos-id>";   // Cigarros, sin impuestos
+
+// Tipo de cambio del dolar publicado por el DOF para la fecha del comprobante.
+// Si no corresponde, el SAT responde CCE121 e indica el valor esperado en el mensaje.
+$tipoCambioUSD = "16.9722";
 
 // Definir la fecha actual
 $currentDate = getCurrentDate();
@@ -45,7 +70,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Exportacion definitiva con traslado internacional de salida. Tres conceptos, dos mercancias.
+    // Tres conceptos por referencia y dos mercancias en el complemento.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -59,71 +84,23 @@ try {
     //     'paymentConditions' => "CondicionesDePago",
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "f8680ef5-49cb-4433-a604-3775c32e35a6"
+    //         'id' => $recipientId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "78101800",
-    //             'itemSku' => "SERV02",
-    //             'quantity' => 1.000000,
-    //             'unitOfMeasurementCode' => "HUR",
-    //             'description' => "FLETE",
-    //             'unitPrice' => 2300.000000,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "003",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.300000",
-    //                     'taxFlagCode' => "R"
-    //                 ]
-    //             ]
+    //             'id' => $productoFleteId,
+    //             'quantity' => 1.000000
     //         ],
     //         [
-    //             'itemCode' => "50161509",
-    //             'itemSku' => "A0001",
-    //             'quantity' => 1.000000,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Gomitas",
-    //             'unitPrice' => 120.000000,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ]
-    //             ]
+    //             'id' => $productoGomitasId,
+    //             'quantity' => 1.000000
     //         ],
     //         [
-    //             'itemCode' => "50307037",
-    //             'itemSku' => "A0002",
-    //             'quantity' => 1.000000,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Pulparindo",
-    //             'unitPrice' => 100.000000,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ]
-    //             ]
+    //             'id' => $productoPulparindoId,
+    //             'quantity' => 1.000000
     //         ]
     //     ],
     //     'complement' => [
@@ -223,7 +200,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "CIF",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "Av Siempre viva",
@@ -247,7 +224,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "A0001",
+    //                     'noIdentificacion' => $productoGomitasId,
     //                     'fraccionArancelariaId' => "4011101099",
     //                     'cantidadAduana' => "1.000",
     //                     'unidadAduanaId' => "06",
@@ -255,7 +232,7 @@ try {
     //                     'valorDolares' => "120.00"
     //                 ],
     //                 [
-    //                     'noIdentificacion' => "A0002",
+    //                     'noIdentificacion' => $productoPulparindoId,
     //                     'fraccionArancelariaId' => "8407210299",
     //                     'cantidadAduana' => "1.000",
     //                     'unidadAduanaId' => "06",
@@ -274,7 +251,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Exportacion facturada en pesos con IVA trasladado, ISR e IVA retenidos.
+    // El producto aporta el IVA trasladado y las retenciones de ISR e IVA.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -288,41 +265,15 @@ try {
     //     'paymentConditions' => "CondicionesDePago",
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "f8680ef5-49cb-4433-a604-3775c32e35a6"
+    //         'id' => $recipientId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "50211503",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 2,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Cigarros",
-    //             'unitPrice' => 200.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "001",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.100000",
-    //                     'taxFlagCode' => "R"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.106666",
-    //                     'taxFlagCode' => "R"
-    //                 ]
-    //             ]
+    //             'id' => $productoCigarrosId,
+    //             'quantity' => 2
     //         ]
     //     ],
     //     'complement' => [
@@ -330,7 +281,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -353,7 +304,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "131494-1055",
+    //                     'noIdentificacion' => $productoCigarrosId,
     //                     'fraccionArancelariaId' => "2402200100",
     //                     'cantidadAduana' => "2.00",
     //                     'unidadAduanaId' => "01",
@@ -372,7 +323,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Dos conceptos del comprobante consolidados en una sola mercancia del complemento.
+    // Dos conceptos del mismo producto consolidados en una sola mercancia.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -386,33 +337,19 @@ try {
     //     'paymentConditions' => "CondicionesDePago",
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "f8680ef5-49cb-4433-a604-3775c32e35a6"
+    //         'id' => $recipientId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "51241200",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 1.0,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "FORMULA MAGISTRAL",
-    //             'unitPrice' => 200.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "01",
-    //             'itemTaxes' => []
+    //             'id' => $productoFormulaMagistralId,
+    //             'quantity' => 1.0
     //         ],
     //         [
-    //             'itemCode' => "51241200",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 1.0,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "FORMULA MAGISTRAL",
-    //             'unitPrice' => 200.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "01",
-    //             'itemTaxes' => []
+    //             'id' => $productoFormulaMagistralId,
+    //             'quantity' => 1.0
     //         ]
     //     ],
     //     'complement' => [
@@ -420,7 +357,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -442,7 +379,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "131494-1055",
+    //                     'noIdentificacion' => $productoFormulaMagistralId,
     //                     'fraccionArancelariaId' => "2402200100",
     //                     'cantidadAduana' => "2",
     //                     'unidadAduanaId' => "01",
@@ -461,7 +398,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Caso minimo de exportacion: receptor XEXX010101000 con countryId y foreignTin.
+    // Caso minimo de exportacion con el concepto tomado del catalogo de productos.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -475,35 +412,15 @@ try {
     //     'paymentConditions' => "CondicionesDePago",
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "f8680ef5-49cb-4433-a604-3775c32e35a6"
+    //         'id' => $recipientId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "50211503",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 2,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Cigarros",
-    //             'unitPrice' => 200.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "001",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.100000",
-    //                     'taxFlagCode' => "R"
-    //                 ]
-    //             ]
+    //             'id' => $productoCigarrosDosImpuestosId,
+    //             'quantity' => 2
     //         ]
     //     ],
     //     'complement' => [
@@ -511,7 +428,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -534,7 +451,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "131494-1055",
+    //                     'noIdentificacion' => $productoCigarrosDosImpuestosId,
     //                     'fraccionArancelariaId' => "2402200100",
     //                     'cantidadAduana' => "117.64",
     //                     'unidadAduanaId' => "01",
@@ -553,7 +470,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Exportacion facturada a un RFC mexicano: el receptor no lleva countryId ni foreignTin.
+    // Exportacion facturada a un RFC mexicano registrado como persona.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -567,41 +484,15 @@ try {
     //     'paymentConditions' => "CondicionesDePago",
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "4f7daa04-a05f-41e9-8d36-33430d607ace"
+    //         'id' => $nationalRecipientId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "50211503",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 2,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Cigarros",
-    //             'unitPrice' => 200.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "001",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.100000",
-    //                     'taxFlagCode' => "R"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.106666",
-    //                     'taxFlagCode' => "R"
-    //                 ]
-    //             ]
+    //             'id' => $productoCigarrosId,
+    //             'quantity' => 2
     //         ]
     //     ],
     //     'complement' => [
@@ -609,7 +500,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -634,7 +525,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "131494-1055",
+    //                     'noIdentificacion' => $productoCigarrosId,
     //                     'fraccionArancelariaId' => "2402200100",
     //                     'cantidadAduana' => "117.64",
     //                     'unidadAduanaId' => "01",
@@ -653,7 +544,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Traslado en moneda XXX. El receptor del comprobante es el propio emisor.
+    // Conceptos en linea: llevan valor unitario cero, que un producto no admite.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -664,10 +555,10 @@ try {
     //     'date' => $currentDate,
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'items' => [
     //         [
@@ -790,7 +681,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -831,7 +722,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Traslado con motivoTrasladoId y un destinatario con su domicilio en el extranjero.
+    // Concepto en linea: lleva valor unitario cero, que un producto no admite.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -842,10 +733,10 @@ try {
     //     'date' => $currentDate,
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'items' => [
     //         [
@@ -866,7 +757,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FCA",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -925,7 +816,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Traslado simple con complemento de Comercio Exterior unicamente.
+    // Traslado con el concepto tomado de un producto sin impuestos.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -936,22 +827,15 @@ try {
     //     'date' => $currentDate,
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "50211503",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 2,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Cigarros",
-    //             'unitPrice' => 200.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "01",
-    //             'itemTaxes' => []
+    //             'id' => $productoCigarrosSinImpuestosId,
+    //             'quantity' => 2
     //         ]
     //     ],
     //     'complement' => [
@@ -959,7 +843,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -981,7 +865,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "131494-1055",
+    //                     'noIdentificacion' => $productoCigarrosSinImpuestosId,
     //                     'fraccionArancelariaId' => "2402200100",
     //                     'cantidadAduana' => "117.64",
     //                     'unidadAduanaId' => "01",
@@ -1000,7 +884,7 @@ try {
     // ==================================================================
 
     // ------------------------------------------------------------------
-    // Exportacion de un solo concepto con su mercancia correspondiente.
+    // Un concepto por referencia con sus tres impuestos definidos en el producto.
     // ------------------------------------------------------------------
     // $invoice = [
     //     'versionCode' => "4.0",
@@ -1014,41 +898,15 @@ try {
     //     'paymentConditions' => "CondicionesDePago",
     //     'exportCode' => "02",
     //     'issuer' => [
-    //         'id' => "b2c921d7-dd04-41d2-ad51-956cd2e8ebe9"
+    //         'id' => $issuerId
     //     ],
     //     'recipient' => [
-    //         'id' => "f8680ef5-49cb-4433-a604-3775c32e35a6"
+    //         'id' => $recipientId
     //     ],
     //     'items' => [
     //         [
-    //             'itemCode' => "50201708",
-    //             'itemSku' => "131494-1055",
-    //             'quantity' => 1.000,
-    //             'unitOfMeasurementCode' => "H87",
-    //             'description' => "Bebida",
-    //             'unitPrice' => 100.00,
-    //             'discount' => 0,
-    //             'taxObjectCode' => "02",
-    //             'itemTaxes' => [
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.160000",
-    //                     'taxFlagCode' => "T"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "001",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.100000",
-    //                     'taxFlagCode' => "R"
-    //                 ],
-    //                 [
-    //                     'taxCode' => "002",
-    //                     'taxTypeCode' => "Tasa",
-    //                     'taxRate' => "0.106666",
-    //                     'taxFlagCode' => "R"
-    //                 ]
-    //             ]
+    //             'id' => $productoBebidaId,
+    //             'quantity' => 1.000
     //         ]
     //     ],
     //     'complement' => [
@@ -1056,7 +914,7 @@ try {
     //             'claveDePedimentoId' => "A1",
     //             'certificadoOrigen' => 0,
     //             'incotermId' => "FOB",
-    //             'tipoCambioUSD' => "16.9722",
+    //             'tipoCambioUSD' => $tipoCambioUSD,
     //             'emisor' => [
     //                 'domicilio' => [
     //                     'calle' => "CALLE DEL PAPEL",
@@ -1079,7 +937,7 @@ try {
     //             ],
     //             'mercancias' => [
     //                 [
-    //                     'noIdentificacion' => "131494-1055",
+    //                     'noIdentificacion' => $productoBebidaId,
     //                     'fraccionArancelariaId' => "2009310201",
     //                     'cantidadAduana' => "0.500",
     //                     'unidadAduanaId' => "08",
