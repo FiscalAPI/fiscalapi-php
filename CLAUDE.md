@@ -13,7 +13,17 @@ composer install          # Install dependencies
 composer dump-autoload    # Regenerate autoloader after namespace/class changes
 ```
 
-No test suite exists in the repo. No linting or static analysis tools are configured.
+No linting or static analysis tools are configured.
+
+## Tests
+
+```bash
+composer test             # PHPUnit 9.6 (the last series that runs on PHP 7.4) over tests/
+```
+
+PHPUnit needs `ext-mbstring`. A PHP without a `php.ini` can load it per call: `php -d extension_dir=<php>/ext -d extension=mbstring vendor/bin/phpunit`.
+
+`tests/` holds offline tests (`Fiscalapi\Tests\`, `autoload-dev`). `FakeFiscalApiHttpClient` implements `FiscalApiHttpClientInterface` and answers every request with a fixed JSON from `tests/fixtures/` (shaped like the API's camelCase responses, enums as integers), so each test runs the real service → `FiscalApiHttpResponse::getJson()` path. `ResponseToleranceTest` characterizes how the SDK handles responses of upcoming API phases.
 
 ## Architecture
 
