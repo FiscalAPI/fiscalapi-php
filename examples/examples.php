@@ -101,7 +101,7 @@ try {
     //     'tin' => 'XEXX010101AAA', //RFC  debe coincidir con el RFC de la constancia de situacion fiscal
     //     'zipCode' => '12345', //Codigo postal debe coincidir con el codigo postal de la constancia de situacion fiscal
     //     'base64Photo' => null, //Foto en base64 paara el dashboard de fiscalapi
-    //     'taxPassword' => '12345678a', //Contraseña de los sellos CSD cuando el contexto de la persona es emisor 
+    //     'taxPassword' => '12345678a', // contraseña de la .key que la persona guarda en su perfil; el API no la usa para sellar (al timbrar usa la de sus certificados). null la conserva y "" la borra
     // ];
     // $apiResponse = $client->getPersonService()->update($data);
     // consoleLog($apiResponse);
