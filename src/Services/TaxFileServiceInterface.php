@@ -37,10 +37,11 @@ interface TaxFileServiceInterface extends FiscalApiServiceInterface
     public function create(array $data): FiscalApiHttpResponseInterface;
 
     /**
-     * Actualiza un archivo fiscal existente. Debe incluir el key 'id' en el array asociativo.
+     * No disponible: el API retiró PUT /api/v4/tax-files/{id}, que responde 405 (Method Not Allowed).
      *
      * @param array $data Datos a actualizar
      * @return FiscalApiHttpResponseInterface
+     * @deprecated Un certificado no se edita: suba el nuevo con create() y elimine el anterior con delete().
      */
     public function update(array $data): FiscalApiHttpResponseInterface;
 
