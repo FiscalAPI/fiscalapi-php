@@ -80,8 +80,7 @@ try {
 
     // // Crear persona (usuario/emisor/receptor/cliente, etc ) con datos minimos requeridos
     // $data = [
-    //     'legalName' => 'MI EMPRESA',
-    //     'capitalRegime' => "S.A. DE C.V.", // omitir cuando sea persona fisica
+    //     'legalName' => 'MI EMPRESA', // razón social sin régimen de capital (sin "S.A. DE C.V.")
     //     'email' => 'juan.perez@example.com',
     //     'password' => 'YourPassword123!', // contraseña el dashboard de fiscalapi. usted decide si su cliente tiene acceso al dashboard o no, entregando las contraseña o no.
     // ];
@@ -92,14 +91,13 @@ try {
     // Actualizar persona (usuario/emisor/receptor/cliente, etc ) por id
     // $data = [
     //     'id' => '39b32f44-b975-4f3b-a3f9-cb093eb0baa9', // id de la persona a actualizar
-    //     'legalName' => 'MI EMPRESA ACTUALIZADA',
-    //     'capitalRegime' => "S DE R.L. DE C.V.", // omitir cuando sea persona fisica
+    //     'legalName' => 'MI EMPRESA ACTUALIZADA', // razón social sin régimen de capital
     //     //'email' => 'juan.perez@example.com', // solo si necesita actualizar el email
-    //     'password' => 'YourPassword123!', // contraseña el dashboard de fiscalapi. usted decide si su cliente tiene acceso al dashboard o no, entregando las contraseña o no.
+    //     'password' => 'YourPassword123!', // opcional al actualizar: si la omite o la envía null o vacía, se conserva la actual
     //     'phoneNumber' => '+521234567890', // solo si necesita actualizar el telefono
     //     'satTaxRegimeId' => '601', //Regimen fiscal General de Ley Personas Morales
     //     'satCfdiUseId' => 'G03', //Uso de CFDI G03	Gastos en general cuando el contexto de la persona es receptor 
-    //     'userTypeId' => 'T', // T: Tenant, C: Cliente , U: Usuario (solo con fines informativos)
+    //     'userTypeId' => 'C', // C: Cliente, U: Usuario (solo con fines informativos). T (Tenant) solo se acepta si la persona ya es T
     //     'tin' => 'XEXX010101AAA', //RFC  debe coincidir con el RFC de la constancia de situacion fiscal
     //     'zipCode' => '12345', //Codigo postal debe coincidir con el codigo postal de la constancia de situacion fiscal
     //     'base64Photo' => null, //Foto en base64 paara el dashboard de fiscalapi
