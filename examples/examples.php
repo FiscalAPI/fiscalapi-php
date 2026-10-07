@@ -124,7 +124,7 @@ try {
     // // Crear certificado (subir el certificado A fiscalapi y asignarlo al cliente KARLA FUENTE NOLASCO)
     // $data = [
     //     'personId' => '3f3478b4-60fd-459e-8bfc-f8239fc96257', // id de la persona (emisor/receptor/cliente) a quien se le asigna el certificado
-    //     'tin' => 'FUNK671228PH6', // RFC del propietario del certificado (.cer) o clave privada (.key)
+    //     'tin' => 'FUNK671228PH6', // RFC de la persona (opcional; si se envía, debe ser el de la persona)
     //     'fileType' => 0, // 0: Certificado CSD (.cer) | 1: ClavePrivada CSD (.key)
     //     'password' => '12345678a', // contraseña de la clave privada independiente si está subiendo un el certificado (.cer) o la clave privada (.key)
     //     'base64File' => $base64Cert, // base64 del certificado o clave privada. Lea como convertir los sellos a base64: https://docs.fiscalapi.com/tax-files-info#codificacion-de-fiel-o-csd-en-base64
@@ -136,7 +136,7 @@ try {
      // // Crear clave privada (subir el clave privada A fiscalapi y asignarlo al cliente KARLA FUENTE NOLASCO)
     //  $data = [
     //     'personId' => '3f3478b4-60fd-459e-8bfc-f8239fc96257', // id de la persona (emisor/receptor/cliente) a quien se le asigna el certificado
-    //     'tin' => 'FUNK671228PH6', // RFC del propietario del certificado (.cer) o clave privada (.key)
+    //     'tin' => 'FUNK671228PH6', // RFC de la persona (opcional; si se envía, debe ser el de la persona)
     //     'fileType' => 1, // 0: Certificado CSD (.cer) | 1: ClavePrivada CSD (.key)
     //     'password' => '12345678a', // contraseña de la clave privada independiente si está subiendo un el certificado (.cer) o la clave privada (.key)
     //     'base64File' => $base64Key, // base64 del certificado o clave privada. Lea como convertir los sellos a base64: https://docs.fiscalapi.com/tax-files-info#codificacion-de-fiel-o-csd-en-base64
