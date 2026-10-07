@@ -20,7 +20,9 @@ El SDK envía y recibe las personas como arreglos, así que estos cambios del co
 - En un 400 de validación, cada falla de `data` trae `attemptedValue`: el valor de un secreto (contraseñas, códigos, tokens, archivos y contraseñas de CSD/FIEL) llega enmascarado como `"[masked: n]"` (`n` es su longitud), o `"[masked]"` si la falla es de un objeto o una lista que lo contiene.
 - En `taxCredentials` (facturas y cancelaciones por valores), `password` solo se exige en la llave privada (.key); en el certificado (.cer) el API no la usa. Al subir certificados con `getTaxFileService()->create()`, `password` sigue siendo obligatoria en el .cer y en la .key.
 - `tin` es opcional en `getTaxFileService()->create()`: si se omite o va vacío, el API usa el RFC de la persona. Si se envía, debe ser el RFC de la persona (sin distinguir mayúsculas); si no, el API responde 400 con la falla en `Tin` (después de comprobar que puede gestionar los certificados de la persona; si no, 403). El API no guarda el valor enviado: el `tin` del archivo siempre es el RFC de la persona.
+- `fileType` (al subir certificados y en `taxCredentials`) va como número: `0` = certificado (.cer), `1` = llave privada (.key). El API no acepta el nombre (`'CertificateCsd'`, `'PrivateKeyCsd'`): responde 400.
 
 ### Ejemplos
 
 - `examples/examples.php`: sin `capitalRegime`, `userTypeId` `'C'` y los comentarios de `password` y `taxPassword` corregidos.
+- `README.md`: los ejemplos "Subir Certificados CSD" y de factura por valores envían `fileType` como número (`0`/`1`) en lugar del nombre.
