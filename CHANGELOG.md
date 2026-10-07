@@ -4,6 +4,10 @@ Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a qui
 
 ## [Sin publicar]
 
+### Cambios incompatibles (BREAKING)
+
+- El API deja de devolver `stripeCustomerId` y `subscriptionStatus` en las personas (`getPersonService()` y la persona de las reglas de descarga): eran datos internos de Stripe. El SDK no cambia, pero el arreglo de la persona ya no trae esas llaves: quite toda lectura de `$persona['stripeCustomerId']` o `$persona['subscriptionStatus']` (ahora da el aviso "Undefined array key" y `null`).
+
 ### Personas (`getPersonService()`)
 
 El SDK envía y recibe las personas como arreglos, así que estos cambios del contrato no cambian código:
@@ -14,6 +18,8 @@ El SDK envía y recibe las personas como arreglos, así que estos cambios del co
 - `userTypeId`: `'C'` (cliente, el valor por omisión al crear) o `'U'` (usuario). `'T'` (tenant) solo llega en respuestas: el API lo rechaza al crear y al actualizar solo lo acepta si la persona ya es `'T'`.
 - `taxPassword` es la contraseña de la llave privada (.key) que la persona guarda en su perfil; el API no la usa para sellar (al timbrar usa la contraseña de los certificados registrados o la de `taxCredentials`). Solo la reciben con valor la propia persona y el owner del tenant; los demás reciben `null`. Al actualizar, `null` la conserva y `''` la borra.
 - El API ya no devuelve `twoFactorEnabled` en las personas.
+- El API ya no devuelve `stripeCustomerId` ni `subscriptionStatus` en las personas (ver «Cambios incompatibles»).
+- `validTo` y `committedBalance` son de solo lectura: el API los ignora al crear o actualizar. `validTo` es el fin de vigencia de la persona: lo asigna el API, casi siempre es `null` y es informativo (no limita el timbrado ni el acceso al API). `committedBalance` es un campo heredado que el API ya no calcula y siempre vale `0`; para el saldo use `availableBalance`, `availableValidationBalance` o `balances`.
 
 ### Otras notas del API
 
