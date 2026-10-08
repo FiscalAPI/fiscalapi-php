@@ -20,6 +20,9 @@ final class FakeFiscalApiHttpClient implements FiscalApiHttpClientInterface
     /** @var string[] */
     private array $requestedUris = [];
 
+    /** @var array<int, array{method: string, uri: string, options: array}> */
+    private array $requests = [];
+
     public static function readFixture(string $name): string
     {
         $contents = file_get_contents(__DIR__ . '/fixtures/' . $name);
@@ -41,6 +44,16 @@ final class FakeFiscalApiHttpClient implements FiscalApiHttpClientInterface
     public function getRequestedUris(): array
     {
         return $this->requestedUris;
+    }
+
+    /**
+     * Peticiones recibidas: método, URI y las opciones tal como las armó el servicio (el cuerpo va en 'data').
+     *
+     * @return array<int, array{method: string, uri: string, options: array}>
+     */
+    public function getRequests(): array
+    {
+        return $this->requests;
     }
 
     public function get(string $uri, array $options = []): FiscalApiHttpResponseInterface
@@ -81,6 +94,7 @@ final class FakeFiscalApiHttpClient implements FiscalApiHttpClientInterface
     public function request(string $method, string $uri, array $options = []): FiscalApiHttpResponseInterface
     {
         $this->requestedUris[] = $method . ' ' . $uri;
+        $this->requests[] = ['method' => $method, 'uri' => $uri, 'options' => $options];
 
         return new FiscalApiHttpResponse(new Response(200, ['Content-Type' => 'application/json'], $this->body));
     }
