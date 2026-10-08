@@ -609,6 +609,8 @@ $json = $apiResponse->getJson();
 file_put_contents($json['data']['fileName'], base64_decode($json['data']['base64File']));
 ```
 
+Al firmar, todas las personas del tenant con el RFC del certificado quedan con `manifestStatusId` en `Signed`.
+
 Hay un ejemplo ejecutable en
 [`examples/EjemplosFirmaManifiestos.php`](examples/EjemplosFirmaManifiestos.php).
 
