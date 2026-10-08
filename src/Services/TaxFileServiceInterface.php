@@ -10,6 +10,9 @@ use Fiscalapi\Http\FiscalApiHttpResponseInterface;
  *
  * No tiene update(): el API no actualiza certificados (PUT /api/v4/tax-files/{id} responde 405).
  * Para cambiar un certificado, suba el nuevo con create() y elimine el anterior con delete().
+ *
+ * La contraseña de la llave privada ('password') solo se envía al subir con create(): en las consultas (list(), get() y la
+ * respuesta de create()) el API la devuelve vacía (''); solo getDefaultValues() la devuelve.
  */
 interface TaxFileServiceInterface extends ImmutableFiscalApiServiceInterface
 {
