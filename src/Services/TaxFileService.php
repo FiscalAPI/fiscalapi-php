@@ -9,7 +9,7 @@ use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 /**
  * Implementación del servicio de certificados CSD del SAT
  */
-class TaxFileService extends AbstractService implements TaxFileServiceInterface
+class TaxFileService extends AbstractImmutableService implements TaxFileServiceInterface
 {
     /**
      * Constructor del servicio de certificados CSD del SAT

@@ -80,8 +80,7 @@ try {
 
     // // Crear persona (usuario/emisor/receptor/cliente, etc ) con datos minimos requeridos
     // $data = [
-    //     'legalName' => 'MI EMPRESA',
-    //     'capitalRegime' => "S.A. DE C.V.", // omitir cuando sea persona fisica
+    //     'legalName' => 'MI EMPRESA', // razón social sin régimen de capital (sin "S.A. DE C.V.")
     //     'email' => 'juan.perez@example.com',
     //     'password' => 'YourPassword123!', // contraseña el dashboard de fiscalapi. usted decide si su cliente tiene acceso al dashboard o no, entregando las contraseña o no.
     // ];
@@ -92,18 +91,17 @@ try {
     // Actualizar persona (usuario/emisor/receptor/cliente, etc ) por id
     // $data = [
     //     'id' => '39b32f44-b975-4f3b-a3f9-cb093eb0baa9', // id de la persona a actualizar
-    //     'legalName' => 'MI EMPRESA ACTUALIZADA',
-    //     'capitalRegime' => "S DE R.L. DE C.V.", // omitir cuando sea persona fisica
+    //     'legalName' => 'MI EMPRESA ACTUALIZADA', // razón social sin régimen de capital
     //     //'email' => 'juan.perez@example.com', // solo si necesita actualizar el email
-    //     'password' => 'YourPassword123!', // contraseña el dashboard de fiscalapi. usted decide si su cliente tiene acceso al dashboard o no, entregando las contraseña o no.
+    //     'password' => 'YourPassword123!', // opcional al actualizar: si la omite o la envía null o vacía, se conserva la actual
     //     'phoneNumber' => '+521234567890', // solo si necesita actualizar el telefono
     //     'satTaxRegimeId' => '601', //Regimen fiscal General de Ley Personas Morales
     //     'satCfdiUseId' => 'G03', //Uso de CFDI G03	Gastos en general cuando el contexto de la persona es receptor 
-    //     'userTypeId' => 'T', // T: Tenant, C: Cliente , U: Usuario (solo con fines informativos)
+    //     'userTypeId' => 'C', // C: Cliente, U: Usuario (solo con fines informativos). T (Tenant) solo se acepta si la persona ya es T
     //     'tin' => 'XEXX010101AAA', //RFC  debe coincidir con el RFC de la constancia de situacion fiscal
     //     'zipCode' => '12345', //Codigo postal debe coincidir con el codigo postal de la constancia de situacion fiscal
     //     'base64Photo' => null, //Foto en base64 paara el dashboard de fiscalapi
-    //     'taxPassword' => '12345678a', //Contraseña de los sellos CSD cuando el contexto de la persona es emisor 
+    //     'taxPassword' => '12345678a', // contraseña de la .key que la persona guarda en su perfil; el API no la usa para sellar (al timbrar usa la de sus certificados). null la conserva y "" la borra
     // ];
     // $apiResponse = $client->getPersonService()->update($data);
     // consoleLog($apiResponse);
@@ -126,7 +124,7 @@ try {
     // // Crear certificado (subir el certificado A fiscalapi y asignarlo al cliente KARLA FUENTE NOLASCO)
     // $data = [
     //     'personId' => '3f3478b4-60fd-459e-8bfc-f8239fc96257', // id de la persona (emisor/receptor/cliente) a quien se le asigna el certificado
-    //     'tin' => 'FUNK671228PH6', // RFC del propietario del certificado (.cer) o clave privada (.key)
+    //     'tin' => 'FUNK671228PH6', // RFC de la persona (opcional; si se envía, debe ser el de la persona)
     //     'fileType' => 0, // 0: Certificado CSD (.cer) | 1: ClavePrivada CSD (.key)
     //     'password' => '12345678a', // contraseña de la clave privada independiente si está subiendo un el certificado (.cer) o la clave privada (.key)
     //     'base64File' => $base64Cert, // base64 del certificado o clave privada. Lea como convertir los sellos a base64: https://docs.fiscalapi.com/tax-files-info#codificacion-de-fiel-o-csd-en-base64
@@ -138,7 +136,7 @@ try {
      // // Crear clave privada (subir el clave privada A fiscalapi y asignarlo al cliente KARLA FUENTE NOLASCO)
     //  $data = [
     //     'personId' => '3f3478b4-60fd-459e-8bfc-f8239fc96257', // id de la persona (emisor/receptor/cliente) a quien se le asigna el certificado
-    //     'tin' => 'FUNK671228PH6', // RFC del propietario del certificado (.cer) o clave privada (.key)
+    //     'tin' => 'FUNK671228PH6', // RFC de la persona (opcional; si se envía, debe ser el de la persona)
     //     'fileType' => 1, // 0: Certificado CSD (.cer) | 1: ClavePrivada CSD (.key)
     //     'password' => '12345678a', // contraseña de la clave privada independiente si está subiendo un el certificado (.cer) o la clave privada (.key)
     //     'base64File' => $base64Key, // base64 del certificado o clave privada. Lea como convertir los sellos a base64: https://docs.fiscalapi.com/tax-files-info#codificacion-de-fiel-o-csd-en-base64
