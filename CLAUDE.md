@@ -13,7 +13,17 @@ composer install          # Install dependencies
 composer dump-autoload    # Regenerate autoloader after namespace/class changes
 ```
 
-No test suite exists in the repo. No linting or static analysis tools are configured.
+No linting or static analysis tools are configured.
+
+## Tests
+
+```bash
+composer test             # PHPUnit 9.6 (the last series that runs on PHP 7.4) over tests/
+```
+
+PHPUnit needs `ext-mbstring`. A PHP without a `php.ini` can load it per call: `php -d extension_dir=<php>/ext -d extension=mbstring vendor/bin/phpunit`.
+
+`tests/` holds offline tests (`Fiscalapi\Tests\`, `autoload-dev`). `FakeFiscalApiHttpClient` implements `FiscalApiHttpClientInterface` and answers every request with a fixed JSON from `tests/fixtures/` (shaped like the API's camelCase responses, enums as integers), so each test runs the real service → `FiscalApiHttpResponse::getJson()` path. `ResponseToleranceTest` characterizes how the SDK handles responses of upcoming API phases.
 
 ## Architecture
 
@@ -25,7 +35,7 @@ No test suite exists in the repo. No linting or static analysis tools are config
 - `FiscalApiHttpResponse` — PSR-7 response wrapper with JSON caching
 
 ### Service Layer (`Fiscalapi\Services`)
-- `AbstractService` — Base CRUD: `list()`, `get()`, `create()`, `update()`, `delete()`. Most services extend this; `SatValidationService`, `EmployeeService` and `EmployerService` are standalone.
+- `AbstractImmutableService` (implements `ImmutableFiscalApiServiceInterface`) — `list()`, `get()`, `create()`, `delete()`. `AbstractService` (implements `FiscalApiServiceInterface`) extends it with `update()`. Most services extend `AbstractService`; `TaxFileService` extends only `AbstractImmutableService` (the API does not update certificates: PUT tax-files answers 405, so `update()` does not exist on the tax-file service); `SatValidationService`, `EmployeeService` and `EmployerService` are standalone.
 - `FiscalApiClient` — Main entry point. Lazy-loads 11 services via getters (e.g., `getInvoiceService()`). `EmployeeService` and `EmployerService` are reached through `getPersonService()`.
 - `FiscalApiClientFactory` — Static factory with instance caching keyed by `apiKey:tenant:apiUrl`.
 

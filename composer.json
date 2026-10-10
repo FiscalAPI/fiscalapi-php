@@ -1,7 +1,7 @@
 {
     "name": "fiscalapi/fiscalapi",
     "description": "SDK de PHP para FiscalAPI",
-    "version": "4.0.417",
+    "version": "4.0.433",
     "type": "library",
     "license": "MPL-2.0",
     "homepage": "https://www.fiscalapi.com",
@@ -27,10 +27,21 @@
         "guzzlehttp/guzzle": "^7.0",
       "ext-json": "*"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6"
+    },
     "autoload": {
         "psr-4": {
             "Fiscalapi\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Fiscalapi\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "config": {
         "sort-packages": true

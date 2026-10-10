@@ -6,9 +6,15 @@ namespace Fiscalapi\Services;
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 
 /**
- * Interfaz para el servicio de archivos fiscales
+ * Interfaz para el servicio de archivos fiscales.
+ *
+ * No tiene update(): el API no actualiza certificados (PUT /api/v4/tax-files/{id} responde 405).
+ * Para cambiar un certificado, suba el nuevo con create() y elimine el anterior con delete().
+ *
+ * La contraseña de la llave privada ('password') solo se envía al subir con create(): en las consultas (list(), get() y la
+ * respuesta de create()) el API la devuelve vacía (''); solo getDefaultValues() la devuelve.
  */
-interface TaxFileServiceInterface extends FiscalApiServiceInterface
+interface TaxFileServiceInterface extends ImmutableFiscalApiServiceInterface
 {
     /**
      * Obtiene una lista de archivos fiscales
@@ -35,14 +41,6 @@ interface TaxFileServiceInterface extends FiscalApiServiceInterface
      * @return FiscalApiHttpResponseInterface
      */
     public function create(array $data): FiscalApiHttpResponseInterface;
-
-    /**
-     * Actualiza un archivo fiscal existente. Debe incluir el key 'id' en el array asociativo.
-     *
-     * @param array $data Datos a actualizar
-     * @return FiscalApiHttpResponseInterface
-     */
-    public function update(array $data): FiscalApiHttpResponseInterface;
 
     /**
      * Elimina un archivo fiscal
