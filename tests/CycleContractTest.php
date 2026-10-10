@@ -12,12 +12,12 @@ use Fiscalapi\Services\TaxFileServiceInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Cambios de código del SDK en el ciclo de deuda técnica 2 (Fase III, C22). Los mismos escenarios viven en los SDK de
- * .NET, Node.js, Python y Java (DEC-136), cuando el cambio aplica a cada uno:
- *  1. persona (SDK-043, SDK-044): no aplica, el SDK de PHP no tiene modelos;
- *  2. certificados: tin opcional al subir (SDK-045) y fileType 2 y 3 de la FIEL (SDK-058); el SDK envía el arreglo
+ * Contrato público que fijan estas pruebas. Los mismos escenarios viven en los SDK de .NET, Node.js, Python y Java, con
+ * el mismo resultado observable en cada uno (lo retirado no existe), cuando el cambio le aplica:
+ *  1. persona: no aplica, el SDK de PHP no tiene modelos;
+ *  2. certificados: tin opcional al subir y fileType 2 y 3 de la FIEL; el SDK envía el arreglo
  *     tal cual;
- *  3. certificados sin update(): el API retiró PUT tax-files (SDK-051); los servicios que sí actualizan lo conservan.
+ *  3. certificados sin update(): el API retiró PUT tax-files; los servicios que sí actualizan lo conservan.
  */
 final class CycleContractTest extends TestCase
 {
@@ -37,7 +37,7 @@ final class CycleContractTest extends TestCase
         return (string) json_encode(['data' => $data, 'succeeded' => true, 'message' => '', 'details' => '', 'httpStatusCode' => 200]);
     }
 
-    // 2. Certificados: tin opcional (SDK-045) y fileType de la FIEL (SDK-058)
+    // 2. Certificados: tin opcional y fileType de la FIEL
 
     /**
      * @return array<string, array{int}>
@@ -72,7 +72,7 @@ final class CycleContractTest extends TestCase
         $this->assertArrayNotHasKey('tin', $requests[0]['options']['data']);
     }
 
-    // 3. Certificados sin update() (SDK-051)
+    // 3. Certificados sin update()
 
     public function testTaxFileServiceHasNoUpdate(): void
     {

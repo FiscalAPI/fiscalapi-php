@@ -23,7 +23,7 @@ composer test             # PHPUnit 9.6 (the last series that runs on PHP 7.4) o
 
 PHPUnit needs `ext-mbstring`. A PHP without a `php.ini` can load it per call: `php -d extension_dir=<php>/ext -d extension=mbstring vendor/bin/phpunit`.
 
-`tests/` holds offline tests (`Fiscalapi\Tests\`, `autoload-dev`). `FakeFiscalApiHttpClient` implements `FiscalApiHttpClientInterface` and answers every request with a fixed JSON from `tests/fixtures/` (shaped like the API's camelCase responses, enums as integers), so each test runs the real service → `FiscalApiHttpResponse::getJson()` path. `ResponseToleranceTest` characterizes how the SDK handles responses of upcoming API phases.
+`tests/` holds offline tests (`Fiscalapi\Tests\`, `autoload-dev`). `FakeFiscalApiHttpClient` implements `FiscalApiHttpClientInterface` and answers every request with a fixed JSON from `tests/fixtures/` (shaped like the API's camelCase responses, enums as integers), so each test runs the real service → `FiscalApiHttpResponse::getJson()` path. `ResponseToleranceTest` characterizes how the SDK handles API responses with values and fields it does not document yet.
 
 ## Architecture
 
