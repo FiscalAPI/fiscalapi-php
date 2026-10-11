@@ -67,8 +67,8 @@ class StampService extends AbstractService implements StampServiceInterface
         }
 
         if (isset($data['creditType'])
-            && !in_array($data['creditType'], [CreditType::STAMP, CreditType::VALIDATION], true)) {
-            throw new InvalidArgumentException('creditType debe ser 1 (timbres) o 2 (créditos de validación)');
+            && !in_array($data['creditType'], [CreditType::STAMP, CreditType::VALIDATION, CreditType::TICKET], true)) {
+            throw new InvalidArgumentException('creditType debe ser 1 (Stamp), 2 (Validation) o 3 (Ticket).');
         }
     }
 }

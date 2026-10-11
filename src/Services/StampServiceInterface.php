@@ -35,8 +35,8 @@ interface StampServiceInterface extends FiscalApiServiceInterface
      * - 'toPersonId' (string, obligatorio): id de la persona de destino.
      * - 'amount' (int, obligatorio): cantidad a transferir, mayor que cero.
      * - 'comments' (string, opcional): hasta 100 caracteres.
-     * - 'creditType' (int, opcional): CreditType::STAMP para timbres o CreditType::VALIDATION
-     *   para créditos de validación. Si se omite, se transfieren timbres.
+     * - 'creditType' (int, opcional): CreditType::STAMP para timbres, CreditType::VALIDATION
+     *   para créditos de validación o CreditType::TICKET para créditos de ticket. Si se omite, se transfieren timbres.
      *
      * El saldo que se valida es el que corresponde al 'creditType' enviado.
      *

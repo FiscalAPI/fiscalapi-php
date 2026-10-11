@@ -7,14 +7,15 @@ use Fiscalapi\Models\CreditType;
 use Fiscalapi\Services\InvoiceService;
 use Fiscalapi\Services\PersonService;
 use Fiscalapi\Services\StampService;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tolerancia del SDK a respuestas del API con valores y campos que el SDK todavía no modela.
+ * Tolerancia del SDK a respuestas del API con valores y campos que el SDK documenta o todavía no conoce.
  *
- * Son pruebas de caracterización: fijan el comportamiento ACTUAL. Los casos son:
- *  1. una transacción de timbres con creditType 3 (créditos de ticket);
- *  2. una persona con el campo nuevo availableTicketBalance;
+ * Los casos son:
+ *  1. transacciones con creditType 3 (CreditType::TICKET): lectura y transferencia;
+ *  2. una persona con el saldo de créditos de ticket en balances;
  *  3. propiedades desconocidas en la envoltura, en data y en objetos anidados;
  *  4. globalInformation en la respuesta de una factura.
  *
@@ -31,9 +32,9 @@ final class ResponseToleranceTest extends TestCase
         $this->api = new FakeFiscalApiHttpClient();
     }
 
-    // 1. creditType 3
+    // 1. creditType 3 (TICKET)
 
-    public function testStampListKeepsCreditType3AsAnIntegerWithoutAConstantSdk013AddsTicket(): void
+    public function testStampListReadsCreditType3AsTicket(): void
     {
         $this->api->respondWith(FakeFiscalApiHttpClient::readFixture('stamps-page-credit-type-3.json'));
 
@@ -41,26 +42,63 @@ final class ResponseToleranceTest extends TestCase
 
         $this->assertTrue($json['succeeded']);
         $this->assertSame(
-            [CreditType::STAMP, CreditType::VALIDATION, self::TICKET_CREDIT_TYPE],
+            [CreditType::STAMP, CreditType::VALIDATION, CreditType::TICKET],
             array_column($json['data']['items'], 'creditType')
         );
-        $this->assertNotContains(self::TICKET_CREDIT_TYPE, (new \ReflectionClass(CreditType::class))->getConstants());
+        $this->assertSame(self::TICKET_CREDIT_TYPE, CreditType::TICKET);
         $this->assertSame(['GET /stamps'], $this->api->getRequestedUris());
     }
 
-    public function testStampByIdKeepsCreditType3AsAnInteger(): void
+    public function testStampByIdReadsCreditType3AsTicket(): void
     {
         $this->api->respondWith(FakeFiscalApiHttpClient::readFixture('stamp-credit-type-3.json'));
 
         $json = (new StampService($this->api))->get('8d0f6a52-6f1e-4c3a-9a10-000000000103')->getJson();
 
-        $this->assertSame(self::TICKET_CREDIT_TYPE, $json['data']['creditType']);
+        $this->assertSame(CreditType::TICKET, $json['data']['creditType']);
         $this->assertSame(25, $json['data']['amount']);
     }
 
-    // 2. availableTicketBalance
+    public function testTransferStampsWithTicketPostsCreditType3(): void
+    {
+        $this->api->respondWith('{"data":true,"succeeded":true,"message":"","details":"","httpStatusCode":200}');
+        $transfer = [
+            'fromPersonId' => '1',
+            'toPersonId' => '4b1c2d3e-0000-4000-8000-000000000001',
+            'amount' => 25,
+            'creditType' => CreditType::TICKET,
+        ];
 
-    public function testPersonKeepsAvailableTicketBalance(): void
+        $json = (new StampService($this->api))->transferStamps($transfer)->getJson();
+
+        $this->assertTrue($json['succeeded']);
+        $requests = $this->api->getRequests();
+        $this->assertCount(1, $requests);
+        $this->assertSame('POST', $requests[0]['method']);
+        $this->assertSame('/stamps', $requests[0]['uri']);
+        $this->assertSame(self::TICKET_CREDIT_TYPE, $requests[0]['options']['data']['creditType']);
+    }
+
+    public function testTransferStampsWithAnUnknownCreditTypeThrowsWithoutCallingTheApi(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessageMatches('/^' . preg_quote('creditType debe ser 1 (Stamp), 2 (Validation) o 3 (Ticket).', '/') . '$/');
+
+        try {
+            (new StampService($this->api))->transferStamps([
+                'fromPersonId' => '1',
+                'toPersonId' => '4b1c2d3e-0000-4000-8000-000000000001',
+                'amount' => 25,
+                'creditType' => 99,
+            ]);
+        } finally {
+            $this->assertSame([], $this->api->getRequests());
+        }
+    }
+
+    // 2. Saldo de créditos de ticket en balances
+
+    public function testPersonReadsTheTicketBalanceFromBalances(): void
     {
         $this->api->respondWith(FakeFiscalApiHttpClient::readFixture('person-ticket-balance.json'));
 
@@ -68,7 +106,11 @@ final class ResponseToleranceTest extends TestCase
 
         $this->assertSame(100, $json['data']['availableBalance']);
         $this->assertSame(50, $json['data']['availableValidationBalance']);
-        $this->assertSame(25, $json['data']['availableTicketBalance']);
+        $this->assertSame(
+            [CreditType::STAMP => 100, CreditType::VALIDATION => 50, CreditType::TICKET => 25],
+            array_column($json['data']['balances'], 'available', 'creditType')
+        );
+        $this->assertArrayNotHasKey('availableTicketBalance', $json['data']);
     }
 
     // 3. Propiedades desconocidas

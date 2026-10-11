@@ -2,6 +2,12 @@
 
 Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a quien usa el SDK.
 
+## [Sin publicar]
+
+### `CreditType`
+
+- Tipo de crédito `CreditType::TICKET` (3) para transferir y leer créditos de ticket: `getStampService()->transferStamps()` (y `withdrawStamps()`) acepta `'creditType' => CreditType::TICKET` y lo envía con las mismas reglas que los timbres; antes lanzaba `InvalidArgumentException` sin llamar al API. Las transacciones (`getStampService()->list()`, `getStampService()->get()`) traen `creditType` 3 para los créditos de ticket. El saldo de créditos de ticket se lee en `balances` de la persona (la entrada con `creditType` igual a `CreditType::TICKET`); un tipo ausente tiene saldo 0. Los valores existentes no cambian (`STAMP` 1, `VALIDATION` 2). Con un `creditType` distinto de 1, 2 o 3, `transferStamps()` sigue lanzando `InvalidArgumentException`, ahora con el mensaje `creditType debe ser 1 (Stamp), 2 (Validation) o 3 (Ticket).` (el mismo texto que el API).
+
 ## [4.0.433] - 2026-10-10
 
 ### Cambios incompatibles (BREAKING)
