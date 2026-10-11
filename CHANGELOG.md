@@ -18,6 +18,10 @@ Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a qui
 - Constantes `TicketStatus`, `TicketEventType` y `TicketActorType` (`Fiscalapi\Models`) con los valores camelCase de `status`, `events[].type` y `events[].actorType`; un valor que el SDK no conoce llega tal cual, como texto.
 - Ejemplo: `examples/EjemplosTickets.php`.
 
+### Conceptos de la factura (`getInvoiceService()->create()`)
+
+- `ticketId` en el concepto de la factura para ligar la factura global a los tickets (Auto CFDI); se omite si es nulo. En PHP es la clave `'ticketId'` (string) de cada elemento de `'items'`: `create()` quita la clave de los conceptos donde es `null` (el resto del cuerpo se envía tal cual). Un 409 por tickets no disponibles trae `unavailableTickets` (`ticketId`, `status`) en `getJson()['data']`. Ejemplo: `examples/EjemplosFacturaGlobalTickets.php`.
+
 ## [4.0.433] - 2026-10-10
 
 ### Cambios incompatibles (BREAKING)
