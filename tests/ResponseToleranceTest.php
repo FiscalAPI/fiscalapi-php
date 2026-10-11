@@ -10,13 +10,13 @@ use Fiscalapi\Services\StampService;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Tolerancia del SDK a respuestas que el API devolverá en las próximas fases (SDK-001).
+ * Tolerancia del SDK a respuestas del API con valores y campos que el SDK todavía no modela.
  *
  * Son pruebas de caracterización: fijan el comportamiento ACTUAL. Los casos son:
- *  1. una transacción de timbres con creditType 3 (créditos de ticket, Fase 1);
- *  2. una persona con el campo nuevo availableTicketBalance (Fase 1);
+ *  1. una transacción de timbres con creditType 3 (créditos de ticket);
+ *  2. una persona con el campo nuevo availableTicketBalance;
  *  3. propiedades desconocidas en la envoltura, en data y en objetos anidados;
- *  4. globalInformation en la respuesta de una factura (BE-008).
+ *  4. globalInformation en la respuesta de una factura.
  *
  * El SDK no tiene modelos: getJson() devuelve el arreglo decodificado tal cual.
  */
@@ -88,7 +88,7 @@ final class ResponseToleranceTest extends TestCase
         $this->assertSame('FISCALAPI', $ticketTransaction['fromPerson']['legalName']);
     }
 
-    // 4. globalInformation en la respuesta de una factura (BE-008)
+    // 4. globalInformation en la respuesta de una factura
 
     public function testInvoiceKeepsTheFullGlobalInformation(): void
     {
