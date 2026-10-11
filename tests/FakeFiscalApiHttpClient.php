@@ -17,6 +17,8 @@ final class FakeFiscalApiHttpClient implements FiscalApiHttpClientInterface
 {
     private string $body = '';
 
+    private int $statusCode = 200;
+
     /** @var string[] */
     private array $requestedUris = [];
 
@@ -33,9 +35,14 @@ final class FakeFiscalApiHttpClient implements FiscalApiHttpClientInterface
         return $contents;
     }
 
-    public function respondWith(string $body): void
+    /**
+     * Cuerpo y status HTTP de las respuestas siguientes (200 por omisión). Como el cliente real (http_errors en false),
+     * un status 4xx o 5xx no lanza: llega en la respuesta.
+     */
+    public function respondWith(string $body, int $statusCode = 200): void
     {
         $this->body = $body;
+        $this->statusCode = $statusCode;
     }
 
     /**
@@ -96,6 +103,6 @@ final class FakeFiscalApiHttpClient implements FiscalApiHttpClientInterface
         $this->requestedUris[] = $method . ' ' . $uri;
         $this->requests[] = ['method' => $method, 'uri' => $uri, 'options' => $options];
 
-        return new FiscalApiHttpResponse(new Response(200, ['Content-Type' => 'application/json'], $this->body));
+        return new FiscalApiHttpResponse(new Response($this->statusCode, ['Content-Type' => 'application/json'], $this->body));
     }
 }
