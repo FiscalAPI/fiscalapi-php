@@ -23,6 +23,7 @@ use PHPUnit\Framework\TestCase;
 final class TicketServiceTest extends TestCase
 {
     private const ISSUER_ID = '4b1c2d3e-0000-4000-8000-000000000002';
+    private const GLOBAL_INVOICE_ID = '7c1d2e3f-0000-4000-8000-0000000000b2';
     private const TICKET_ID = '9f8e7d6c-0000-4000-8000-0000000000a1';
     private const IDEMPOTENCY_KEY = 'pos-01-F-1001';
 
@@ -235,6 +236,27 @@ final class TicketServiceTest extends TestCase
             $request['uri']
         );
         self::assertSame($page, $response->getJson()['data']);
+    }
+
+    public function testGetListSendsDetailsAndGlobalInvoiceIdWhenAssigned(): void
+    {
+        $this->api->respondWith(self::envelope(['items' => [], 'pageNumber' => 1, 'totalPages' => 0, 'totalCount' => 0, 'hasPreviousPage' => false, 'hasNextPage' => false]));
+
+        $this->tickets->getList(['details' => true, 'globalInvoiceId' => self::GLOBAL_INVOICE_ID]);
+
+        self::assertSame(
+            '/tickets?details=true&globalInvoiceId=' . self::GLOBAL_INVOICE_ID,
+            $this->singleRequest()['uri']
+        );
+    }
+
+    public function testGetListDoesNotSendDetailsWhenFalse(): void
+    {
+        $this->api->respondWith(self::envelope(['items' => [], 'pageNumber' => 1, 'totalPages' => 0, 'totalCount' => 0, 'hasPreviousPage' => false, 'hasNextPage' => false]));
+
+        $this->tickets->getList(['details' => false]);
+
+        self::assertSame('/tickets', $this->singleRequest()['uri']);
     }
 
     public function testGetListOmitsNullFiltersAndSendsNoQueryWithoutFilters(): void

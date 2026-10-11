@@ -31,7 +31,9 @@ interface TicketServiceInterface
     /**
      * Lista los tickets del tenant con los filtros asignados. GET /api/v4/tickets
      *
-     * @param array $filters 'status' (uno o más; se envía repitiendo la llave), 'personId', 'from' y 'to'
+     * @param array $filters 'status' (uno o más; se envía repitiendo la llave), 'personId', 'details' (true envía
+     *                       details=true: conceptos con impuestos, sin la historia; false no se envía),
+     *                       'globalInvoiceId' (factura global que ampara los tickets), 'from' y 'to'
      *                       (fecha civil de México Y-m-d), 'pageNumber' y 'pageSize'. Los valores null no se envían.
      * @return FiscalApiHttpResponseInterface Página de tickets ordenados por fecha de pago
      */

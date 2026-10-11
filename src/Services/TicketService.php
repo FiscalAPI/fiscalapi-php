@@ -118,9 +118,12 @@ class TicketService implements TicketServiceInterface
     {
         $pairs = [];
         foreach ($filters as $key => $value) {
-            // (array) null es []: un filtro en null no se envía.
+            // (array) null es []: un filtro en null no se envía. Un false tampoco: details solo viaja como true.
             foreach ((array) $value as $item) {
-                $text = is_bool($item) ? ($item ? 'true' : 'false') : (string) $item;
+                if ($item === false) {
+                    continue;
+                }
+                $text = $item === true ? 'true' : (string) $item;
                 $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode($text);
             }
         }
