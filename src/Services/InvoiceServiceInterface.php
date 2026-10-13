@@ -115,6 +115,13 @@ interface InvoiceServiceInterface extends FiscalApiServiceInterface
      * asimetría es intencional: reutilizar una sola forma para los tres domicilios produce un complemento
      * inválido.
      *
+     * Factura global de tickets (Auto CFDI): 'items[].ticketId' (string, opcional) liga el concepto a su ticket.
+     * Solo en una global de ingreso (typeCode 'I' con 'globalInformation') con el emisor por referencia
+     * ('issuer.id'); un ticket puede ir en varios conceptos, uno por grupo de objeto de impuesto e impuestos, y la
+     * suma de sus conceptos debe reflejar el ticket (si no, 400 en items[i].ticketId). Un 'ticketId' en null no se
+     * envía. Si algún ticket ya no está pendiente, la respuesta es 409 con getJson()['data']['unavailableTickets']
+     * ([['ticketId' => ..., 'status' => ...]]).
+     *
      * @param array $data Datos de la factura
      * @return FiscalApiHttpResponseInterface
      */

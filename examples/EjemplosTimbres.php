@@ -8,7 +8,7 @@ declare(strict_types=1);
  * Incluye operaciones de listar, obtener por ID, transferir y retirar.
  *
  * El recurso es un ledger de créditos: cada movimiento indica con creditType qué saldo mueve,
- * timbres o créditos de validación. Los saldos nunca se mezclan.
+ * timbres, créditos de validación o créditos de ticket. Los saldos nunca se mezclan.
  */
 
 use Fiscalapi\Http\FiscalApiHttpResponseInterface;
@@ -80,6 +80,21 @@ try {
 
 
     // ------------------------------------------------------------------
+    // Transferir créditos de ticket.
+    // El saldo que se valida es el de créditos de ticket de la persona de origen.
+    // ------------------------------------------------------------------
+    // $transParams = [
+    //     'fromPersonId' => "0e82a655-5f0c-4e07-abab-8f322e4123ef",
+    //     'toPersonId' => "da71df0c-f328-45ee-9bd9-3096ed02c164",
+    //     'amount' => 100,
+    //     'comments' => "venta de créditos de ticket",
+    //     'creditType' => CreditType::TICKET,
+    // ];
+    // $apiResponse = $client->getStampService()->transferStamps($transParams);
+    // consoleLog($apiResponse);
+
+
+    // ------------------------------------------------------------------
     // Retirar créditos: es una transferencia con origen y destino invertidos.
     // ------------------------------------------------------------------
     // $transParams = [
@@ -96,11 +111,14 @@ try {
     // ------------------------------------------------------------------
     // Consultar los saldos de una persona.
     // availableBalance son timbres y availableValidationBalance son créditos de validación.
+    // El saldo de créditos de ticket se lee en balances (un tipo ausente tiene saldo 0).
     // ------------------------------------------------------------------
     // $apiResponse = $client->getPersonService()->get("da71df0c-f328-45ee-9bd9-3096ed02c164");
     // $person = $apiResponse->getJson()['data'] ?? [];
     // echo "Timbres disponibles: " . $person['availableBalance'] . "\n";
     // echo "Créditos de validación disponibles: " . $person['availableValidationBalance'] . "\n";
+    // $ticketBalances = array_column($person['balances'] ?? [], 'available', 'creditType');
+    // echo "Créditos de ticket disponibles: " . ($ticketBalances[CreditType::TICKET] ?? 0) . "\n";
 
 
 } catch (\Exception $e) {

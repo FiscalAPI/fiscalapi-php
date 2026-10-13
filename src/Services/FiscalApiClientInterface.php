@@ -88,6 +88,13 @@ interface FiscalApiClientInterface
     public function getSatValidationService(): SatValidationServiceInterface;
 
     /**
+     * Obtiene el servicio de tickets de Auto CFDI.
+     *
+     * @return TicketServiceInterface
+     */
+    public function getTicketService(): TicketServiceInterface;
+
+    /**
      * Obtiene el servicio de manifiestos.
      *
      * @return ManifestServiceInterface

@@ -2,6 +2,26 @@
 
 Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a quien usa el SDK.
 
+## [4.0.439] - 2026-10-12
+
+### `CreditType`
+
+- Tipo de crédito `CreditType::TICKET` (3) para transferir y leer créditos de ticket: `getStampService()->transferStamps()` (y `withdrawStamps()`) acepta `'creditType' => CreditType::TICKET` y lo envía con las mismas reglas que los timbres; antes lanzaba `InvalidArgumentException` sin llamar al API. Las transacciones (`getStampService()->list()`, `getStampService()->get()`) traen `creditType` 3 para los créditos de ticket. El saldo de créditos de ticket se lee en `balances` de la persona (la entrada con `creditType` igual a `CreditType::TICKET`); un tipo ausente tiene saldo 0. Los valores existentes no cambian (`STAMP` 1, `VALIDATION` 2). Con un `creditType` distinto de 1, 2 o 3, `transferStamps()` sigue lanzando `InvalidArgumentException`, ahora con el mensaje `creditType debe ser 1 (Stamp), 2 (Validation) o 3 (Ticket).` (el mismo texto que el API).
+
+### Servicio de tickets (Auto CFDI)
+
+- Servicio de tickets (Auto CFDI): `tickets.create` (con `Idempotency-Key` opcional), `getList` con filtros, `getById`, `getCode` y `cancel`, en `getTicketService()` (`TicketServiceInterface`/`TicketService`). Como el resto del SDK, los tickets se envían y se reciben como arreglos con las claves camelCase del API:
+  - `create(array $ticket, ?string $idempotencyKey = null)`: `POST /api/v4/tickets`; cobra 1 crédito de ticket y responde 201 con `id`, `ticketCode`, `qrUrl`, `status`, `selfInvoiceEligible`, `eligibleUntil` y los importes calculados. Con `$idempotencyKey` envía el header `Idempotency-Key` (sin ella no lo envía): repetir la key con el mismo cuerpo responde 200 con el ticket original y sin cobrar. Un folio y serie ya activos del emisor responden 409 con `data.existingTicketId` y un total que no cuadra 422 con `data.expectedTotal` y `data.computedTotal`, en `getStatusCode()` y `getJson()` de la respuesta.
+  - `getList(array $filters = [])`: `GET /api/v4/tickets` con `status` (uno o más; se repite la llave `status`), `personId`, `details` (con `true` envía `details=true`: cada ticket trae sus conceptos con impuestos, sin la historia; `false` no se envía), `globalInvoiceId` (factura global que ampara los tickets), `from`/`to` (fecha civil de México `Y-m-d`), `pageNumber` y `pageSize`; los valores `null` no se envían.
+  - `getById(string $id, bool $details = false)`: con `details` trae `items` (con `itemTaxes`) y `events`. `getCode(string $id)` devuelve `ticketCode` y `qrUrl` para reimprimir. `cancel(string $id)` usa `DELETE` (solo desde `pending`; el crédito no se devuelve).
+- `FiscalApiClientInterface` agrega `getTicketService()`. Quien implementa su propia versión de `FiscalApiClientInterface` (p. ej. un doble de pruebas) debe agregar `getTicketService()`; quien usa el cliente del SDK no cambia nada.
+- Constantes `TicketStatus`, `TicketEventType` y `TicketActorType` (`Fiscalapi\Models`) con los valores camelCase de `status`, `events[].type` y `events[].actorType`; un valor que el SDK no conoce llega tal cual, como texto.
+- Ejemplo: `examples/EjemplosTickets.php`.
+
+### Conceptos de la factura (`getInvoiceService()->create()`)
+
+- `ticketId` en el concepto de la factura para ligar la factura global a los tickets (Auto CFDI); se omite si es nulo. En PHP es la clave `'ticketId'` (string) de cada elemento de `'items'`: `create()` quita la clave de los conceptos donde es `null` (el resto del cuerpo se envía tal cual). Un 409 por tickets no disponibles trae `unavailableTickets` (`ticketId`, `status`) en `getJson()['data']`. Ejemplo: `examples/EjemplosFacturaGlobalTickets.php`.
+
 ## [4.0.433] - 2026-10-10
 
 ### Cambios incompatibles (BREAKING)

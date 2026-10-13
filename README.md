@@ -636,8 +636,10 @@ Hay un ejemplo ejecutable en
   Administración de catálogos de productos, búsqueda en catálogos SAT.
 - **Validaciones SAT**  
   Validación de CFDI ante el SAT: estructura, sellos, vigencia del certificado, estado del comprobante y listados 69-B y 69-B Bis.
-- **Timbres y créditos de validación**  
-  Consulta y transferencia de saldos del ledger, diferenciados con `creditType`.
+- **Timbres, créditos de validación y créditos de ticket**  
+  Consulta y transferencia de saldos del ledger, diferenciados con `creditType` (`CreditType::STAMP`, `CreditType::VALIDATION` o `CreditType::TICKET`). El saldo de créditos de ticket se lee en `balances` de la persona.
+- **Tickets (Auto CFDI)**  
+  Ingesta de ventas pagadas del punto de venta con `Idempotency-Key` opcional, consulta con filtros, código para reimprimir y cancelación (`getTicketService()`, ejemplo en `examples/EjemplosTickets.php`).
 
 
 ## 🤝 Contribuir
