@@ -191,6 +191,7 @@ final class WebhookBackInteropTest extends TestCase
      */
     private function deliver(array $headers, string $body, string $secret): WebhookEvent
     {
-        return Webhook::verifyAt($headers, $body, [$secret], Webhook::DEFAULT_TOLERANCE_SECONDS, self::TIMESTAMP);
+        return FixedClockWebhook::verifyAt($headers, $body, [$secret], Webhook::DEFAULT_TOLERANCE_SECONDS,
+            self::TIMESTAMP);
     }
 }

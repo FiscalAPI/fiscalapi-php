@@ -26,7 +26,6 @@ final class Webhook
     private const SIGNATURE_VERSION = 'v1';
     private const SIGNATURE_SEPARATOR = ' ';
     private const VERSION_SEPARATOR = ',';
-    private const SECRET_PREFIX = 'whsec_';
 
     /**
      * Verifica una entrega y devuelve su evento.
@@ -48,13 +47,15 @@ final class Webhook
      * @throws WebhookVerificationException Falta un header, el timestamp no es válido o está fuera de la tolerancia,
      *     ninguna firma v1 coincide, el cuerpo no es UTF-8 válido o el cuerpo firmado no es un evento: rechace la entrega
      *     (por ejemplo con un 400) sin procesarla.
-     * @throws InvalidArgumentException El secreto falta, no es texto o no es base64, la lista de secretos está vacía, la
-     *     tolerancia es negativa o un header no es texto: es un error de configuración del receptor, no de la entrega. El
-     *     mensaje nunca incluye el valor del secreto.
+     * @throws InvalidArgumentException El secreto falta, no es texto o no es base64 canónico, la lista de secretos está
+     *     vacía, la tolerancia es negativa o un header no es texto: es un error de configuración del receptor, no de la
+     *     entrega. El mensaje nunca incluye el valor del secreto, y desde PHP 8.2 tampoco la traza
+     *     (#[\SensitiveParameter]); en versiones anteriores, configure zend.exception_ignore_args=On en producción.
      */
     public static function verify(
         array $headers,
         string $body,
+        #[\SensitiveParameter]
         $secret,
         int $toleranceSeconds = self::DEFAULT_TOLERANCE_SECONDS
     ): WebhookEvent {
@@ -62,14 +63,20 @@ final class Webhook
     }
 
     /**
-     * La verificación contra el momento $now (segundos Unix) del receptor, para fijar el reloj en las pruebas.
+     * La verificación contra el momento $now (segundos Unix) del receptor. Privada: las pruebas fijan el reloj por
+     * reflexión, sin agregar a la API pública un método que acepte cualquier reloj.
      *
-     * @internal Use verify().
      * @param array<string, string|string[]> $headers
      * @param string|string[] $secret
      */
-    public static function verifyAt(array $headers, string $body, $secret, int $toleranceSeconds, int $now): WebhookEvent
-    {
+    private static function verifyAt(
+        array $headers,
+        string $body,
+        #[\SensitiveParameter]
+        $secret,
+        int $toleranceSeconds,
+        int $now
+    ): WebhookEvent {
         $keys = self::decodeSecrets($secret);
         if ($toleranceSeconds < 0) {
             throw new InvalidArgumentException('La tolerancia no puede ser negativa.');
@@ -87,12 +94,14 @@ final class Webhook
 
     /**
      * @param mixed $secret
-     * @return string[] Las llaves HMAC.
+     * @return WebhookSigningKey[]
      */
-    private static function decodeSecrets($secret): array
-    {
+    private static function decodeSecrets(
+        #[\SensitiveParameter]
+        $secret
+    ): array {
         if (!is_array($secret)) {
-            return [self::decodeSecret($secret, 'El secreto de firma')];
+            return [WebhookSigningKey::fromSecret($secret, 'El secreto de firma')];
         }
 
         if ($secret === []) {
@@ -101,38 +110,10 @@ final class Webhook
 
         $keys = [];
         foreach (array_values($secret) as $position => $each) {
-            $keys[] = self::decodeSecret($each, "El secreto de firma en la posición {$position}");
+            $keys[] = WebhookSigningKey::fromSecret($each, "El secreto de firma en la posición {$position}");
         }
 
         return $keys;
-    }
-
-    /**
-     * Los mensajes nombran el secreto por su posición y nunca incluyen su valor: terminarían en los logs del receptor.
-     *
-     * @param mixed $secret
-     */
-    private static function decodeSecret($secret, string $description): string
-    {
-        if ($secret === null) {
-            throw new InvalidArgumentException("{$description} es null.");
-        }
-        if (!is_string($secret)) {
-            throw new InvalidArgumentException(
-                "{$description} no es texto: pase el secreto (whsec_…) o una lista de secretos.");
-        }
-
-        $encoded = strpos($secret, self::SECRET_PREFIX) === 0 ? substr($secret, strlen(self::SECRET_PREFIX)) : $secret;
-        $key = base64_decode($encoded, true);
-        if ($key === false) {
-            throw new InvalidArgumentException(
-                "{$description} no es whsec_ seguido de base64: cópielo completo del endpoint de webhooks.");
-        }
-        if ($key === '') {
-            throw new InvalidArgumentException("{$description} está vacío.");
-        }
-
-        return $key;
     }
 
     /**
@@ -141,7 +122,8 @@ final class Webhook
     private static function requiredHeader(array $headers, string $name): string
     {
         foreach ($headers as $headerName => $value) {
-            if (strtolower((string) $headerName) === $name) {
+            // strcasecmp compara en ASCII; strtolower de PHP < 8.2 depende del locale (en turco, 'I' no es 'i').
+            if (strcasecmp((string) $headerName, $name) === 0) {
                 $text = self::headerText($value, $name);
                 if ($text === '') {
                     break;
@@ -209,13 +191,17 @@ final class Webhook
     }
 
     /**
-     * @param string[] $keys
+     * @param WebhookSigningKey[] $keys
      */
-    private static function ensureSigned(array $keys, string $signedContent, string $signatureHeader): void
-    {
+    private static function ensureSigned(
+        #[\SensitiveParameter]
+        array $keys,
+        string $signedContent,
+        string $signatureHeader
+    ): void {
         $expected = array_map(
-            static function (string $key) use ($signedContent): string {
-                return base64_encode(hash_hmac('sha256', $signedContent, $key, true));
+            static function (WebhookSigningKey $key) use ($signedContent): string {
+                return $key->sign($signedContent);
             },
             $keys
         );

@@ -15,7 +15,8 @@ use TypeError;
 /**
  * Webhook::verify(): la firma Standard Webhooks (HMAC-SHA256 sobre webhook-id.webhook-timestamp.cuerpo) y la tolerancia
  * del timestamp. Los mismos escenarios viven en los SDK de .NET, Node.js, Python y Java. El momento de la verificación se
- * fija con Webhook::verifyAt() (interno), así el vector oficial (de 2021) verifica sin depender del reloj.
+ * fija con FixedClockWebhook (el método privado Webhook::verifyAt()), así el vector oficial (de 2021) verifica sin
+ * depender del reloj.
  */
 final class WebhookVerifyTest extends TestCase
 {
@@ -27,6 +28,15 @@ final class WebhookVerifyTest extends TestCase
     private const OFFICIAL_SIGNATURE = 'v1,g0hM9SsE+OTPJTGt/tmIKtSyZlE3uFJELVlNIOLJ1OE=';
 
     private const MALFORMED_SECRET = 'whsec_%%no-es-base64%%';
+
+    // Fragmento del secreto oficial: ningún mensaje ni traza debe contenerlo.
+    private const OFFICIAL_SECRET_FRAGMENT = 'MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLa';
+
+    public function testTheOnlyPublicMethodIsVerify(): void
+    {
+        // El reloj fijo de las pruebas (verifyAt) no es parte de la API pública.
+        self::assertSame(['verify'], get_class_methods(Webhook::class));
+    }
 
     public function testTheOfficialVectorVerifies(): void
     {
@@ -174,6 +184,7 @@ final class WebhookVerifyTest extends TestCase
             'sin versión' => ['g0hM9SsE+OTPJTGt/tmIKtSyZlE3uFJELVlNIOLJ1OE='],
             'v1 vacía' => ['v1,'],
             'v1 no base64' => ['v1,!!!'],
+            'v1 sin relleno' => ['v1,g0hM9SsE+OTPJTGt/tmIKtSyZlE3uFJELVlNIOLJ1OE'],
         ];
     }
 
@@ -278,6 +289,30 @@ final class WebhookVerifyTest extends TestCase
             $this->verifyAt(self::OFFICIAL_TIMESTAMP, $headers, self::OFFICIAL_BODY));
     }
 
+    public function testHeaderNamesAreComparedAsAsciiUnderATurkishLocale(): void
+    {
+        // Con un locale turco de un byte, strtolower() de PHP < 8.2 convierte 'I' en 'ı' (sin punto): 'WEBHOOK-ID' ya no
+        // sería 'webhook-id'. Los nombres de header son ASCII y se comparan como tales.
+        $previous = setlocale(LC_CTYPE, '0');
+        $turkish = setlocale(LC_CTYPE, 'tr_TR.ISO8859-9', 'tr_TR.ISO-8859-9', 'tr_TR', 'Turkish_Turkey.1254', 'turkish');
+        if ($turkish === false) {
+            self::markTestSkipped('No hay un locale turco instalado.');
+        }
+
+        try {
+            $headers = [
+                'WEBHOOK-ID' => self::OFFICIAL_ID,
+                'WEBHOOK-TIMESTAMP' => (string) self::OFFICIAL_TIMESTAMP,
+                'WEBHOOK-SIGNATURE' => self::OFFICIAL_SIGNATURE,
+            ];
+
+            self::assertInstanceOf(WebhookEvent::class,
+                $this->verifyAt(self::OFFICIAL_TIMESTAMP, $headers, self::OFFICIAL_BODY));
+        } finally {
+            setlocale(LC_CTYPE, (string) $previous);
+        }
+    }
+
     public function testHeaderValuesAsListsVerifyLikePsr7AndSymfony(): void
     {
         // PSR-7 getHeaders() conserva el nombre; Symfony/Laravel headers->all() lo pasa a minúsculas. Ambos dan listas.
@@ -334,6 +369,10 @@ final class WebhookVerifyTest extends TestCase
             'vacío' => [''],
             'solo el prefijo' => ['whsec_'],
             'no base64' => [self::MALFORMED_SECRET],
+            // base64_decode(…, true) los acepta: el secreto se exige en base64 canónico.
+            'truncado, sin relleno' => ['whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2LaLaS'],
+            'con salto de línea final' => [self::OFFICIAL_SECRET . "\n"],
+            'con espacio interno' => ['whsec_MfKQ9r8GKYqrTwjU PD8ILPZIo2LaLaSw'],
         ];
     }
 
@@ -345,6 +384,43 @@ final class WebhookVerifyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $this->verifyAt(self::OFFICIAL_TIMESTAMP, $this->officialHeaders(), self::OFFICIAL_BODY, $secret);
+    }
+
+    public function testANonCanonicalSecretInAListNamesItsPositionWithoutItsValue(): void
+    {
+        $exception = $this->assertArgumentError(function (): void {
+            Webhook::verify($this->officialHeaders(), self::OFFICIAL_BODY,
+                [self::OFFICIAL_SECRET, self::OFFICIAL_SECRET . "\n"]);
+        });
+
+        self::assertStringContainsString('posición 1', $exception->getMessage());
+        self::assertStringNotContainsString(self::OFFICIAL_SECRET_FRAGMENT, $exception->getMessage());
+    }
+
+    public function testAFailedVerificationDoesNotExposeTheSecretOrTheKeyInTheTrace(): void
+    {
+        // Sin php.ini (y en las imágenes de Docker) zend.exception_ignore_args vale 0: la traza lleva los argumentos.
+        $previous = ini_set('zend.exception_ignore_args', '0');
+        try {
+            // Firmada con otro secreto y al momento: falla en la comparación de firmas, con las llaves ya decodificadas.
+            $headers = BackWebhookSigner::headers(self::OFFICIAL_ID, time(), self::OFFICIAL_BODY,
+                BackWebhookSigner::generateSecret());
+            try {
+                Webhook::verify($headers, self::OFFICIAL_BODY, [self::OFFICIAL_SECRET]);
+                self::fail('Se esperaba WebhookVerificationException.');
+            } catch (WebhookVerificationException $exception) {
+                $this->assertTraceDoesNotExpose($exception);
+            }
+
+            try {
+                Webhook::verify($headers, self::OFFICIAL_BODY, self::OFFICIAL_SECRET . "\n");
+                self::fail('Se esperaba InvalidArgumentException.');
+            } catch (InvalidArgumentException $exception) {
+                $this->assertTraceDoesNotExpose($exception);
+            }
+        } finally {
+            ini_set('zend.exception_ignore_args', (string) $previous);
+        }
     }
 
     public function testAMalformedSecretInAListNamesItsPositionWithoutItsValue(): void
@@ -454,7 +530,55 @@ final class WebhookVerifyTest extends TestCase
     private function verifyAt(int $now, array $headers, string $body, $secret = self::OFFICIAL_SECRET,
         int $tolerance = Webhook::DEFAULT_TOLERANCE_SECONDS): WebhookEvent
     {
-        return Webhook::verifyAt($headers, $body, $secret, $tolerance, $now);
+        return FixedClockWebhook::verifyAt($headers, $body, $secret, $tolerance, $now);
+    }
+
+    /**
+     * La llave (los bytes del secreto) nunca aparece en la traza, ni como texto ni al volcar un objeto con print_r o
+     * var_dump. El secreto tal como se configuró solo se puede ocultar desde PHP 8.2 (#[\SensitiveParameter]): en 7.4
+     * queda en los argumentos de verify(); por eso el README recomienda zend.exception_ignore_args=On.
+     */
+    private function assertTraceDoesNotExpose(Throwable $exception): void
+    {
+        $key = (string) base64_decode(substr(self::OFFICIAL_SECRET, strlen('whsec_')), true);
+        $dump = $exception->getTraceAsString() . $this->dumpTraceArguments($exception->getTrace());
+
+        // assertFalse y no assertStringNotContainsString: al fallar, este volcaría la traza (y la llave) en la salida.
+        self::assertFalse(strpos($dump, $key) !== false, 'La llave aparece en la traza.');
+        if (PHP_VERSION_ID >= 80200) {
+            self::assertFalse(strpos($dump, self::OFFICIAL_SECRET_FRAGMENT) !== false, 'El secreto aparece en la traza.');
+        }
+    }
+
+    /**
+     * Los argumentos de la traza como texto: los escalares tal cual y los objetos del SDK (o el SensitiveParameterValue
+     * de PHP 8.2) como los mostraría un logger con print_r y var_dump. Los objetos de PHPUnit y de las pruebas no se
+     * vuelcan: arrastran el estado de la corrida, con los datos de otras pruebas.
+     *
+     * @param array<int, array<string, mixed>> $trace
+     */
+    private function dumpTraceArguments(array $trace): string
+    {
+        $dump = '';
+        array_walk_recursive($trace, static function ($value) use (&$dump): void {
+            if (is_scalar($value)) {
+                $dump .= $value . "\n";
+            } elseif (is_object($value) && self::isSdkOrRedactedValue($value)) {
+                ob_start();
+                var_dump($value);
+                $dump .= print_r($value, true) . ob_get_clean();
+            }
+        });
+
+        return $dump;
+    }
+
+    private static function isSdkOrRedactedValue(object $value): bool
+    {
+        $class = get_class($value);
+
+        return $class === 'SensitiveParameterValue'
+            || (strpos($class, 'Fiscalapi\\') === 0 && strpos($class, 'Fiscalapi\\Tests\\') !== 0);
     }
 
     private function assertRejected(string $expectedMessage, callable $verify): WebhookVerificationException

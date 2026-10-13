@@ -682,9 +682,13 @@ switch ($event->getType()) {
   `Webhook::verify($headers, $body, [$secretoNuevo, $secretoAnterior])`.
 - La tolerancia es configurable en segundos (`Webhook::verify($headers, $body, $secreto, 120)`); el valor por omisión es
   `Webhook::DEFAULT_TOLERANCE_SECONDS` (300).
-- Un secreto mal copiado (no es base64), una lista de secretos vacía o una tolerancia negativa lanzan
-  `InvalidArgumentException` (con la posición del secreto en la lista, nunca su valor): es un error de configuración, no
-  de la entrega.
+- Un secreto mal copiado (no es base64 canónico: truncado, con espacios o saltos de línea), una lista de secretos vacía
+  o una tolerancia negativa lanzan `InvalidArgumentException` (con la posición del secreto en la lista, nunca su valor):
+  es un error de configuración, no de la entrega.
+- En producción configure `zend.exception_ignore_args=On` en el `php.ini` (es el valor de `php.ini-production`). Sin él,
+  la traza de una excepción lleva los argumentos de cada llamada y un logger (Sentry, Flare, el log de Laravel) los
+  enviaría. Desde PHP 8.2 el SDK oculta el secreto en la traza con `#[\SensitiveParameter]`; en PHP 7.4 a 8.1 solo esa
+  opción lo evita. La llave decodificada nunca viaja como texto entre funciones.
 
 ---
 
