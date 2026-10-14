@@ -9,7 +9,7 @@ use InvalidArgumentException;
 /**
  * Verificación de las entregas de webhooks de FiscalAPI, que se firman con Standard Webhooks
  * (https://www.standardwebhooks.com): HMAC-SHA256 sobre 'webhook-id.webhook-timestamp.cuerpo' con el secreto 'whsec_…'
- * del endpoint, en el header webhook-signature como 'v1,<base64>'. La firma es la única prueba de que una entrega viene
+ * del webhook, en el header webhook-signature como 'v1,<base64>'. La firma es la única prueba de que una entrega viene
  * de FiscalAPI.
  */
 final class Webhook
@@ -39,7 +39,7 @@ final class Webhook
      * @param string $body El cuerpo CRUDO tal como llegó, antes de decodificarlo: file_get_contents('php://input'),
      *     getBody() de PSR-7 o $request->getContent() de Symfony o Laravel. Un cuerpo decodificado y vuelto a codificar
      *     cambia sus bytes (espacios, orden, escapes) y su firma deja de coincidir.
-     * @param string|string[] $secret El secreto del endpoint ('whsec_…'; se acepta también sin el prefijo), o una lista de
+     * @param string|string[] $secret El secreto del webhook ('whsec_…'; se acepta también sin el prefijo), o una lista de
      *     secretos durante una rotación (FiscalAPI firma con el nuevo y el anterior durante 24 h): basta que una firma v1
      *     del header coincida con uno de ellos.
      * @param int $toleranceSeconds Tolerancia del timestamp en segundos; por omisión DEFAULT_TOLERANCE_SECONDS.

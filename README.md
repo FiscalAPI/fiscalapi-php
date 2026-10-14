@@ -619,7 +619,7 @@ Hay un ejemplo ejecutable en
 ### 11. Recibir webhooks
 
 FiscalAPI firma cada entrega con [Standard Webhooks](https://www.standardwebhooks.com) y el secreto `whsec_…` de su
-endpoint. `Webhook::verify()` comprueba la firma (en tiempo constante) y que `webhook-timestamp` no difiera más de 5
+webhook. `Webhook::verify()` comprueba la firma (en tiempo constante) y que `webhook-timestamp` no difiera más de 5
 minutos del reloj del receptor, y devuelve el `WebhookEvent`. La firma es la única prueba de que la entrega viene de
 FiscalAPI.
 
@@ -634,7 +634,7 @@ use Fiscalapi\Webhooks\Webhook;
 use Fiscalapi\Webhooks\WebhookVerificationException;
 
 $body = file_get_contents('php://input'); // el cuerpo CRUDO
-$secret = getenv('FISCALAPI_WEBHOOK_SECRET'); // whsec_… del endpoint, desde su configuración segura
+$secret = getenv('FISCALAPI_WEBHOOK_SECRET'); // whsec_… del webhook, desde su configuración segura
 
 try {
     $event = Webhook::verify(getallheaders(), $body, $secret);
