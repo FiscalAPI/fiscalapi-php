@@ -616,6 +616,82 @@ Hay un ejemplo ejecutable en
 
 ---
 
+### 11. Recibir webhooks
+
+FiscalAPI firma cada entrega con [Standard Webhooks](https://www.standardwebhooks.com) y el secreto `whsec_…` de su
+webhook. `Webhook::verify()` comprueba la firma (en tiempo constante) y que `webhook-timestamp` no difiera más de 5
+minutos del reloj del receptor, y devuelve el `WebhookEvent`. La firma es la única prueba de que la entrega viene de
+FiscalAPI.
+
+**Verifique el cuerpo crudo**: `file_get_contents('php://input')`, tal como llegó. Un cuerpo decodificado y vuelto a
+codificar (por ejemplo `json_encode(json_decode($body))`) cambia sus bytes y la firma deja de coincidir.
+
+```php
+<?php
+use Fiscalapi\Models\WebhookEventTypes;
+use Fiscalapi\Services\FiscalApiClient;
+use Fiscalapi\Webhooks\Webhook;
+use Fiscalapi\Webhooks\WebhookVerificationException;
+
+$body = file_get_contents('php://input'); // el cuerpo CRUDO
+$secret = getenv('FISCALAPI_WEBHOOK_SECRET'); // whsec_… del webhook, desde su configuración segura
+
+try {
+    $event = Webhook::verify(getallheaders(), $body, $secret);
+} catch (WebhookVerificationException $e) {
+    http_response_code(400); // firma inválida, header faltante o timestamp fuera de tolerancia
+    exit;
+}
+
+// Responda 2xx rápido y procese después: FiscalAPI corta cada intento a los 15 s y lo reintenta. En producción, encole
+// el evento (por ejemplo, un job de Laravel); con PHP-FPM, fastcgi_finish_request() cierra la respuesta antes de seguir.
+http_response_code(200);
+if (function_exists('fastcgi_finish_request')) {
+    fastcgi_finish_request();
+}
+
+// La entrega es al menos una vez: $event->getId() (el header webhook-id) se repite en cada reintento; descarte los ya
+// procesados. El orden de llegada no está garantizado: el estado autoritativo se lee del recurso.
+$client = new FiscalApiClient($settings);
+$resourceId = $event->getData()->getRelatedObject()->getId();
+switch ($event->getType()) {
+    case WebhookEventTypes::INVOICE_CANCELED:
+        $invoice = $client->getInvoiceService()->get($resourceId)->getJson();
+        break;
+    case WebhookEventTypes::DOWNLOAD_REQUEST_COMPLETED:
+        $downloadRequest = $client->getDownloadRequestService()->get($resourceId)->getJson();
+        break;
+    default:
+        break; // un tipo que no conoce se ignora: el catálogo puede crecer
+}
+```
+
+- Con Laravel o Symfony: `Webhook::verify($request->headers->all(), $request->getContent(), $secret)`; con PSR-7:
+  `Webhook::verify($request->getHeaders(), (string) $request->getBody(), $secret)`. Los nombres de los headers se
+  comparan sin distinguir mayúsculas y un valor puede ser texto o lista de textos (una lista se une con `', '`).
+- `WebhookEvent` es el mismo sobre para todo evento: `getId()`, `getType()` (texto; compárelo con las constantes de
+  `WebhookEventTypes`), `getCreatedAt()` (`DateTimeImmutable` en UTC), `getPersonId()` (null si el recurso no tiene
+  persona) y `getData()` con `getRelatedObject()` (`getId()`, `getType()`, `getUrl()`), `getStatus()` y
+  `getPreviousStatus()`.
+- `getRelatedObject()->getUrl()` es la ruta relativa del GET v4 del recurso (`/api/v4/invoices/{id}`); para leerlo, use el
+  servicio de su tipo con `getRelatedObject()->getId()`.
+- El botón "Enviar prueba" del webhook (`POST /api/v4/webhooks/{id}/test`) envía `WebhookEventTypes::WEBHOOK_TEST`
+  (`webhook.test`), cuyo `relatedObject` es el webhook mismo (tipo `webhook`, url `/api/v4/webhooks/{id}`), sin persona
+  ni estados; no se suscribe.
+- Durante una rotación del secreto, FiscalAPI firma con el nuevo y con el anterior por 24 h: pase ambos,
+  `Webhook::verify($headers, $body, [$secretoNuevo, $secretoAnterior])`.
+- La tolerancia es configurable en segundos (`Webhook::verify($headers, $body, $secreto, 120)`); el valor por omisión es
+  `Webhook::DEFAULT_TOLERANCE_SECONDS` (300).
+- Un secreto mal copiado (no es base64 canónico: truncado, con espacios o saltos de línea), una lista de secretos vacía
+  o una tolerancia negativa lanzan `InvalidArgumentException` (con la posición del secreto en la lista, nunca su valor):
+  es un error de configuración, no de la entrega.
+- En producción configure `zend.exception_ignore_args=On` en el `php.ini` (es el valor de `php.ini-production`). Sin él,
+  la traza de una excepción lleva los argumentos de cada llamada y un logger (Sentry, Flare, el log de Laravel) los
+  enviaría. Desde PHP 8.2 el SDK oculta el secreto en la traza con `#[\SensitiveParameter]`; en PHP 7.4 a 8.1 solo esa
+  opción lo evita. La llave decodificada nunca viaja como texto entre funciones.
+
+---
+
 ## 📋 Operaciones Principales
 
 - **Facturas (CFDI)**  
@@ -640,6 +716,8 @@ Hay un ejemplo ejecutable en
   Consulta y transferencia de saldos del ledger, diferenciados con `creditType` (`CreditType::STAMP`, `CreditType::VALIDATION` o `CreditType::TICKET`). El saldo de créditos de ticket se lee en `balances` de la persona.
 - **Tickets (Auto CFDI)**  
   Ingesta de ventas pagadas del punto de venta con `Idempotency-Key` opcional, consulta con filtros, código para reimprimir y cancelación (`getTicketService()`, ejemplo en `examples/EjemplosTickets.php`).
+- **Webhooks**  
+  Verificación de la firma Standard Webhooks de las entregas y lectura del evento (`Webhook::verify()`, `WebhookEvent`).
 
 
 ## 🤝 Contribuir

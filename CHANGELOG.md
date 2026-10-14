@@ -2,6 +2,22 @@
 
 Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a quien usa el SDK.
 
+## [Sin publicar]
+
+### Webhooks
+
+- `Webhook::verify(array $headers, string $body, $secret, int $toleranceSeconds = Webhook::DEFAULT_TOLERANCE_SECONDS)` (namespace `Fiscalapi\Webhooks`) verifica una entrega de webhook de FiscalAPI y devuelve su `WebhookEvent`: valida la firma Standard Webhooks (HMAC-SHA256 sobre `webhook-id.webhook-timestamp.cuerpo` con el secreto `whsec_…`, comparada con `hash_equals`) y que `webhook-timestamp` (solo dígitos) no difiera del reloj del receptor más que la tolerancia, hacia atrás o hacia adelante (por omisión `Webhook::DEFAULT_TOLERANCE_SECONDS`, 300 segundos). Acepta cualquier firma `v1` válida del header `webhook-signature` (varias, separadas por espacio) y el secreto con o sin el prefijo `whsec_`. `$secret` es un secreto o una lista de secretos para la rotación (FiscalAPI firma con el nuevo y el anterior durante 24 h).
+  - `$headers` es un arreglo asociativo: sirven `getallheaders()`, `getHeaders()` de PSR-7 y `$request->headers->all()` de Symfony o Laravel. Los nombres se comparan sin distinguir mayúsculas y un valor puede ser texto o lista de textos (una lista se une con `', '`, como `getHeaderLine()`).
+  - Opera sobre el cuerpo **crudo** tal como llegó (`file_get_contents('php://input')`, `$request->getContent()`): un cuerpo decodificado y vuelto a codificar no verifica. Ejemplo en el README (sección 11).
+  - Una entrega que no se puede tratar como auténtica (falta un header o está vacío, ninguna firma coincide, timestamp inválido o fuera de la tolerancia, un cuerpo o header que no es UTF-8 válido, o un cuerpo firmado que no es un objeto JSON con la forma del evento) lanza `WebhookVerificationException` (extiende `RuntimeException`; `getPrevious()` conserva el `JsonException` original). Un secreto null, que no es texto o no es base64 canónico (truncado o sin relleno, con espacios o saltos de línea), una lista de secretos vacía, una tolerancia negativa o un header que no es texto lanzan `InvalidArgumentException` (error de configuración del receptor), que en una lista indica la posición del secreto y nunca su valor. Un `$headers` o `$body` null lanza `TypeError`.
+  - El secreto no aparece en la traza de una excepción desde PHP 8.2 (`#[\SensitiveParameter]`), y la llave decodificada nunca viaja como texto entre funciones (ni `var_dump` ni `print_r` la muestran). En PHP 7.4 a 8.1, configure `zend.exception_ignore_args=On` en producción para que la traza no lleve el secreto.
+  - Los nombres de los headers se comparan en ASCII (`strcasecmp`), sin depender del locale del proceso.
+  - El evento se lee con `json_decode` y opciones explícitas (`JSON_THROW_ON_ERROR`, objetos como `stdClass`): el contenido que sobra después del evento, `null` o un JSON que no es objeto se rechazan; los campos que el SDK no conoce se ignoran.
+  - Sin dependencias nuevas: no requiere `ext-mbstring` (UTF-8 se valida con PCRE). No usa la librería oficial `standard-webhooks/standard-webhooks`, que exige PHP 8.0.
+- Modelo `WebhookEvent` (namespace `Fiscalapi\Models`), inmutable y el mismo sobre para todo evento: `getId()` (igual al header `webhook-id`, se repite en cada reintento), `getType()`, `getCreatedAt()` (`DateTimeImmutable` en UTC), `getPersonId()` (null si el recurso no tiene persona) y `getData()` (`WebhookEventData`) con `getRelatedObject()` (`WebhookRelatedObject`: `getId()`, `getType()`, `getUrl()`), `getStatus()` y `getPreviousStatus()`. `getRelatedObject()->getUrl()` es la ruta relativa del GET v4 del recurso (por ejemplo `/api/v4/invoices/{id}`); el recurso se lee con el servicio de su tipo y `getRelatedObject()->getId()`. Es la primera clase de modelo del SDK: el resto de las respuestas siguen siendo arreglos.
+- `getType()` es texto: las constantes de `WebhookEventTypes` (`INVOICE_CANCELLATION_REQUESTED`, `INVOICE_CANCELED`, `INVOICE_CANCELLATION_REJECTED`, `DOWNLOAD_REQUEST_COMPLETED`, `DOWNLOAD_REQUEST_ABANDONED`, `DOWNLOAD_RULE_SUSPENDED` y `WEBHOOK_TEST`) son una ayuda para comparar, y un tipo o un campo que el SDK no conoce llega sin error. `WEBHOOK_TEST` (`webhook.test`) no se suscribe: llega solo al pulsar "Enviar prueba" (`POST /api/v4/webhooks/{id}/test`), con `relatedObject` de tipo `webhook` y url `/api/v4/webhooks/{id}`, sin persona ni estados.
+- Cambio aditivo: nada existente cambia.
+
 ## [4.0.439] - 2026-10-12
 
 ### `CreditType`

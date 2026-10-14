@@ -48,7 +48,13 @@ PHPUnit needs `ext-mbstring`. A PHP without a `php.ini` can load it per call: `p
 - **StampService** — Credit ledger. `transferStamps()` takes an optional `creditType` (`CreditType::STAMP` or `CreditType::VALIDATION`); `withdrawStamps()` is deprecated and delegates to it.
 
 ### Models (`Fiscalapi\Models`)
-Constant-only classes, no DTOs: `SatValidationTypeIds`, `SatValidationStatusIds`, `CreditType`. Values mirror the API contract exactly; identifiers follow PHP's `UPPER_SNAKE_CASE`.
+Constant-only classes, no DTOs: `SatValidationTypeIds`, `SatValidationStatusIds`, `CreditType`, `WebhookEventTypes`, etc. Values mirror the API contract exactly; identifiers follow PHP's `UPPER_SNAKE_CASE`. The one exception is the webhook envelope: `WebhookEvent`, `WebhookEventData` and `WebhookRelatedObject` are immutable classes with getters (`createdAt` as a UTC `DateTimeImmutable`), returned by `Webhook::verify()`; API responses stay arrays.
+
+### Webhooks (`Fiscalapi\Webhooks`)
+- `Webhook::verify()` — Standard Webhooks verification (HMAC-SHA256, `hash_equals`, timestamp tolerance, several secrets for rotation, strict UTF-8 via PCRE) over the raw body. The clock-pinned `verifyAt()` is private; tests reach it through `tests/FixedClockWebhook.php` (reflection). Every parameter carrying a secret or key has `#[\SensitiveParameter]` on its own line (a comment before PHP 8.0, redacted in traces from 8.2).
+- `WebhookSigningKey` (`@internal`) — decodes a secret (canonical base64 only) and signs; the key bytes never leave it and `__debugInfo()` redacts them.
+- `WebhookEnvelope` (`@internal`) — reads the verified body into `WebhookEvent` with explicit `json_decode` options.
+- `WebhookVerificationException` (`RuntimeException`) for deliveries that are not authentic; `InvalidArgumentException` for receiver configuration errors.
 
 ## Coding Conventions
 
