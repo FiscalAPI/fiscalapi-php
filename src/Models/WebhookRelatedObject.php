@@ -30,8 +30,8 @@ final class WebhookRelatedObject
     }
 
     /**
-     * Tipo de recurso: 'invoice', 'download_request', 'download_rule' o 'webhook_endpoint' (el de
-     * WebhookEventTypes::WEBHOOK_ENDPOINT_TEST); el conjunto puede crecer.
+     * Tipo de recurso: 'invoice', 'download_request', 'download_rule' o 'webhook' (el de
+     * WebhookEventTypes::WEBHOOK_TEST); el conjunto puede crecer.
      */
     public function getType(): ?string
     {

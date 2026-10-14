@@ -675,9 +675,9 @@ switch ($event->getType()) {
   `getPreviousStatus()`.
 - `getRelatedObject()->getUrl()` es la ruta relativa del GET v4 del recurso (`/api/v4/invoices/{id}`); para leerlo, use el
   servicio de su tipo con `getRelatedObject()->getId()`.
-- El botón "Enviar prueba" del endpoint (`POST webhook-endpoints/{id}/test`) envía
-  `WebhookEventTypes::WEBHOOK_ENDPOINT_TEST`, cuyo `relatedObject` es el endpoint (`webhook_endpoint`), sin persona ni
-  estados; no se suscribe.
+- El botón "Enviar prueba" del webhook (`POST /api/v4/webhooks/{id}/test`) envía `WebhookEventTypes::WEBHOOK_TEST`
+  (`webhook.test`), cuyo `relatedObject` es el webhook mismo (tipo `webhook`, url `/api/v4/webhooks/{id}`), sin persona
+  ni estados; no se suscribe.
 - Durante una rotación del secreto, FiscalAPI firma con el nuevo y con el anterior por 24 h: pase ambos,
   `Webhook::verify($headers, $body, [$secretoNuevo, $secretoAnterior])`.
 - La tolerancia es configurable en segundos (`Webhook::verify($headers, $body, $secreto, 120)`); el valor por omisión es

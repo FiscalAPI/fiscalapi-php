@@ -21,7 +21,7 @@ final class WebhookBackInteropTest extends TestCase
     private const PERSON_ID = '4b1c2d3e-0000-4000-8000-000000000002';
     private const INVOICE_ID = '9f8e7d6c-0000-4000-8000-0000000000a1';
     private const DOWNLOAD_REQUEST_ID = '3c2b1a09-0000-4000-8000-0000000000b7';
-    private const ENDPOINT_ID = '6a5b4c3d-0000-4000-8000-0000000000c9';
+    private const WEBHOOK_ID = '6a5b4c3d-0000-4000-8000-0000000000c9';
     private const TIMESTAMP = 1791830873; // 2026-10-12T18:47:53Z, el createdAt de los sobres
 
     // Los sobres de WebhookEnvelopeTests de fapi-back, con ids fijos.
@@ -37,11 +37,11 @@ final class WebhookBackInteropTest extends TestCase
         . '"3c2b1a09-0000-4000-8000-0000000000b7","type":"download_request","url":'
         . '"/api/v4/download-requests/3c2b1a09-0000-4000-8000-0000000000b7"},"status":null,"previousStatus":null}}';
 
-    // El sobre de WebhookEvent.EndpointTest del back (POST webhook-endpoints/{id}/test): el recurso es el endpoint.
-    private const ENDPOINT_TEST_BODY =
-        '{"id":"0f6b2c1e-7d3a-4e8b-9c51-2a4d6e8f0b13","type":"webhook_endpoint.test","createdAt":"2026-10-12T18:47:53Z",'
+    // El sobre de "Enviar prueba" del back (POST /api/v4/webhooks/{id}/test): el recurso es el webhook mismo.
+    private const WEBHOOK_TEST_BODY =
+        '{"id":"0f6b2c1e-7d3a-4e8b-9c51-2a4d6e8f0b13","type":"webhook.test","createdAt":"2026-10-12T18:47:53Z",'
         . '"personId":null,"data":{"relatedObject":{"id":"6a5b4c3d-0000-4000-8000-0000000000c9","type":'
-        . '"webhook_endpoint","url":"/api/v4/webhook-endpoints/6a5b4c3d-0000-4000-8000-0000000000c9"},"status":null,'
+        . '"webhook","url":"/api/v4/webhooks/6a5b4c3d-0000-4000-8000-0000000000c9"},"status":null,'
         . '"previousStatus":null}}';
 
     public function testABackDeliverySignedDuringARotationVerifiesWithEitherSecretAndReadsEveryField(): void
@@ -100,18 +100,18 @@ final class WebhookBackInteropTest extends TestCase
         self::assertSame('Z', $event->getData()->getStatus());
     }
 
-    public function testABackEndpointTestDeliveryPointsToTheEndpointWithoutPersonOrStatuses(): void
+    public function testABackWebhookTestDeliveryPointsToTheWebhookWithoutPersonOrStatuses(): void
     {
         $secret = BackWebhookSigner::generateSecret();
-        $headers = BackWebhookSigner::headers(self::EVENT_ID, self::TIMESTAMP, self::ENDPOINT_TEST_BODY, $secret);
+        $headers = BackWebhookSigner::headers(self::EVENT_ID, self::TIMESTAMP, self::WEBHOOK_TEST_BODY, $secret);
 
-        $event = $this->deliver($headers, self::ENDPOINT_TEST_BODY, $secret);
+        $event = $this->deliver($headers, self::WEBHOOK_TEST_BODY, $secret);
 
-        self::assertSame(WebhookEventTypes::WEBHOOK_ENDPOINT_TEST, $event->getType());
+        self::assertSame(WebhookEventTypes::WEBHOOK_TEST, $event->getType());
         self::assertNull($event->getPersonId());
-        self::assertSame(self::ENDPOINT_ID, $event->getData()->getRelatedObject()->getId());
-        self::assertSame('webhook_endpoint', $event->getData()->getRelatedObject()->getType());
-        self::assertSame('/api/v4/webhook-endpoints/' . self::ENDPOINT_ID,
+        self::assertSame(self::WEBHOOK_ID, $event->getData()->getRelatedObject()->getId());
+        self::assertSame('webhook', $event->getData()->getRelatedObject()->getType());
+        self::assertSame('/api/v4/webhooks/' . self::WEBHOOK_ID,
             $event->getData()->getRelatedObject()->getUrl());
         self::assertNull($event->getData()->getStatus());
         self::assertNull($event->getData()->getPreviousStatus());
@@ -119,7 +119,7 @@ final class WebhookBackInteropTest extends TestCase
 
     public function testTheEventTypeConstantsAreTheTypesOfTheBack(): void
     {
-        self::assertSame('webhook_endpoint.test', WebhookEventTypes::WEBHOOK_ENDPOINT_TEST);
+        self::assertSame('webhook.test', WebhookEventTypes::WEBHOOK_TEST);
         self::assertSame('invoice.cancellation_requested', WebhookEventTypes::INVOICE_CANCELLATION_REQUESTED);
         self::assertSame('invoice.canceled', WebhookEventTypes::INVOICE_CANCELED);
         self::assertSame('invoice.cancellation_rejected', WebhookEventTypes::INVOICE_CANCELLATION_REJECTED);

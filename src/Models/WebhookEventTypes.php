@@ -32,10 +32,11 @@ final class WebhookEventTypes
     public const DOWNLOAD_RULE_SUSPENDED = 'download_rule.suspended';
 
     /**
-     * Prueba de un endpoint: no se suscribe; solo llega al pulsar "Enviar prueba" (POST webhook-endpoints/{id}/test), y
-     * solo a ese endpoint. Su relatedObject es el endpoint mismo ('webhook_endpoint'), sin persona ni estados.
+     * Prueba de un webhook: no se suscribe; llega solo al pulsar "Enviar prueba" (POST /api/v4/webhooks/{id}/test), y
+     * solo a ese webhook. Su relatedObject es el webhook mismo (type 'webhook', url '/api/v4/webhooks/{id}'), sin persona
+     * ni estados.
      */
-    public const WEBHOOK_ENDPOINT_TEST = 'webhook_endpoint.test';
+    public const WEBHOOK_TEST = 'webhook.test';
 
     /**
      * Contenedor de constantes: no se instancia.
