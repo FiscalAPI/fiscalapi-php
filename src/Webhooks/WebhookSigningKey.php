@@ -50,7 +50,7 @@ final class WebhookSigningKey
         // mal copiado se rechaza aquí en vez de verificar con otra llave.
         if ($bytes === false || base64_encode($bytes) !== $encoded) {
             throw new InvalidArgumentException(
-                "{$description} no es whsec_ seguido de base64: cópielo completo del endpoint de webhooks.");
+                "{$description} no es whsec_ seguido de base64: cópielo completo del webhook.");
         }
         if ($bytes === '') {
             throw new InvalidArgumentException("{$description} está vacío.");
