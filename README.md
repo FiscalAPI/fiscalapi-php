@@ -346,6 +346,12 @@ $invoice = [
 $apiResponse = $client->getInvoiceService()->create($invoice);
 ```
 
+Con una llave de idempotencia (opcional, de 1 a 64 caracteres), repetir la misma petición responde la factura original en lugar de crearla otra vez. El SDK no genera la llave ni reintenta: la pasa como segundo argumento.
+
+```php
+$apiResponse = $client->getInvoiceService()->create($invoice, 'pos-01-F-1001');
+```
+
 ### 6. Crear la Misma Factura de Ingreso (Por Valores)
 
 ```php

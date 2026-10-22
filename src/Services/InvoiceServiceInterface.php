@@ -122,10 +122,16 @@ interface InvoiceServiceInterface extends FiscalApiServiceInterface
      * envía. Si algún ticket ya no está pendiente, la respuesta es 409 con getJson()['data']['unavailableTickets']
      * ([['ticketId' => ..., 'status' => ...]]).
      *
+     * Con $idempotencyKey (de 1 a 64 caracteres ASCII visibles, sin espacios) se envía el header Idempotency-Key.
+     * Repetir la misma petición con la misma key dentro de 24 h responde la respuesta original con el header
+     * Idempotent-Replayed: true; otra petición con la misma key responde 422, y una original
+     * que aún se procesa, 409. Sin ella, el header no se envía.
+     *
      * @param array $data Datos de la factura
+     * @param string|null $idempotencyKey Valor del header Idempotency-Key, o null para no enviarlo
      * @return FiscalApiHttpResponseInterface
      */
-    public function create(array $data): FiscalApiHttpResponseInterface;
+    public function create(array $data, ?string $idempotencyKey = null): FiscalApiHttpResponseInterface;
 
     /**
      * Cancela una factura
