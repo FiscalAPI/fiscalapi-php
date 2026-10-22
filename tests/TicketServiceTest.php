@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Servicio de tickets de Auto CFDI (POST/GET/DELETE /api/v4/tickets). Los mismos escenarios viven en los SDK de .NET,
- * Node.js, Python y Java: el cuerpo exacto de la ingesta y el header Idempotency-Key solo si se pasa; las respuestas
- * 201 y 200 de la ingesta; el 409 y el 422 con la forma de error del SDK (en PHP, la respuesta con su status y el
+ * Node.js, Python y Java: el cuerpo exacto de la ingesta y el header Idempotency-Key solo si se pasa; la respuesta 201 de
+ * la ingesta; el 409 y el 422 con la forma de error del SDK (en PHP, la respuesta con su status y el
  * cuerpo completo en getJson(), con su 'data'); la query de la lista con status repetido; el detalle con y sin
  * details; el código; la cancelación con DELETE, y un estado que el SDK no conoce, conservado como texto.
  */
@@ -25,7 +25,7 @@ final class TicketServiceTest extends TestCase
     private const ISSUER_ID = '4b1c2d3e-0000-4000-8000-000000000002';
     private const GLOBAL_INVOICE_ID = '7c1d2e3f-0000-4000-8000-0000000000b2';
     private const TICKET_ID = '9f8e7d6c-0000-4000-8000-0000000000a1';
-    private const IDEMPOTENCY_KEY = 'pos-01-F-1001';
+    private const IDEMPOTENCY_KEY = '550e8400-e29b-41d4-a716-446655440000';
 
     private const INGESTED = [
         'id' => self::TICKET_ID,
@@ -154,26 +154,15 @@ final class TicketServiceTest extends TestCase
         self::assertArrayNotHasKey('headers', $request['options']);
     }
 
-    // b. Respuestas de la ingesta
+    // b. Respuesta de la ingesta: la repetición con la misma llave de idempotencia devuelve esta misma 201
 
-    /**
-     * @return array<string, array{int}>
-     */
-    public function ingestionStatuses(): array
+    public function testCreateReadsTheNewTicketWithItsShape(): void
     {
-        return ['ticket nuevo' => [201], 'repetición idempotente' => [200]];
-    }
-
-    /**
-     * @dataProvider ingestionStatuses
-     */
-    public function testCreateReadsTheNewTicketAndTheIdempotentReplayWithTheSameShape(int $statusCode): void
-    {
-        $this->api->respondWith(self::envelope(self::INGESTED, $statusCode), $statusCode);
+        $this->api->respondWith(self::envelope(self::INGESTED, 201), 201);
 
         $response = $this->tickets->create(self::newTicket(), self::IDEMPOTENCY_KEY);
 
-        self::assertSame($statusCode, $response->getStatusCode());
+        self::assertSame(201, $response->getStatusCode());
         self::assertTrue($response->isSuccessful());
         self::assertSame(self::INGESTED, $response->getJson()['data']);
         self::assertSame(TicketStatus::PENDING, $response->getJson()['data']['status']);
