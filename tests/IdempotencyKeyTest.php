@@ -8,8 +8,8 @@ use Fiscalapi\Services\StampService;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Llave de idempotencia de crear factura y de transferir timbres. Con la llave, la petición lleva el header
- * Idempotency-Key con ese valor; sin ella, no lleva headers. El SDK no genera la llave ni reintenta: solo la pasa.
+ * Llave de idempotencia de crear factura y de transferir timbres. Con la llave de idempotencia, la petición lleva el header
+ * Idempotency-Key con ese valor; sin ella, no lleva headers. El SDK no genera la llave de idempotencia ni reintenta: solo la pasa.
  */
 final class IdempotencyKeyTest extends TestCase
 {

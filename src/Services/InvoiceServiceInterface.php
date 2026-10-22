@@ -123,8 +123,8 @@ interface InvoiceServiceInterface extends FiscalApiServiceInterface
      * ([['ticketId' => ..., 'status' => ...]]).
      *
      * Con $idempotencyKey (de 1 a 64 caracteres ASCII visibles, sin espacios) se envía el header Idempotency-Key.
-     * Repetir la misma petición con la misma key dentro de 24 h responde la respuesta original con el header
-     * Idempotent-Replayed: true; otra petición con la misma key responde 422, y una original
+     * Repetir la misma petición con la misma llave de idempotencia dentro de 24 h devuelve la respuesta original con el header
+     * Idempotent-Replayed: true; otra petición con la misma llave de idempotencia responde 422, y una original
      * que aún se procesa, 409. Sin ella, el header no se envía.
      *
      * @param array $data Datos de la factura

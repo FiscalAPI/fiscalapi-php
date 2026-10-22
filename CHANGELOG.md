@@ -6,10 +6,10 @@ Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a qui
 
 ### Llave de idempotencia (`Idempotency-Key`)
 
-- `getInvoiceService()->create(array $data, ?string $idempotencyKey = null)`: `POST /api/v4/invoices` envía el header `Idempotency-Key` con la llave que se pase; sin ella, no lo envía. Repetir la misma petición con la misma llave dentro de 24 h responde la respuesta original con el header `Idempotent-Replayed: true`; otra petición con la misma llave responde 422, y una original que aún se procesa, 409. Una llave inválida responde 400. La llave es de 1 a 64 caracteres ASCII visibles, sin espacios.
-- `getStampService()->transferStamps(array $data, ?string $idempotencyKey = null)`: `POST /api/v4/stamps` con las mismas reglas que la factura. `withdrawStamps()` no recibe llave: delega en `transferStamps()` sin ella.
+- `getInvoiceService()->create(array $data, ?string $idempotencyKey = null)`: `POST /api/v4/invoices` envía el header `Idempotency-Key` con la llave de idempotencia que se pase; sin ella, no lo envía. Repetir la misma petición con la misma llave de idempotencia dentro de 24 h devuelve la respuesta original con el header `Idempotent-Replayed: true`; otra petición con la misma llave de idempotencia responde 422, y una original que aún se procesa, 409. Una llave de idempotencia inválida responde 400. La llave de idempotencia tiene de 1 a 64 caracteres ASCII visibles, sin espacios.
+- `getStampService()->transferStamps(array $data, ?string $idempotencyKey = null)`: `POST /api/v4/stamps` con las mismas reglas que la factura. `withdrawStamps()` no recibe llave de idempotencia: delega en `transferStamps()` sin ella.
 - Quien implementa su propia versión de `InvoiceServiceInterface` o `StampServiceInterface` debe agregar el parámetro `?string $idempotencyKey = null` a `create()` y a `transferStamps()`. Quien usa el cliente del SDK no cambia nada.
-- El SDK no genera llaves ni reintenta peticiones: solo pasa la que da el integrador. Los tickets (`getTicketService()->create()`) ya aceptaban la llave.
+- El SDK no genera llaves de idempotencia ni reintenta peticiones: solo pasa la que da el integrador. Los tickets (`getTicketService()->create()`) ya aceptaban la llave de idempotencia.
 
 ## [4.0.450] - 2026-10-14
 
