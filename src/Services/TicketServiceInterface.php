@@ -15,16 +15,19 @@ interface TicketServiceInterface
     /**
      * Ingiere un ticket y cobra 1 crédito de ticket. POST /api/v4/tickets
      *
-     * Con $idempotencyKey (hasta 64 caracteres) se envía el header Idempotency-Key: repetir la key con el mismo cuerpo
-     * responde 200 con el ticket original sin cobrar otra vez; con otro cuerpo, 422. Sin ella, el header no se envía.
-     * Un folio y serie ya activos del emisor responden 409 con 'data.existingTicketId'; un total que no cuadra, 422 con
-     * 'data.expectedTotal' y 'data.computedTotal'.
+     * Con $idempotencyKey (de 1 a 64 caracteres ASCII visibles, sin espacios) se envía el header Idempotency-Key: repetir
+     * la misma llave de idempotencia con el mismo cuerpo, dentro de 24 h, devuelve la respuesta original (201, con el
+     * header Idempotent-Replayed: true) sin registrar otro ticket ni cobrar otra vez; con otro cuerpo, 422; con la
+     * original aún en proceso, 409 con Retry-After. Sin ella, el header no se envía. Un folio y serie ya activos del
+     * emisor responden 409 con 'data.existingTicketId'; un total que no cuadra, 422 con 'data.expectedTotal' y
+     * 'data.computedTotal'.
      *
      * @param array $ticket Ticket: issuer.id, folio, series, paymentDate (hora civil de México, Y-m-d\TH:i:s),
      *                      paymentFormCode, currencyCode, exchangeRate, expeditionZipCode, total e items con itemTaxes
-     * @param string|null $idempotencyKey Valor del header Idempotency-Key, o null para no enviarlo
+     * @param string|null $idempotencyKey Llave de idempotencia (idempotency key), valor del header Idempotency-Key, o null
+     *                                    para no enviarlo
      * @return FiscalApiHttpResponseInterface 201 con id, ticketCode, qrUrl, status, selfInvoiceEligible, eligibleUntil
-     *                                        e importes; 200 en la repetición idempotente
+     *                                        e importes; la repetición idempotente devuelve esa misma respuesta
      */
     public function create(array $ticket, ?string $idempotencyKey = null): FiscalApiHttpResponseInterface;
 

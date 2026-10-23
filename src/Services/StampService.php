@@ -13,6 +13,8 @@ use InvalidArgumentException;
  */
 class StampService extends AbstractService implements StampServiceInterface
 {
+    private const IDEMPOTENCY_KEY_HEADER = 'Idempotency-Key';
+
     /**
      * Constructor del servicio de timbres
      *
@@ -26,16 +28,16 @@ class StampService extends AbstractService implements StampServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function transferStamps(array $data): FiscalApiHttpResponseInterface
+    public function transferStamps(array $data, ?string $idempotencyKey = null): FiscalApiHttpResponseInterface
     {
         $this->validateStampTransaction($data);
 
-        return $this->httpClient->post(
-            $this->buildResourceUrl(),
-            [
-                'data' => $data
-            ]
-        );
+        $options = ['data' => $data];
+        if ($idempotencyKey !== null) {
+            $options['headers'] = [self::IDEMPOTENCY_KEY_HEADER => $idempotencyKey];
+        }
+
+        return $this->httpClient->post($this->buildResourceUrl(), $options);
     }
 
     /**

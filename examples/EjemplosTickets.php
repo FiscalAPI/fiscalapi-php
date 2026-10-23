@@ -8,8 +8,8 @@ declare(strict_types=1);
  * de venta (cobra 1 crédito de ticket), listar los tickets pendientes de un emisor en un periodo (para la factura
  * global), consultar el detalle, reimprimir el código y cancelar un ticket.
  *
- * Con Idempotency-Key, repetir la misma key con el mismo cuerpo responde 200 con el ticket original sin cobrar otra
- * vez. Un folio y serie ya activos responden 409 ('data.existingTicketId'); un total que no cuadra al centavo, 422
+ * Con Idempotency-Key, repetir la misma llave de idempotencia con el mismo cuerpo, dentro de 24 h, devuelve la respuesta
+ * original (201) sin cobrar otra vez. Un folio y serie ya activos responden 409 ('data.existingTicketId'); un total que no cuadra al centavo, 422
  * ('data.expectedTotal' y 'data.computedTotal').
  */
 
@@ -62,7 +62,9 @@ try {
         ]],
     ];
 
-    $created = $ticketService->create($ticket, 'pos-01-F-1001');
+    // Una llave de idempotencia por operación: guárdala para reintentar el mismo ticket
+    $idempotencyKey = bin2hex(random_bytes(16));
+    $created = $ticketService->create($ticket, $idempotencyKey);
     consoleLog($created);
 
     $ticketId = null;

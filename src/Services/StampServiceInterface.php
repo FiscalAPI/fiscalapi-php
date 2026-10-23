@@ -40,11 +40,17 @@ interface StampServiceInterface extends FiscalApiServiceInterface
      *
      * El saldo que se valida es el que corresponde al 'creditType' enviado.
      *
+     * Con $idempotencyKey (de 1 a 64 caracteres ASCII visibles, sin espacios) se envía el header Idempotency-Key.
+     * Repetir la misma transferencia con la misma llave de idempotencia dentro de 24 h devuelve la respuesta original con el header
+     * Idempotent-Replayed: true; otra petición con la misma llave de idempotencia responde 422, y una original
+     * que aún se procesa, 409. Sin ella, el header no se envía.
+     *
      * @param array $data Datos de la transferencia
+     * @param string|null $idempotencyKey Valor del header Idempotency-Key, o null para no enviarlo
      * @return FiscalApiHttpResponseInterface
      * @throws InvalidArgumentException Si falta un campo obligatorio o 'creditType' no es un valor válido.
      */
-    public function transferStamps(array $data): FiscalApiHttpResponseInterface;
+    public function transferStamps(array $data, ?string $idempotencyKey = null): FiscalApiHttpResponseInterface;
 
     /**
      * Retira créditos de una persona.

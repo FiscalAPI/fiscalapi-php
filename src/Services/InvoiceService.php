@@ -12,6 +12,8 @@ use InvalidArgumentException;
  */
 class InvoiceService extends AbstractService implements InvoiceServiceInterface
 {
+    private const IDEMPOTENCY_KEY_HEADER = 'Idempotency-Key';
+
     /**
      * Constructor del servicio de facturas
      *
@@ -27,14 +29,14 @@ class InvoiceService extends AbstractService implements InvoiceServiceInterface
     /**
      * {@inheritdoc}
      */
-    public function create(array $data): FiscalApiHttpResponseInterface
+    public function create(array $data, ?string $idempotencyKey = null): FiscalApiHttpResponseInterface
     {
-        return $this->httpClient->post(
-            $this->buildResourceUrl(),
-            [
-                'data' => self::withoutNullTicketIds($data)
-            ]
-        );
+        $options = ['data' => self::withoutNullTicketIds($data)];
+        if ($idempotencyKey !== null) {
+            $options['headers'] = [self::IDEMPOTENCY_KEY_HEADER => $idempotencyKey];
+        }
+
+        return $this->httpClient->post($this->buildResourceUrl(), $options);
     }
 
     /**
