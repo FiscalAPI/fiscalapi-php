@@ -2,6 +2,12 @@
 
 Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a quien usa el SDK.
 
+## [Sin publicar]
+
+### Seguridad
+
+- `guzzlehttp/guzzle` sube su piso a `^7.15.2` y `phpunit/phpunit` (solo desarrollo) a `^9.6.33`. Las versiones anteriores tienen avisos de seguridad. Sigue soportando PHP 7.4. Sin cambios de API.
+
 ## [4.0.462] - 2026-10-22
 
 ### Llave de idempotencia (`Idempotency-Key`)
