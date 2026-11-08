@@ -14,11 +14,18 @@ final class WebhookEventData
 
     private ?string $previousStatus;
 
-    public function __construct(?WebhookRelatedObject $relatedObject, ?string $status, ?string $previousStatus)
-    {
+    private ?string $reason;
+
+    public function __construct(
+        ?WebhookRelatedObject $relatedObject,
+        ?string $status,
+        ?string $previousStatus,
+        ?string $reason = null
+    ) {
         $this->relatedObject = $relatedObject;
         $this->status = $status;
         $this->previousStatus = $previousStatus;
+        $this->reason = $reason;
     }
 
     /**
@@ -44,5 +51,15 @@ final class WebhookEventData
     public function getPreviousStatus(): ?string
     {
         return $this->previousStatus;
+    }
+
+    /**
+     * Motivo de la transición. Todo evento lo trae; es null salvo en WebhookEventTypes::INVOICE_CANCELLATION_REJECTED,
+     * donde dice por qué no procedió la cancelación ('rejectedByRecipient', 'expired', 'notRequested' o
+     * 'notCancelable'). Es texto libre: pueden aparecer valores nuevos.
+     */
+    public function getReason(): ?string
+    {
+        return $this->reason;
     }
 }

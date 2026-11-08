@@ -65,7 +65,8 @@ final class WebhookEnvelope
         return new WebhookEventData(
             self::relatedObject($data),
             self::text($data, 'status', 'data.'),
-            self::text($data, 'previousStatus', 'data.')
+            self::text($data, 'previousStatus', 'data.'),
+            self::text($data, 'reason', 'data.')
         );
     }
 

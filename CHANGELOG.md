@@ -2,6 +2,13 @@
 
 Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a quien usa el SDK.
 
+## [Sin publicar]
+
+### Cancelación de facturas y webhooks
+
+- `WebhookEventData::getReason(): ?string` (nuevo): el motivo de la transición. Todo evento lo trae; es `null` salvo en `invoice.cancellation_rejected`, donde dice por qué no procedió la cancelación: `rejectedByRecipient`, `expired`, `notRequested` o `notCancelable`. Es texto libre: pueden aparecer valores nuevos. Cambio aditivo: el constructor de `WebhookEventData` recibe `reason` como cuarto argumento opcional.
+- `InvoiceService::cancel` frente a un rechazo del SAT: el API responde 422 y el SDK no lanza. La respuesta llega con `getStatusCode()` 422 y el cuerpo completo en `getJson()`: `succeeded` en `false`, `message` genérico, `details` con `SAT <código>: <descripción>` y `data` con `base64CancellationAcknowledgement` e `invoiceUuids` (el código del SAT por UUID). No hay cambios de código: el comportamiento ya existía y ahora tiene prueba.
+
 ## [4.0.469] - 2026-10-30
 
 ### Seguridad
