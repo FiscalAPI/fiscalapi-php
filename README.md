@@ -677,8 +677,9 @@ switch ($event->getType()) {
   comparan sin distinguir mayúsculas y un valor puede ser texto o lista de textos (una lista se une con `', '`).
 - `WebhookEvent` es el mismo sobre para todo evento: `getId()`, `getType()` (texto; compárelo con las constantes de
   `WebhookEventTypes`), `getCreatedAt()` (`DateTimeImmutable` en UTC), `getPersonId()` (null si el recurso no tiene
-  persona) y `getData()` con `getRelatedObject()` (`getId()`, `getType()`, `getUrl()`), `getStatus()` y
-  `getPreviousStatus()`.
+  persona) y `getData()` con `getRelatedObject()` (`getId()`, `getType()`, `getUrl()`), `getStatus()`,
+  `getPreviousStatus()` y `getReason()` (null salvo en `invoice.cancellation_rejected`, donde dice por qué no procedió la
+  cancelación).
 - `getRelatedObject()->getUrl()` es la ruta relativa del GET v4 del recurso (`/api/v4/invoices/{id}`); para leerlo, use el
   servicio de su tipo con `getRelatedObject()->getId()`.
 - El botón "Enviar prueba" del webhook (`POST /api/v4/webhooks/{id}/test`) envía `WebhookEventTypes::WEBHOOK_TEST`

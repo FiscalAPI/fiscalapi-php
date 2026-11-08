@@ -29,20 +29,27 @@ final class WebhookBackInteropTest extends TestCase
         '{"id":"0f6b2c1e-7d3a-4e8b-9c51-2a4d6e8f0b13","type":"invoice.canceled","createdAt":"2026-10-12T18:47:53Z",'
         . '"personId":"4b1c2d3e-0000-4000-8000-000000000002","data":{"relatedObject":{"id":'
         . '"9f8e7d6c-0000-4000-8000-0000000000a1","type":"invoice","url":'
-        . '"/api/v4/invoices/9f8e7d6c-0000-4000-8000-0000000000a1"},"status":"X","previousStatus":"C"}}';
+        . '"/api/v4/invoices/9f8e7d6c-0000-4000-8000-0000000000a1"},"status":"X","previousStatus":"C","reason":null}}';
+
+    private const REJECTED_CANCELLATION_BODY =
+        '{"id":"0f6b2c1e-7d3a-4e8b-9c51-2a4d6e8f0b13","type":"invoice.cancellation_rejected",'
+        . '"createdAt":"2026-10-12T18:47:53Z","personId":"4b1c2d3e-0000-4000-8000-000000000002","data":'
+        . '{"relatedObject":{"id":"9f8e7d6c-0000-4000-8000-0000000000a1","type":"invoice","url":'
+        . '"/api/v4/invoices/9f8e7d6c-0000-4000-8000-0000000000a1"},"status":"V","previousStatus":"C",'
+        . '"reason":"rejectedByRecipient"}}';
 
     private const COMPLETED_DOWNLOAD_REQUEST_BODY =
         '{"id":"0f6b2c1e-7d3a-4e8b-9c51-2a4d6e8f0b13","type":"download_request.completed",'
         . '"createdAt":"2026-10-12T18:47:53Z","personId":null,"data":{"relatedObject":{"id":'
         . '"3c2b1a09-0000-4000-8000-0000000000b7","type":"download_request","url":'
-        . '"/api/v4/download-requests/3c2b1a09-0000-4000-8000-0000000000b7"},"status":null,"previousStatus":null}}';
+        . '"/api/v4/download-requests/3c2b1a09-0000-4000-8000-0000000000b7"},"status":null,"previousStatus":null,"reason":null}}';
 
     // El sobre de "Enviar prueba" del back (POST /api/v4/webhooks/{id}/test): el recurso es el webhook mismo.
     private const WEBHOOK_TEST_BODY =
         '{"id":"0f6b2c1e-7d3a-4e8b-9c51-2a4d6e8f0b13","type":"webhook.test","createdAt":"2026-10-12T18:47:53Z",'
         . '"personId":null,"data":{"relatedObject":{"id":"6a5b4c3d-0000-4000-8000-0000000000c9","type":'
         . '"webhook","url":"/api/v4/webhooks/6a5b4c3d-0000-4000-8000-0000000000c9"},"status":null,'
-        . '"previousStatus":null}}';
+        . '"previousStatus":null,"reason":null}}';
 
     public function testABackDeliverySignedDuringARotationVerifiesWithEitherSecretAndReadsEveryField(): void
     {
@@ -64,7 +71,22 @@ final class WebhookBackInteropTest extends TestCase
             self::assertSame('/api/v4/invoices/' . self::INVOICE_ID, $event->getData()->getRelatedObject()->getUrl());
             self::assertSame('X', $event->getData()->getStatus());
             self::assertSame('C', $event->getData()->getPreviousStatus());
+            self::assertNull($event->getData()->getReason());
         }
+    }
+
+    public function testARejectedCancellationCarriesTheReason(): void
+    {
+        $secret = BackWebhookSigner::generateSecret();
+        $headers = BackWebhookSigner::headers(self::EVENT_ID, self::TIMESTAMP, self::REJECTED_CANCELLATION_BODY,
+            $secret);
+
+        $event = $this->deliver($headers, self::REJECTED_CANCELLATION_BODY, $secret);
+
+        self::assertSame(WebhookEventTypes::INVOICE_CANCELLATION_REJECTED, $event->getType());
+        self::assertSame('V', $event->getData()->getStatus());
+        self::assertSame('C', $event->getData()->getPreviousStatus());
+        self::assertSame('rejectedByRecipient', $event->getData()->getReason());
     }
 
     public function testABackDeliveryWithoutPersonOrStatusesReadsThemAsNull(): void
