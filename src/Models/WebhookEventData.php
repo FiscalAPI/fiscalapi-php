@@ -53,11 +53,7 @@ final class WebhookEventData
         return $this->previousStatus;
     }
 
-    /**
-     * Motivo de la transición. Todo evento lo trae; es null salvo en WebhookEventTypes::INVOICE_CANCELLATION_REJECTED,
-     * donde dice por qué no procedió la cancelación ('rejectedByRecipient', 'expired', 'notRequested' o
-     * 'notCancelable'). Es texto libre: pueden aparecer valores nuevos.
-     */
+    /** Por qué no procedió la cancelación (invoice.cancellation_rejected); null en los demás eventos. */
     public function getReason(): ?string
     {
         return $this->reason;

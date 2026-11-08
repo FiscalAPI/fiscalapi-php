@@ -4,10 +4,19 @@ Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a qui
 
 ## [4.0.474] - 2026-11-07
 
+### Cambios incompatibles (BREAKING)
+
+- Cambio del API, no del SDK: cancelar factura (`InvoiceService::cancel`) frente a un rechazo del SAT responde **422** con `succeeded` en `false`. Antes respondía 200 con `succeeded` en `true` y el código 203 en `data.invoiceUuids`. El SDK no lanza excepción.
+- `data` sigue con el acuse en `getJson()`: solo cambian el status (`getStatusCode()`, 422) y `succeeded`. El código del SAT está en `details`.
+- Migración: trate el 422 como rechazo; quien filtraba por `getStatusCode()` 200 o por `succeeded` cambia de rama.
+- Las validaciones previas al PAC responden **400**: UUID no canónico, sustituta inválida con motivo 01, y cancelación por valores cuando no hay una persona con CSD o hay más de una.
+- Si el PAC no trae el código del SAT, la respuesta es **502**.
+- Cancelar por valores un UUID que FiscalAPI no tiene ya no responde 404: responde el resultado del PAC con su acuse y no toca ninguna factura.
+
 ### Cancelación de facturas y webhooks
 
 - `WebhookEventData::getReason(): ?string` (nuevo): el motivo de la transición. Todo evento lo trae; es `null` salvo en `invoice.cancellation_rejected`, donde dice por qué no procedió la cancelación: `rejectedByRecipient`, `expired`, `notRequested` o `notCancelable`. Es texto libre: pueden aparecer valores nuevos. Cambio aditivo: el constructor de `WebhookEventData` recibe `reason` como cuarto argumento opcional.
-- `InvoiceService::cancel` frente a un rechazo del SAT: el API responde 422 y el SDK no lanza. La respuesta llega con `getStatusCode()` 422 y el cuerpo completo en `getJson()`: `succeeded` en `false`, `message` genérico, `details` con `SAT <código>: <descripción>` y `data` con `base64CancellationAcknowledgement` e `invoiceUuids` (el código del SAT por UUID). No hay cambios de código: el comportamiento ya existía y ahora tiene prueba.
+- `InvoiceService::cancel` frente a un rechazo del SAT: el API responde 422 y el SDK no lanza. La respuesta llega con `getStatusCode()` 422 y el cuerpo completo en `getJson()`: `succeeded` en `false`, `message` genérico, `details` con `SAT <código>: <descripción>` y `data` con `base64CancellationAcknowledgement` e `invoiceUuids` (el código del SAT por UUID). El SDK no cambia de código: el cambio es del API (ver *Cambios incompatibles*).
 
 ## [4.0.469] - 2026-10-30
 

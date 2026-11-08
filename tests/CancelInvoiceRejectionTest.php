@@ -6,12 +6,7 @@ namespace Fiscalapi\Tests;
 use Fiscalapi\Services\InvoiceService;
 use PHPUnit\Framework\TestCase;
 
-/**
- * Cancelar factura (DELETE /api/v4/invoices) cuando el SAT rechaza la solicitud: el API responde 422 con 'succeeded' en
- * false, el mensaje genérico, "SAT <código>: <descripción>" en 'details' y el acuse con el código por UUID en 'data'.
- * El SDK no lanza: en PHP la respuesta llega con su status y el cuerpo completo en getJson(). Los mismos escenarios
- * viven en los SDK de .NET, Node.js, Python y Java.
- */
+/** Cancelar factura con rechazo del SAT: 422, 'succeeded' en false y el acuse en 'data' del JSON. */
 final class CancelInvoiceRejectionTest extends TestCase
 {
     private const INVOICE_ID = '21c39425-9d0a-449b-a7ba-49335b85b062';
