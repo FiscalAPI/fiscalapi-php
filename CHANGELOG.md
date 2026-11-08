@@ -9,7 +9,7 @@ Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a qui
 - Cambio del API, no del SDK: cancelar factura (`InvoiceService::cancel`) frente a un rechazo del SAT responde **422** con `succeeded` en `false`. Antes respondía 200 con `succeeded` en `true` y el código 203 en `data.invoiceUuids`. El SDK no lanza excepción.
 - `data` sigue con el acuse en `getJson()`: solo cambian el status (`getStatusCode()`, 422) y `succeeded`. El código del SAT está en `details`.
 - Migración: trate el 422 como rechazo; quien filtraba por `getStatusCode()` 200 o por `succeeded` cambia de rama.
-- Las validaciones previas al PAC responden **400**: UUID no canónico, sustituta inválida con motivo 01, y cancelación por valores cuando no hay una persona con CSD o hay más de una.
+- Las validaciones previas al PAC responden **400**: UUID no canónico, sustituta inválida con motivo 01, y cancelar por `id` una factura emitida por valores cuando el tenant no tiene una persona con ese RFC y CSD vigente o tiene más de una.
 - Si el PAC no trae el código del SAT, la respuesta es **502**.
 - Una factura rechazada se queda vigente; ya no queda en «Cancelando».
 - Cancelar por valores un UUID que FiscalAPI no tiene ya no responde 404: responde el resultado del PAC con su acuse y no toca ninguna factura.
