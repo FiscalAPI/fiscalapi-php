@@ -1,0 +1,26 @@
+{
+  "data": [
+    {
+      "id": "a1",
+      "personId": "p1",
+      "tin": "EKU9003173C9",
+      "fileType": 0,
+      "validFrom": "2023-05-18T11:43:51",
+      "validTo": "2027-05-18T11:43:51",
+      "sequence": 1
+    },
+    {
+      "id": "a2",
+      "personId": "p1",
+      "tin": "EKU9003173C9",
+      "fileType": 1,
+      "validFrom": "2023-05-18T11:43:51",
+      "validTo": "2027-05-18T11:43:51",
+      "sequence": 1
+    }
+  ],
+  "succeeded": true,
+  "message": "",
+  "details": "",
+  "httpStatusCode": 200
+}

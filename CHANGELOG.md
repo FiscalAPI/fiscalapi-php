@@ -2,6 +2,12 @@
 
 Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a quien usa el SDK.
 
+## [Sin publicar]
+
+### Agregado
+
+- `getPersonService()->getTaxFiles(string $personId)`: `GET /api/v4/people/{personId}/tax-files` lista los certificados (CSD y FIEL) de la persona, solo metadatos: `id`, `personId`, `tin`, `fileType`, `validFrom`, `validTo` y `sequence`. No trae el archivo (`base64File`) ni la contraseña. Devuelve el arreglo `data` sin paginar.
+
 ## [4.0.474] - 2026-11-07
 
 ### Cambios incompatibles (BREAKING)

@@ -41,4 +41,12 @@ class PersonService extends AbstractService implements PersonServiceInterface
     {
         return $this->employerService;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTaxFiles(string $personId): FiscalApiHttpResponseInterface
+    {
+        return $this->httpClient->get($this->buildResourceUrl($personId, 'tax-files'));
+    }
 }

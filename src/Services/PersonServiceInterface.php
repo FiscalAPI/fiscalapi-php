@@ -66,4 +66,12 @@ interface PersonServiceInterface extends FiscalApiServiceInterface
      * @return FiscalApiHttpResponseInterface
      */
     public function delete(string $id): FiscalApiHttpResponseInterface;
+
+    /**
+     * Lista los certificados (CSD y FIEL) de una persona, solo metadatos, sin el archivo ni la contraseña.
+     *
+     * @param string $personId Id de la persona
+     * @return FiscalApiHttpResponseInterface
+     */
+    public function getTaxFiles(string $personId): FiscalApiHttpResponseInterface;
 }
