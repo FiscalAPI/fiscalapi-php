@@ -6,7 +6,19 @@ Cambios del SDK y notas de comportamiento del API de FiscalAPI que afectan a qui
 
 ### Agregado
 
+- Filtros en las listas de facturas, personas y productos, con el patrón de `getTicketService()->getList(array $filters)`: cada clave del arreglo viaja tal cual en la query string y una en `null` no se envía; sin filtros (`getList()`), se pide la lista sin query. `list(int $pageNumber = 1, int $pageSize = 10)` sigue existiendo y se comporta igual.
+  - `getInvoiceService()->getList(array $filters = [])`: `GET /api/v4/invoices` con `from`/`to` (fecha civil de México `Y-m-d`; van juntos), `issuerTin`, `recipientTin`, `typeCode` (I, E, T, P o N), `statusId` (B, V, C o X), `series`, `number`, `uuid`, `order`, `pageNumber` y `pageSize` (1 a 50). `order` es `'asc'` (por omisión) o `'desc'` (las más recientes primero), por fecha de creación; `InvoiceListOrder::ASC` e `InvoiceListOrder::DESC` (namespace `Fiscalapi\Models`) tienen esos valores.
+  - `getPersonService()->getList(array $filters = [])`: `GET /api/v4/people` con `search` (2 a 100 caracteres; razón social, RFC o correo), `userTypeId` (T, U o C), `pageNumber` y `pageSize`.
+  - `getProductService()->getList(array $filters = [])`: `GET /api/v4/products` con `search` (descripción o clave de producto o servicio del SAT), `pageNumber` y `pageSize`.
+- `getMeService()->get()` (`FiscalApiClientInterface::getMeService()`, `MeServiceInterface`/`MeService`): `GET /api/v4/me`. En `data` llega la persona de la API key: `id`, `legalName`, `tin`, `email`, `tenantId`, `environment` (Development, Test o Production), `isOwner`, `features` (`roles`, `permissions`, `denied`, `features`, `subscription` y `seatAssignments`) y `balances` (saldo por `creditType`; un tipo ausente tiene saldo 0). Sirve para validar una credencial: con una API key o un tenant que no son válidos responde 401.
+- `loginEnabled` en el arreglo de la persona, el acceso al portal: al crear, sin la clave o en `false`, la persona nace sin acceso. En `getPersonService()->update()`, sin la clave no se envía y no cambia el acceso; `true` lo da y `false` lo quita. Solo lo cambia el owner, el owner siempre lo tiene y no afecta a la API key. En las respuestas llega el acceso efectivo.
+- `password` es opcional al crear una persona: sin la clave no se envía, y solo es obligatoria si `loginEnabled` es `true`.
 - `getPersonService()->getTaxFiles(string $personId)`: `GET /api/v4/people/{personId}/tax-files` lista los certificados (CSD y FIEL) de la persona, solo metadatos: `id`, `personId`, `tin`, `fileType`, `validFrom`, `validTo` y `sequence`. No trae el archivo (`base64File`) ni la contraseña. Devuelve el arreglo `data` sin paginar.
+- Quien usa el cliente del SDK no cambia nada. Quien implementa su propia versión de `FiscalApiClientInterface`, `InvoiceServiceInterface`, `PersonServiceInterface` o `ProductServiceInterface` (p. ej. un doble de pruebas) debe agregar `getMeService()`, `getList(array $filters = [])` de cada lista y `getTaxFiles(string $personId)`.
+
+### Obsoleto
+
+- En `getPersonService()->get(string $id, bool $details = false)`, `details` no tiene efecto: el API responde la misma persona con cualquier valor. La firma se conserva para no romper el código; usa `get($id)`. En `getInvoiceService()->get()` sigue teniendo efecto.
 
 ## [4.0.474] - 2026-11-07
 

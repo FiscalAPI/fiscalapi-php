@@ -21,6 +21,7 @@ class FiscalApiClient implements FiscalApiClientInterface
     private ?SatValidationServiceInterface $satValidationService = null;
     private ?ManifestServiceInterface $manifestService = null;
     private ?TicketServiceInterface $ticketService = null;
+    private ?MeServiceInterface $meService = null;
 
 
 
@@ -187,6 +188,18 @@ class FiscalApiClient implements FiscalApiClientInterface
         }
 
         return $this->manifestService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMeService(): MeServiceInterface
+    {
+        if ($this->meService === null) {
+            $this->meService = new MeService($this->httpClient);
+        }
+
+        return $this->meService;
     }
 
     /**

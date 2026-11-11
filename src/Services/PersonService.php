@@ -29,6 +29,14 @@ class PersonService extends AbstractService implements PersonServiceInterface
     /**
      * {@inheritdoc}
      */
+    public function getList(array $filters = []): FiscalApiHttpResponseInterface
+    {
+        return $this->getFilteredList($filters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getEmployeeService(): EmployeeServiceInterface
     {
         return $this->employeeService;

@@ -45,6 +45,19 @@ abstract class AbstractImmutableService implements ImmutableFiscalApiServiceInte
     }
 
     /**
+     * Lista los recursos con los filtros asignados (ver ListQuery::build); sin filtros, la ruta de la lista sin query.
+     *
+     * @param array $filters Filtros de la lista con las claves camelCase del API
+     * @return FiscalApiHttpResponseInterface
+     */
+    protected function getFilteredList(array $filters): FiscalApiHttpResponseInterface
+    {
+        $query = ListQuery::build($filters);
+
+        return $this->httpClient->get($this->buildResourceUrl() . ($query === '' ? '' : '?' . $query));
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function get(string $id, bool $details = false): FiscalApiHttpResponseInterface

@@ -45,7 +45,7 @@ class TicketService implements TicketServiceInterface
      */
     public function getList(array $filters = []): FiscalApiHttpResponseInterface
     {
-        $query = $this->buildQueryString($filters);
+        $query = ListQuery::build($filters);
 
         return $this->httpClient->get($this->buildResourceUrl() . ($query === '' ? '' : '?' . $query));
     }
@@ -104,31 +104,6 @@ class TicketService implements TicketServiceInterface
         }
 
         return $url;
-    }
-
-    /**
-     * La query string de los filtros asignados, sin el signo '?'. Un arreglo repite la llave por cada valor
-     * (status=pending&status=invoiced), los null se omiten y los booleanos viajan como 'true' o 'false'. Se arma aquí
-     * porque la opción query de Guzzle numera los arreglos (status[0]=…), que el API no lee.
-     *
-     * @param array $filters Filtros de la lista
-     * @return string
-     */
-    private function buildQueryString(array $filters): string
-    {
-        $pairs = [];
-        foreach ($filters as $key => $value) {
-            // (array) null es []: un filtro en null no se envía. Un false tampoco: details solo viaja como true.
-            foreach ((array) $value as $item) {
-                if ($item === false) {
-                    continue;
-                }
-                $text = $item === true ? 'true' : (string) $item;
-                $pairs[] = rawurlencode((string) $key) . '=' . rawurlencode($text);
-            }
-        }
-
-        return implode('&', $pairs);
     }
 
     /**
