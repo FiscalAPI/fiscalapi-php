@@ -29,6 +29,14 @@ class PersonService extends AbstractService implements PersonServiceInterface
     /**
      * {@inheritdoc}
      */
+    public function getList(array $filters = []): FiscalApiHttpResponseInterface
+    {
+        return $this->getFilteredList($filters);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getEmployeeService(): EmployeeServiceInterface
     {
         return $this->employeeService;
@@ -40,5 +48,13 @@ class PersonService extends AbstractService implements PersonServiceInterface
     public function getEmployerService(): EmployerServiceInterface
     {
         return $this->employerService;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTaxFiles(string $personId): FiscalApiHttpResponseInterface
+    {
+        return $this->httpClient->get($this->buildResourceUrl($personId, 'tax-files'));
     }
 }

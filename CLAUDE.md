@@ -35,12 +35,14 @@ PHPUnit needs `ext-mbstring`. A PHP without a `php.ini` can load it per call: `p
 - `FiscalApiHttpResponse` — PSR-7 response wrapper with JSON caching
 
 ### Service Layer (`Fiscalapi\Services`)
-- `AbstractImmutableService` (implements `ImmutableFiscalApiServiceInterface`) — `list()`, `get()`, `create()`, `delete()`. `AbstractService` (implements `FiscalApiServiceInterface`) extends it with `update()`. Most services extend `AbstractService`; `TaxFileService` extends only `AbstractImmutableService` (the API does not update certificates: PUT tax-files answers 405, so `update()` does not exist on the tax-file service); `SatValidationService`, `EmployeeService` and `EmployerService` are standalone.
-- `FiscalApiClient` — Main entry point. Lazy-loads 11 services via getters (e.g., `getInvoiceService()`). `EmployeeService` and `EmployerService` are reached through `getPersonService()`.
+- `AbstractImmutableService` (implements `ImmutableFiscalApiServiceInterface`) — `list()`, `get()`, `create()`, `delete()`. `AbstractService` (implements `FiscalApiServiceInterface`) extends it with `update()`. Most services extend `AbstractService`; `TaxFileService` extends only `AbstractImmutableService` (the API does not update certificates: PUT tax-files answers 405, so `update()` does not exist on the tax-file service); `SatValidationService`, `TicketService`, `MeService`, `EmployeeService` and `EmployerService` are standalone.
+- `FiscalApiClient` — Main entry point. Lazy-loads 14 services via getters (e.g., `getInvoiceService()`). `EmployeeService` and `EmployerService` are reached through `getPersonService()`.
 - `FiscalApiClientFactory` — Static factory with instance caching keyed by `apiKey:tenant:apiUrl`.
 
 ### Notable Service Implementations
 - **InvoiceService** — Every invoice goes to a single `POST /invoices` carrying `typeCode` in the body (`'I'` income, `'E'` credit note, `'P'` payment, `'N'` payroll). Has specialized methods: `cancel()`, `getPdf()`, `getXml()`, `send()`, `getStatus()`.
+- **Filtered lists** — `getList(array $filters = [])` on tickets, invoices, people and products builds the query with `ListQuery::build()` (`@internal`): each key travels as is, `null` and `false` are omitted, an array repeats the key. Invoices, people and products reach it through the protected `AbstractImmutableService::getFilteredList()`; the public `getList` lives on each service because `DownloadCatalogService::getList()` has another signature.
+- **MeService** — `get()` calls `GET /me`: the person of the API key with features and balances.
 - **CatalogService** — Custom `search(catalogName, searchText)` and `getById(catalogName, id)` methods. Min search term: 4 chars.
 - **DownloadCatalogService** — Throws `BadMethodCallException` for standard CRUD; uses `getList()` and `listCatalog()` instead.
 - **DownloadRequestService** — Methods for downloading XMLs, metadata, ZIP packages, and SAT request/response files.

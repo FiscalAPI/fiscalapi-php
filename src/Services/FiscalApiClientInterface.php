@@ -102,6 +102,13 @@ interface FiscalApiClientInterface
     public function getManifestService(): ManifestServiceInterface;
 
     /**
+     * Obtiene el servicio de la persona de la credencial (GET /api/v4/me).
+     *
+     * @return MeServiceInterface
+     */
+    public function getMeService(): MeServiceInterface;
+
+    /**
      * Obtiene el cliente HTTP subyacente.
      *
      * @return FiscalApiHttpClientInterface

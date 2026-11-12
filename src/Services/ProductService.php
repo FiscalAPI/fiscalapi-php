@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Fiscalapi\Services;
 
 use Fiscalapi\Http\FiscalApiHttpClientInterface;
+use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 
 class ProductService extends AbstractService implements ProductServiceInterface
 {
@@ -17,4 +18,11 @@ class ProductService extends AbstractService implements ProductServiceInterface
         parent::__construct($httpClient, 'products');
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getList(array $filters = []): FiscalApiHttpResponseInterface
+    {
+        return $this->getFilteredList($filters);
+    }
 }

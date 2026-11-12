@@ -11,6 +11,22 @@ use Fiscalapi\Http\FiscalApiHttpResponseInterface;
 interface InvoiceServiceInterface extends FiscalApiServiceInterface
 {
     /**
+     * Lista las facturas del tenant con los filtros y el orden asignados. GET /api/v4/invoices
+     *
+     * Sin filtros, la lista de siempre (primera página, de la más antigua a la más reciente). list($pageNumber, $pageSize)
+     * sigue igual.
+     *
+     * @param array $filters 'from' y 'to' (fecha de la factura, fecha civil de México Y-m-d, incluidas; van juntas),
+     *                       'issuerTin' y 'recipientTin' (RFC exacto), 'typeCode' (I, E, T, P o N), 'statusId' (B
+     *                       borrador, V vigente, C cancelando o X cancelada), 'series', 'number' (folio) y 'uuid',
+     *                       'order' (InvoiceListOrder::ASC, el de omisión, o InvoiceListOrder::DESC, las más recientes
+     *                       primero; por fecha de creación), 'pageNumber' (desde 1) y 'pageSize' (1 a 50). Cada clave
+     *                       viaja tal cual en la query string; los valores null no se envían.
+     * @return FiscalApiHttpResponseInterface Página de facturas
+     */
+    public function getList(array $filters = []): FiscalApiHttpResponseInterface;
+
+    /**
      * Crea una nueva factura: ingreso (I), egreso/nota de crédito (E), traslado (T), pago (P) o nómina (N).
      * Acepta complementos como Carta Porte, Pagos, Nómina, Impuestos Locales y Comercio Exterior
      * bajo la propiedad 'complement'.

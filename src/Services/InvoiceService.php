@@ -24,8 +24,14 @@ class InvoiceService extends AbstractService implements InvoiceServiceInterface
         parent::__construct($httpClient, 'invoices');
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getList(array $filters = []): FiscalApiHttpResponseInterface
+    {
+        return $this->getFilteredList($filters);
+    }
 
-    
     /**
      * {@inheritdoc}
      */

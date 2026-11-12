@@ -1,0 +1,28 @@
+{
+  "data": {
+    "id": "78d380fd-1b69-4e3c-8bc0-4f57737f7d5f",
+    "legalName": "KARLA FUENTE NOLASCO",
+    "tin": "FUNK671228PH6",
+    "email": "persona@example.com",
+    "tenantId": "102e5f13-e114-41dd-bea7-507fce177281",
+    "environment": "Test",
+    "isOwner": true,
+    "features": {
+      "isOwner": true,
+      "roles": ["Owner"],
+      "permissions": ["Invoices.Read", "Invoices.Issue"],
+      "denied": { "Tickets.Create": { "missingFeatures": ["auto_cfdi"] } },
+      "features": { "emision_cfdi": { "values": {} }, "descarga_cfdi": { "values": { "seats": 2 } } },
+      "subscription": { "status": "active", "isAvailable": true },
+      "seatAssignments": [{ "featureCode": "descarga_cfdi", "units": 1, "status": "Active" }]
+    },
+    "balances": [
+      { "creditType": 1, "available": 7 },
+      { "creditType": 2, "available": 3 }
+    ]
+  },
+  "succeeded": true,
+  "message": "",
+  "details": "",
+  "httpStatusCode": 200
+}

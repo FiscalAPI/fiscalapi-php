@@ -702,7 +702,7 @@ switch ($event->getType()) {
 ## 📋 Operaciones Principales
 
 - **Facturas (CFDI)**  
-  Crear facturas de ingreso, notas de crédito, complementos de pago, nómina, cancelaciones, generación de PDF/XML.
+  Crear facturas de ingreso, notas de crédito, complementos de pago, nómina, cancelaciones, generación de PDF/XML. Listado con filtros por fechas, RFC, tipo, estatus, serie, folio y UUID, y orden `InvoiceListOrder::ASC` o `InvoiceListOrder::DESC` (`getInvoiceService()->getList(array $filters)`).
 - **Nómina**  
   Crear facturas de nómina (typeCode 'N') con complemento de nómina (percepciones, deducciones, etc.).
 - **Impuestos Locales**  
@@ -714,9 +714,11 @@ switch ($event->getType()) {
 - **Empleadores y Empleados**  
   Gestión de datos de empleador (patrón) y empleado asociados a personas, necesarios para facturación de nómina.
 - **Personas (Clientes/Emisores)**  
-  Alta y administración de personas, gestión de certificados (CSD).
+  Alta y administración de personas, gestión de certificados (CSD), acceso al portal (`loginEnabled`) y listado con búsqueda y tipo de persona (`getPersonService()->getList(array $filters)`).
 - **Productos y Servicios**  
-  Administración de catálogos de productos, búsqueda en catálogos SAT.
+  Administración de catálogos de productos, búsqueda en catálogos SAT y listado con búsqueda (`getProductService()->getList(array $filters)`).
+- **Persona de la credencial**  
+  La persona de la API key con su tenant, ambiente, permisos, features y saldos; sirve para validar una credencial (`getMeService()->get()`).
 - **Validaciones SAT**  
   Validación de CFDI ante el SAT: estructura, sellos, vigencia del certificado, estado del comprobante y listados 69-B y 69-B Bis.
 - **Timbres, créditos de validación y créditos de ticket**  
